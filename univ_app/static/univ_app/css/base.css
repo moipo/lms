@@ -1,0 +1,32 @@
+body{
+  background: white;
+}
+
+
+
+.midbtn{
+  margin-left: 45%;
+  margin-right: 45%;
+  margin-top: 17%;
+  background-color:white;
+}
+
+.mb-10{
+  margin-bottom: 10px;
+}
+
+.middle{
+  height: 757px;
+  width: 100%;
+  background: white;
+  display:block;
+  padding:10px;
+}
+
+.content{
+  overflow:auto;
+  height:100%;
+  width:100%;
+  border-radius: 25px;
+  background-color:#9d55e6;
+}

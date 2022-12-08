@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block show_result %}
+  <div class = "centrate cent" >
+    Ваш результат:
+    <strong>{{taken_test.score}}/{{q_amount}}</strong>
+    <br>
+    <br>
+    <br>
+
+    <a href = "{%url 'show_result_table' taken_test.id %}" class = "text-warning">показать таблицу</a>
+
+
+  </div>
+
+  <style>
+    .centrate {
+      font-size:30px;
+      margin:auto;
+      color: white;
+    }
+
+    .cent{
+      margin-left: 26%;
+      padding: 300px;
+    }
+  </style>
+{% endblock %}

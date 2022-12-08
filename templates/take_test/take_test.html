@@ -1,0 +1,43 @@
+{% extends "base.html"%}
+
+{%block take_test %}
+<div class = 'container'>
+  <br>
+  <br>
+  <div class="border border-light p-3 mb-4 " style = "width: 50%; color: white; margin:auto; ">
+      Вопрос {{next_question_num}} / {{ quantity_of_questions }}:
+      <br>
+      {{this_question}}
+  </div>
+  <!-- <div class="border border-light p-3 mb-4">
+    <div class="text-wrap" style="width: 8rem; color: white;">
+    </div>
+  </div> -->
+
+  <form action = "{% url 'take_test' the_test.id next_question_num taken_test.pk %}" method = "POST"> {%csrf_token%}
+
+    <ul>
+      <!-- {# {{given_answer_formset.management_form}} #} -->
+      {{a_ga_zipped.1.management_form}}
+      {% for answer, checkbox in a_ga_zipped %}
+
+        <li>{{forloop.counter}}:{{checkbox}} {{answer}} </li>
+
+        <!-- <input class="form-check-input" type="checkbox" name="" value=""> -->
+        <br>
+      {% endfor %}
+    </ul>
+
+
+
+      <!-- <ul>
+        {% for answer in the_answers %}
+          <li>{{answer}}</li>
+          <input class="form-check-input" type="checkbox" name="" value="">
+          <br>
+        {% endfor %}
+      </ul> -->
+      <button type="submit" class = "btn btn-success btn-lg " name="button">Дать ответ</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block successful_registration %}
+<br>
+<div class = "text-wrapper centrate cent" >
+  Регистрация прошла успешно, теперь вы можете
+  <a href = "{% url 'login_form' %}" class = "text-warning">войти</a>.
+</div>
+
+<style>
+  .centrate {
+    font-size:30px;
+    margin:auto;
+    color: white;
+  }
+
+  .cent{
+    margin-left: 25%;
+    margin-top: 15%;
+    display:float;
+  }
+</style>
+{% endblock %}

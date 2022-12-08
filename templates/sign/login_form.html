@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block login %}
+<br>
+<div class="container signinup-form">
+  {% if error %}
+  <p style = "color:red"> {{error}}</p>
+  {% endif %}
+  <form action = "{% url 'login_form' %}" method="post"> {% csrf_token %}
+    {{user_form.as_p}}
+    <button type="submit" style = "margin-left: 78px;"> Войти </button>
+  </form>
+  <br>
+  <br>
+  <a  class = "reg_ref" href="{% url 'register' %}">Регистрация</a>
+
+</div>
+<!-- <form> {% csrf_token %}
+    <input type="text" name="username">
+    <input type= "password" name = "password">
+    <button type="submit" name="button"> Login </button>
+</form> -->
+
+<style>
+  .signinup-form{
+    background-color: orange;
+    margin: auto;
+    width: 300px;
+    height; 200px;
+    padding: 40px;
+    border-radius: 15px;
+    margin-top: 70px;
+    color: #6c1a75;
+
+
+  }
+
+  .reg_ref{
+    margin: 5px;
+    float: right;
+  }
+
+  .reg_ref:hover{
+    color:green;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,46 @@
+{%extends "storage_base.html"%}
+
+{%block show_result_table%}
+
+<table class = "table">
+  <tr>
+    <th>Вопрос</th>
+    <th>Варианты ответов</th>
+    <th>Правильный ответ</th>
+    <th>Ваш ответ</th>
+    <th>Результат</th>
+  </tr>
+  {% for zipped in all_zipped %}
+  <tr>
+    <!-- questions-->
+    <td>{{zipped.0}}</td>
+    <td>
+      {% for ans in zipped.1%}
+        {{forloop.counter}}:  {{ans}}
+        <br>
+      {%endfor%}
+    </td>
+    <td>
+      {% for ans in zipped.1%}
+        {{forloop.counter}}:  {{ans.is_right|yesno:"+,-, "}}
+        <br>
+      {%endfor%}
+    </td>
+    <td>
+      {% for ans in zipped.2%}
+        {{forloop.counter}}:  {{ans.checked|yesno:"+,-, "}}
+        <br>
+      {%endfor%}
+    </td>
+    <td>
+      {{zipped.3.correct|yesno:"Правильный ответ, Неправильный ответ"}}
+    </td>
+  </tr>
+  {% endfor %}
+
+
+
+</table>
+
+
+{%endblock%}

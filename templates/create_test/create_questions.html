@@ -1,0 +1,207 @@
+{% extends "base_with_sidebar.html" %}
+{% load static %}
+
+<!--<form action="" method="POST"> {% csrf_token %}-->
+<!--    <div class='form-group testformtxt'>-->
+
+
+            <!-- {# {% comment %}  #} -->
+<!--        <button type="submit" class="btn btn-success btn-md createTestButton"> Продолжить</button>-->
+<!--    </div>-->
+<!--</form>-->
+
+{% block questions_form %}
+
+<form action="{% url 'geturl' testid %}"> {%csrf_token%}
+  <button class = "btn btn-danger btn-lg ready_btn" type="submit" name="button">Тест готов</button>
+</form>
+
+   <form class = "white_text" action = "#" method="POST"> {% csrf_token %}
+       <div class="form-group testformtxt mb-1">
+           <textarea class ="form-control"  name="question" cols="40" rows="10" required="" id="id_question" placeholder = "Текст вопроса"></textarea>
+       </div>
+
+      <div class="form-group ans_group " >
+        <button type = "button" class="btn btn-primary plusBtn" name="button"> Добавить ещё ответ </button>
+        <button type="submit" class="btn btn-success btn-md createQuestionButton">Сохранить вопрос</button>
+
+
+              <div id = "empty_form" class = "empty_form" >
+                {{answer_form_not_model.as_p}}
+              </div>
+
+              <div class="empty_form">
+                <p>
+                  <label for="id_answer">Answer:</label>
+                  <textarea type="text" name="answer" maxlength="200" cols = "90" rows = '1' placeholder="Ответ" required="" id="id_answer"></textarea>
+                  <!-- <input type="text" name="answer" maxlength="200" cols = "90" rows = '1' placeholder="Ответ" required="" id="id_answer"> -->
+                </p>
+
+                <p>
+                  <label for="id_is_right">Is right:</label>
+                  <input type="checkbox" name="is_right" id="id_is_right" value = "2">
+                  <!-- <input type="hidden" name="hidden_checkbox" id="hidden_checkbox" value ="off" > -->
+                </p>
+              </div>
+
+         </div>
+
+
+     </form>
+
+
+
+
+
+    <script defer>
+
+
+      //empty_form = document.getElementById("empty_form")
+      //second_form = empty_form.cloneNode()
+      //second_form.setAttribute("id" , "")
+
+
+
+
+
+      let num = 3
+      const plusBtn = document.querySelector('.plusBtn')
+      plusBtn.addEventListener('click', function handler() {
+        const emptyForm = document.querySelector('#empty_form')
+        let newForm = emptyForm.cloneNode(true)
+        newForm.setAttribute("id", ``)
+
+        console.log(newForm)
+        console.log(newForm.lastElementChild)
+        console.log(newForm.lastElementChild.lastElementChild)
+
+        let checkbox = newForm.lastElementChild.lastElementChild
+        checkbox.setAttribute("id", "")
+        checkbox.setAttribute("value", `${num}`)
+        checkbox.checked = false
+
+        let textarea = newForm.firstElementChild.lastElementChild
+        textarea.value = ""
+
+        console.log(newForm.lastElementChild.lastElementChild)
+
+        // answer = newForm.firstElementChild.lastElementChild
+        // answer.setAttribute("id", "")
+
+
+        num += 1
+        const ansGroup = document.querySelector(".ans_group")
+
+
+        ansGroup.appendChild(newForm)
+      });
+    </script>
+
+<style>
+
+        .ready_btn{
+          display: inline;
+          float:right;
+          margin:50px;
+          margin-top: 40%;
+
+        }
+
+        .white_text{
+          color:white;
+        }
+
+        .plusBtn{
+          margin:10px;
+          margin-top:20px;
+          margin-bottom: 20px;
+          margin-left:7%;
+          display: inline;
+        }
+
+        .ans_group{
+        //border: 3px solid red;
+        margin: 5px;
+        margin-left:30%;
+        }
+
+        .hidden{
+          display:none
+        }
+
+        #empty_form{
+
+        }
+
+
+        .testformstr{
+        margin-top: 50px;
+        width:300px;
+        margin-left: 500px;
+        }
+
+        .testformtxt{
+        margin-top: 30px;
+        width:700px;
+        margin-left: 500px;
+
+        }
+
+        .questionform_importance
+        {
+        display: inline-block;
+        margin-left: 700px;
+        width:100px;
+        margin: 0px;
+        }
+
+
+        .createQuestionButton{
+        margin-top: 20px;
+        margin-bottom: 20px;
+        margin-left: 300px;
+        display:inline;
+        }
+
+        .textstyle{
+        color:white;
+        margin-top: 30px;
+        font-size: 22px;
+        }
+
+        .finish{
+          position: fixed;
+          right: 450px;
+          bottom: 100px;
+          background-color: red;
+        }
+
+
+
+</style>
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+{% block answer%}
+{% for question in previous_questions %}
+<!-- some text and form:
+<form class="" action="index.html" method="post"> {% csrf_token %}
+  {{answer_form.as_p}}
+  <br>
+  {{answer_form.as_p}}
+</form> -->
+<br>
+<em>{{question}}</em>
+<br>
+
+{% endfor %}
+{% endblock%}

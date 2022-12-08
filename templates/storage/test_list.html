@@ -1,0 +1,66 @@
+{%extends "storage_base.html"%}
+
+{%block test_list%}
+
+
+<div class ="container">
+    Страница {{page_obj.number}} из {{page_obj.paginator.num_pages}}:
+
+
+
+  <div class="container nested center" >
+
+
+      {% for page_num in page_obj.paginator.page_range %}
+      <div class=" page_num">
+      <a href="?page={{page_num}}">{{page_num}}</a>
+      </div>
+      {%endfor%}
+      <!-- {#{% for page in page_obj%}
+      {{page}}
+      {%endfor%} #} -->
+
+
+  </div>
+  <br>
+  <table class = "table">
+    <tr>
+      <th>Название</th>
+      <th>Описание</th>
+      <th>Картинка</th>
+      <th>Ссылка</th>
+    </tr>
+  {% for test in object_list %}
+    <tr>
+      <td>{{test.title}}</td>
+      <td>{{test.description}}</td>
+      <td><img src="{{test.image.url}}" alt="Невозможно отобразить картинку" width = "150px"></td>
+      <td> <a href="{% url 'start_a_test' test.pk %}" class = "btn btn-primary"> Пройти</a></td>
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+
+<style>
+.nested{
+  height: 30px;
+  border: 2px solid red;
+  border-radius: 8px;
+  width:60%;
+}
+
+.page_num
+{
+  //border: 2px solid green;
+  border-radius: 5px;
+  display:inline-block;
+}
+
+.menu{
+  width: 800px;
+  display: flex;
+  justify-content: space-between;
+}
+</style>
+
+{%endblock%}

@@ -1,0 +1,20 @@
+{% extends 'base_with_sidebar.html' %}
+{% block congratulations %}
+<div class = "text-wrapper centrate cent" >
+  Ссылка для прохождения теста:
+  <strong><a class = "centrate" href = "{% url 'start_a_test' testid %}"> {{yoururl}} </a></strong>
+</div>
+
+<style>
+  .centrate {
+    font-size:30px;
+    margin:auto;
+    color: white;
+  }
+
+  .cent{
+    margin-left: 20%;
+    margin-top: 20%;
+  }
+</style>
+{% endblock %}

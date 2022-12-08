@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{%block cant_create_test%}
+<br>
+<div class = "text-wrapper centrate cent" >
+  Невозможно создать тест с 0 вопросов.
+  <a href = "{% url 'create_test' %}" class = "text-warning">Создать заново</a>.
+</div>
+
+<style>
+  .centrate {
+    font-size:30px;
+    margin:auto;
+    color: white;
+  }
+
+  .cent{
+    margin-left: 25%;
+    margin-top: 15%;
+    display:float;
+  }
+</style>
+{%endblock%}
