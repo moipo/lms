@@ -12,9 +12,7 @@
 
 {% block questions_form %}
 
-<form action="{% url 'geturl' testid %}"> {%csrf_token%}
-  <button class = "btn btn-danger btn-lg ready_btn" type="submit" name="button">Тест готов</button>
-</form>
+
 
    <form class = "white_text" action = "#" method="POST"> {% csrf_token %}
        <div class="form-group testformtxt mb-1">
@@ -49,6 +47,9 @@
 
      </form>
 
+     <form action="{% url 'geturl' testid %}"> {%csrf_token%}
+       <button class = "btn btn-danger btn-lg ready_btn" type="submit" name="button">Тест готов</button>
+     </form>
 
 
 
@@ -103,7 +104,7 @@
           display: inline;
           float:right;
           margin:50px;
-          margin-top: 40%;
+          margin-top: 5px;
 
         }
 

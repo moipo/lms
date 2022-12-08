@@ -10,6 +10,13 @@ from django.forms import inlineformset_factory
 from django.views.generic import ListView
 
 
+class Main:
+    def homepage(request):
+        return render(request,"main/homepage.html",{})
+
+    def profile(request):
+        return render(request,"main/profile.html",{})
+        
 
 
 class TestList(ListView):
