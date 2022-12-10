@@ -3,24 +3,45 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 
 
+class Subject:
+    title = models.CharField(max_length=200, default = '', blank = True)
 
-# class Student:
-#     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
-#
-# class Teacher:
-#     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
-#
-#
-#
-# class Task:
-#     created_at = models.DateTimeField(auto_add_now = True)
-#
-#     class Meta:
-#         abstract = True
-#
-# class Group: #import
-#
-# class Grade:
+class Group:
+    title = models.CharField(max_length=200, default = '', blank = True)
+    subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
+
+class Student:
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
+
+class Teacher:
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
+
+
+class Task:
+    created_at = models.DateTimeField(auto_add_now = True)
+    created_by = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
+    group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
+    subject = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
+
+    class Meta:
+        abstract = True
+
+
+
+class CommonTask(Task):
+    pass
+
+class AnsweredCommonTask:
+    pass
+
+class Grade:
+
+
+
+
+
 
 # тут не будет: семестр, расписание, практики, категорий студентов, административного персонала, зачётки электронной.
 

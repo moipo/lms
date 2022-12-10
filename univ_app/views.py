@@ -24,6 +24,19 @@ class Main:
         return render(request,"profile/profile.html",{})
 
 
+class Student_views:
+    def tasks(request):
+        return HttpResponse("Задачи")
+
+    def subjects(request):
+        return HttpResponse("Предметы")
+
+    def statistics(request):
+        return HttpResponse("Статистика")
+
+
+class Teacher_views:
+    pass
 
 
 
@@ -36,13 +49,7 @@ class TestList(ListView):
 
 
 
-class General:
-    def homepage(request):
-        ctx = {
-        "state_of_user" : request.user.is_authenticated
-        }
-        return render(request, "homepage/homepage.html", ctx)
-
+class Tester:
     def create_test(request):
         if request.method == "POST":
             form_result = TestForm(request.POST,request.FILES)
@@ -103,7 +110,7 @@ class General:
             the_test.delete()
             return render(request, "tester/create_test/cant_create_test.html", {})
 
-        path = reverse(General.start_a_test, args = [testid])
+        path = reverse(Tester.start_a_test, args = [testid])
         yoururl = str(request.META["HTTP_HOST"])  + str(path)
 
         the_test.link = yoururl
@@ -311,6 +318,9 @@ class General:
         return render(request, 'tester/take_test/show_result_table.html', ctx)
 
 
+
+
+class Login:
     def login_form(request):
         if request.method == "POST":
             username = request.POST.get("username")
@@ -342,4 +352,4 @@ class General:
     def log_out(request):
         if request.user.is_authenticated:
             logout(request)
-        return redirect(General.homepage)
+        return redirect(Main.homepage)
