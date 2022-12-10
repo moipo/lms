@@ -1,5 +1,53 @@
 from django.db import models
 from django.utils.text import slugify
+from django.contrib.auth.models import User
+
+
+
+# class Student:
+#     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+#
+# class Teacher:
+#     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+#
+#
+#
+# class Task:
+#     created_at = models.DateTimeField(auto_add_now = True)
+#
+#     class Meta:
+#         abstract = True
+#
+# class Group: #import
+#
+# class Grade:
+
+# тут не будет: семестр, расписание, практики, категорий студентов, административного персонала, зачётки электронной.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Test(models.Model):
