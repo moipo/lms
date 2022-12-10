@@ -11,7 +11,7 @@
 
 
           <!-- <li class="nav-item">
-            <a class="nav-link" href="{% url 'profile' %}">Личный кабинет</a>
+            <a class="nav-link" href="{#{% url 'profile' %} #}">Личный кабинет</a>
           </li> -->
           <!-- <li class="nav-item">
             <a class="nav-link" href="{#  {% url 'homepage' %} #}">Создать тест</a>
@@ -21,9 +21,13 @@
           </li> -->
           <li class="nav-item">
             {% if request.user.is_authenticated %}
-            <a class="nav-link" href="{% url 'profile' %}">Мой профиль<span class="sr-only"></span></a>
+            <a class="nav-link" href="{% url 's_profile' %}">Мой профиль<span class="sr-only"></span></a>
             {% endif %}
           </li>
+          <li class="nav-item">
+            <a class = "nav-link" href="#">{{request.user}}</a>
+          </li>
+
           <li class="nav-item">
             {% if not request.user.is_authenticated %}
             <a class="nav-link" href="{% url 'login_form' %}">Войти<span class="sr-only"></span></a>

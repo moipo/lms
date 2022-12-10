@@ -20,23 +20,42 @@ class Main:
     def homepage(request):
         return render(request,"homepage/homepage.html",{})
 
-    def profile(request):
-        return render(request,"profile/profile.html",{})
+
 
 
 class Student_views:
-    def tasks(request):
-        return HttpResponse("Задачи")
+    def s_profile(request):
+        return render(request,"student_views/s_profile.html",{})
 
-    def subjects(request):
-        return HttpResponse("Предметы")
+    def s_tasks(request):
+        ctx = {}
+        return render(request, "student_views/s_statistics.html", ctx)
 
-    def statistics(request):
-        return HttpResponse("Статистика")
+    def s_subjects(request):
+        ctx = {}
+        return render(request, "student_views/s_subjects.html", ctx)
+
+    def s_statistics(request):
+        ctx = {}
+        return render(request, "student_views/s_tasks.html", ctx)
 
 
 class Teacher_views:
-    pass
+    def t_profile(request):
+        ctx = {}
+        return render(request,"teacher_views/t_profile.html",{})
+
+    def t_tasks(request):
+        ctx = {}
+        return render(request,"teacher_views/t_statistics.html",{})
+
+    def t_subjects(request):
+        ctx = {}
+        return render(request,"teacher_views/t_subjects.html",{})
+
+    def t_statistics(request):
+        ctx = {}
+        return render(request,"teacher_views/t_tasks.html",{})
 
 
 

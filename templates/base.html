@@ -21,46 +21,32 @@
 
 
 
-      <!-- Middle -->
-      <div class = "clearfix">
-        <div class = "middle">
-          <div class = "content">
-              {% block start_test %}
-              {% endblock %}
-              {%block showquestions %}
-              {% endblock %}
-              {% block login %}
-              {% endblock %}
-              {% block register %}
-              {% endblock %}
-              {%block myprofile%}
-              {%endblock%}
-              {% block login_required_message %}
-              {% endblock %}
-              {% block change_user_credentials_form %}
-              {% endblock %}
-              {% block homepage %}
-              {% endblock %}
-              {% block show_result %}
-              {% endblock %}
-              {%block take_test %}
-              {%endblock%}
-              {%block feedback%}
-              {%endblock%}
-              {% block successful_registration %}
-              {% endblock %}
-              {%block cant_create_test%}
-              {%endblock%}
-          </div>
-        </div>
-      </div>
+      {% block test_list %}
+      {% endblock %}
+      {%block show_result_table%}
+      {% endblock %}
+      {%block homepage%}
+      {% endblock %}
 
 
+      {%block s_profile%}
+      {% endblock %}
+      {% block s_statistics %}
+      {% endblock %}
+      {% block s_subjects %}
+      {% endblock %}
+      {% block s_tasks %}
+      {% endblock %}
 
 
-      {% include "include/footer.html" %}
-
-
+      {%block t_profile%}
+      {% endblock %}
+      {% block t_statistics %}
+      {% endblock %}
+      {% block t_subjects %}
+      {% endblock %}
+      {% block t_tasks %}
+      {% endblock %}
 
     </div>
 
@@ -68,12 +54,8 @@
 </html>
 
 <style>
-  body{
-    background-color:white;
-    color: white;
-  }
-
-  .midbtn{
-    background-color:green;
-  }
+body{
+  background-color:white;
+  /* color: white; */
+}
 </style>

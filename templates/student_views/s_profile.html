@@ -1,0 +1,10 @@
+{%extends "base.html"%}
+
+{% block s_profile %}
+
+
+<a href="{% url 's_tasks' %}">Мои задания</a> <hr>
+<a href="{% url 's_subjects' %}">Мои предметы</a> <hr>
+<a href="{% url 's_statistics' %}">Моя статистика</a> <hr>
+
+{% endblock s_profile %}

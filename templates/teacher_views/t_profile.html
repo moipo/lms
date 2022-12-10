@@ -1,10 +1,10 @@
-{%extends "storage_base.html"%}
+{%extends "base.html"%}
 
-{% block profile %}
+{% block t_profile %}
 
 
 <a href="{% url 'tasks' %}">Мои задания</a> <hr>
 <a href="{% url 'subjects' %}">Мои предметы</a> <hr>
 <a href="{% url 'statistics' %}">Моя статистика</a> <hr>
 
-{% endblock profile %}
+{% endblock t_profile %}

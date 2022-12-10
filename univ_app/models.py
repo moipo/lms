@@ -3,40 +3,50 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 
 
-class Subject:
+class Subject(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
 
-class Group:
+class Group(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
 
-class Student:
+class Student(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
 
-class Teacher:
+class Teacher(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
 
 
-class Task:
-    created_at = models.DateTimeField(auto_add_now = True)
+class Task(models.Model):
+    title = models.CharField(max_length=200, default = '', blank = True) #this field is present in Test itself
+    description = models.TextField(default = '', blank = True) #this field is present in Test itself
+    created_at = models.DateTimeField(auto_now_add = True)
     created_by = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
     group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
     subject = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
+    #tag
 
     class Meta:
         abstract = True
 
 
 
-class CommonTask(Task):
-    pass
 
-class AnsweredCommonTask:
-    pass
+# class CommonTask(Task):
+#     nested_files = models.FileField()
 
-class Grade:
+
+
+class AnsweredTask():
+    grade = models.IntegerField()
+    finished_at = models.DateTimeField(blank = True, null = True)
+
+
+
+
+
 
 
 
