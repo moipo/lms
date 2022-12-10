@@ -5,24 +5,33 @@ from .models import *
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
 from django.forms import inlineformset_factory
 from django.views.generic import ListView
 
 
+
+
+
+
+
+
+
 class Main:
     def homepage(request):
-        return render(request,"main/homepage.html",{})
+        return render(request,"homepage/homepage.html",{})
 
     def profile(request):
-        return render(request,"main/profile.html",{})
-        
+        return render(request,"profile/profile.html",{})
+
+
+
+
 
 
 class TestList(ListView):
     paginate_by = 10
     model = Test
-    template_name = "storage/test_list.html"
+    template_name = "tester/storage/test_list.html"
 
 
 
@@ -45,7 +54,7 @@ class General:
         ctx = {
             "form_test": form_test,
         }
-        return render(request, "create_test/create_test.html", ctx)
+        return render(request, "tester/create_test/create_test.html", ctx)
 
 
 
@@ -76,14 +85,14 @@ class General:
             'testid': testid,
             'previous_questions' : previous_questions,
             }
-            return render(request,"create_test/create_questions.html", ctx)
+            return render(request,"tester/create_test/create_questions.html", ctx)
         else:
             answer_form_not_model = AnswerFormNotModel()
             ctx = {
             "answer_form_not_model" : answer_form_not_model,
             'testid': testid,
             }
-            return render(request,"create_test/create_questions.html", ctx)
+            return render(request,"tester/create_test/create_questions.html", ctx)
 
     def geturl(request, testid):
 
@@ -92,7 +101,7 @@ class General:
         questions = Question.objects.filter(related_test=the_test)
         if len(questions)==0:
             the_test.delete()
-            return render(request, "create_test/cant_create_test.html", {})
+            return render(request, "tester/create_test/cant_create_test.html", {})
 
         path = reverse(General.start_a_test, args = [testid])
         yoururl = str(request.META["HTTP_HOST"])  + str(path)
@@ -105,7 +114,7 @@ class General:
         "yoururl": yoururl,
         }
 
-        return render(request, "create_test/geturl.html", ctx)
+        return render(request, "tester/create_test/geturl.html", ctx)
 
 
 
@@ -114,7 +123,7 @@ class General:
         ctx = {
         "the_test":the_test,
         }
-        return render(request,"take_test/start_a_test.html", ctx )
+        return render(request,"tester/take_test/start_a_test.html", ctx )
 
 
     def take_test(request, testid, current_question_num, taken_test_id):
@@ -214,7 +223,7 @@ class General:
                 "a_ga_zipped" : a_ga_zipped,
                 "taken_test" : taken_test,
             }
-            return render(request,"take_test/take_test.html", ctx )
+            return render(request,"tester/take_test/take_test.html", ctx )
 
         else:
             the_test = Test.objects.get(pk = testid)
@@ -257,7 +266,7 @@ class General:
                 "a_ga_zipped" : a_ga_zipped,
                 "taken_test" : taken_test,
             }
-            return render(request,"take_test/take_test.html", ctx )
+            return render(request,"tester/take_test/take_test.html", ctx )
 
 
     def show_result(request, taken_test_id):
@@ -270,7 +279,7 @@ class General:
         "taken_test":taken_test,
         "q_amount" : q_amount,
         }
-        return render(request, "take_test/show_result.html", ctx)
+        return render(request, "tester/take_test/show_result.html", ctx)
 
 
     def show_result_table(request, taken_test_id):
@@ -299,7 +308,7 @@ class General:
         "ans_arr2d":ans_arr2d,
         "all_zipped" : all_zipped,
         }
-        return render(request, 'take_test/show_result_table.html', ctx)
+        return render(request, 'tester/take_test/show_result_table.html', ctx)
 
 
     def login_form(request):
@@ -313,84 +322,24 @@ class General:
                 'error' : "Invalid username or password",
                 "user_form" : user_form,
                 }
-                return render(request, "sign/login_form.html", ctx)
+                return render(request, "login/login_form.html", ctx)
             else:
                 login(request,user)
                 ctx = {
                     "user" : user,
                 }
-                return render(request, "profile/show_my_profile.html", ctx)
+                return render(request, "profile/profile.html", ctx)
         else:
             user_form = UserForm()
             ctx = {
             "user_form" : user_form,
             }
-            return render(request, "sign/login_form.html", ctx)
+            return render(request, "login/login_form.html", ctx)
 
 
 
-    def register(request):
-        if request.method == "POST":
-            username = request.POST.get("username")
-            password = request.POST.get("password")
-            user = authenticate(request, username = username, password = password)
-            if user is None:
-                user = User.objects.create_user(username = username, password = password)
-                # ctx = {
-                #     "user" : user,
-                # }
-                return render(request, "sign/successful_registration.html", {})
-            else:
-                user_form = UserForm()
-                ctx = { "error" : "Такой пользователь уже существует! Используйте другой логин.",
-                "user_form" : user_form,
-                }
-                return render(request, "sign/register.html", ctx)
-
-        else:
-            user_form = UserForm()
-            ctx = {
-            "user_form" : user_form,
-            }
-            return render(request, "sign/register.html", ctx)
 
     def log_out(request):
         if request.user.is_authenticated:
             logout(request)
         return redirect(General.homepage)
-
-
-    @login_required(login_url = "/access_denied/")
-    def feedback(request):
-        return render(request,"profile/feedback.html",{})
-
-    def access_denied(request):
-        return render(request,"sign/login_required_redirect.html",{})
-
-
-
-    def change_user_credentials(request):
-        form = ChangeUserForm()
-        ctx = {
-            "form":form
-        }
-        if request.method == "POST":
-            form = ChangeUserForm(request.POST)
-            ctx['form'] = form
-            if form.is_valid():
-                first_name = form.cleaned_data.get("first_name")
-                last_name = form.cleaned_data.get("last_name")
-                this_user = request.user
-                user.first_name = first_name
-                user.last_name = last_name
-                user.save()
-                return redirect(General.show_my_profile)
-        return render(request, "profile/change_user_credentials.html", ctx)
-
-
-
-    def show_my_profile(request):
-        ctx = {
-            "user" : request.user,
-        }
-        return render(request, "profile/show_my_profile.html", ctx)

@@ -1,8 +1,7 @@
-{% extends "base.html"%}
-
+{%extends "storage_base.html"%}
 
 {% block homepage %}
-    <form action = "{% url 'create_test' %}">
-        <button type="submit" class = "btn btn-success btn-lg midbtn" name="button">Создать тест</button>
-    </form>
-{% endblock %}
+...
+<a href="{% url 'login_form' %}">войти в систему</a>
+
+{% endblock homepage %}
