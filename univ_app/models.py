@@ -1,14 +1,16 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 
 class Subject(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
 
-class Group(models.Model):
+class Sgroup(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
+
 
 class Student(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
@@ -26,22 +28,29 @@ class Task(models.Model):
     created_by = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
     group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
     subject = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
-    #tag
 
     class Meta:
         abstract = True
 
+class AnsweredTask(Task):
+    grade = models.IntegerField(null = True, blank = True )
+    finished_at = models.DateTimeField(blank = True, null = True)
 
 
+
+
+# class Student(AbsctractUser):
+#     group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
+#
+# class Teacher(AbstractUser):
+#     subjects = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
 
 # class CommonTask(Task):
 #     nested_files = models.FileField()
 
 
 
-class AnsweredTask():
-    grade = models.IntegerField()
-    finished_at = models.DateTimeField(blank = True, null = True)
+
 
 
 
