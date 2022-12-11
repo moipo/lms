@@ -18,7 +18,7 @@ class Student(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
 
 
-class Grade():
+class Grade(models.Model):
     grade = models.IntegerField(null = True, blank = True)
     # student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
     # answered_task = models.OneToOne("AnsweredTask", blank = True, null = True, on_delete = models.SET_NULL)
@@ -51,8 +51,8 @@ class CommonTask(Task):
 #EXECUTION
 #student takes
 class AnsweredTask(models.Model):
-    student = ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
-    grade = models.OneToOne("Grade", blank = True, null = True, on_delete = models.SET_NULL)
+    student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
+    grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
     finished_at = models.DateTimeField(blank = True, null = True)
 
     class Meta:
