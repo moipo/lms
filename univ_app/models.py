@@ -64,71 +64,12 @@ class AnsweredCommonTask(AnsweredTask):
 
 
 
-#TakenTest (imagefield)
-#AnsweredCommonTask(FileField)
-
-
-
-# class User(AbstractUser):
-#     TEACHER = 1
-#     STUDENT = 2
-#
-#     ROLE_CHOICES = (
-#         (TEACHER, "Teacher"),
-#         (STUDENT, "Student"),
-#     )
-#
-#     role = models.PositiveSmallIntegerField(choices = ROLE_CHOICES, null = True, blank = True)
-#
-#     # def save():
-#     #
-#     #     super().save()
-
-# class Student(AbsctractUser):
-#     group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
-#
-# class Teacher(AbstractUser):
-#     subjects = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
-
-# class CommonTask(Task):
-#     nested_files = models.FileField()
 
 
 
 
-
-# тут не будет: семестр, расписание, практики, категорий студентов, административного персонала, зачётки электронной.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class Test(models.Model):
-    title = models.CharField(max_length=100)
+class Test(Task):
     slug = models.SlugField(max_length = 120 , blank = True, null = True)
-    description = models.TextField(blank = True, default = "")
     link = models.CharField(max_length=1000, default = '')
     image = models.ImageField(upload_to = "uploads/", blank = True , null=True, default = "test.png")
     #upload_to = "uploads/Y%/%m/%d/"
@@ -187,7 +128,7 @@ class Answer(models.Model):
 
 
 
-class TakenTest(models.Model):
+class TakenTest(AnsweredTask):
     related_test = models.ForeignKey ("Test", on_delete = models.CASCADE, null = True)
     score = models.IntegerField()
 
