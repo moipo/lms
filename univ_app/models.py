@@ -1,43 +1,88 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-from django.contrib.auth.models import AbstractUser
 
-
+#*instance of subject
 class Subject(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
+    description = models.TextField( default = '', blank = True)
+    image = models.ImageField(upload_to = "uploads/subjects/", blank = True , null=True, default = "test.png")
 
-class Sgroup(models.Model):
+class StGroup(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
+    student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
-    group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+
+
+class Grade():
+    grade = models.IntegerField(null = True, blank = True)
+    # student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
+    # answered_task = models.OneToOne("AnsweredTask", blank = True, null = True, on_delete = models.SET_NULL)
 
 class Teacher(models.Model):
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
 
 
+#CREATION
+#teacher creates
 class Task(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True) #this field is present in Test itself
     description = models.TextField(default = '', blank = True) #this field is present in Test itself
+    subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add = True)
     created_by = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
-    group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
-    subject = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
 
     class Meta:
         abstract = True
 
-class AnsweredTask(Task):
-    grade = models.IntegerField(null = True, blank = True )
+#Test (imagefield)
+#CommonTask(FileField)
+class CommonTask(Task):
+    file = models.FileField(upload_to = "uploads/common_tasks/")
+
+
+
+
+#EXECUTION
+#student takes
+class AnsweredTask(models.Model):
+    student = ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
+    grade = models.OneToOne("Grade", blank = True, null = True, on_delete = models.SET_NULL)
     finished_at = models.DateTimeField(blank = True, null = True)
 
+    class Meta:
+        abstract = True
+
+class AnsweredCommonTask(AnsweredTask):
+    answer = models.TextField()
+    file = models.FileField(upload_to = "uploads/answered_common_tasks/")
 
 
+
+#TakenTest (imagefield)
+#AnsweredCommonTask(FileField)
+
+
+
+# class User(AbstractUser):
+#     TEACHER = 1
+#     STUDENT = 2
+#
+#     ROLE_CHOICES = (
+#         (TEACHER, "Teacher"),
+#         (STUDENT, "Student"),
+#     )
+#
+#     role = models.PositiveSmallIntegerField(choices = ROLE_CHOICES, null = True, blank = True)
+#
+#     # def save():
+#     #
+#     #     super().save()
 
 # class Student(AbsctractUser):
 #     group = models.ForeignKey("Group", blank = True, null = True, on_delete = models.SET_NULL)
@@ -47,16 +92,6 @@ class AnsweredTask(Task):
 
 # class CommonTask(Task):
 #     nested_files = models.FileField()
-
-
-
-
-
-
-
-
-
-
 
 
 
