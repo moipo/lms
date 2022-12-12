@@ -3,29 +3,27 @@ from .models import *
 
 
 
-# class SubjectAdmin(admin.ModelAdmin):
-#     list_display = [x.name for x in Answer._meta.fields]
-# admin.site.register(Subject, SubjectAdmin)
-#
-# class GroupAdmin(admin.ModelAdmin):
-#     list_display = [x.name for x in Subject._meta.fields]
-# admin.site.register(Group, GroupAdmin)
-#
-# class StudentAdmin(admin.ModelAdmin):
-#     list_display = [x.name for x in Subject._meta.fields]
-# admin.site.register(Student, StudentAdmin)
-#
-# class TeacherAdmin(admin.ModelAdmin):
-#     list_display = [x.name for x in Answer._meta.fields]
-# admin.site.register(Teacher, TeacherAdmin)
-#
-# class CommonTaskAdmin(admin.ModelAdmin):
-#     list_display = [x.name for x in CommonTask._meta.fields]
-# admin.site.register(CommonTask, CommonTaskAdmin)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in Subject._meta.fields]
+admin.site.register(Subject, SubjectAdmin)
 
-# class AnsweredTaskAdmin(admin.ModelAdmin):
-#     list_display = [x.name for x in AnsweredTask._meta.fields]
-# admin.site.register(AnsweredTask, AnsweredTaskAdmin)
+class StGroupAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in StGroup._meta.fields]
+admin.site.register(StGroup, StGroupAdmin)
+
+class StudentAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in Student._meta.fields]
+admin.site.register(Student, StudentAdmin)
+
+class TeacherAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in Teacher._meta.fields]
+admin.site.register(Teacher, TeacherAdmin)
+
+class CommonTaskAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in CommonTask._meta.fields]
+admin.site.register(CommonTask, CommonTaskAdmin)
+
+
 
 
 

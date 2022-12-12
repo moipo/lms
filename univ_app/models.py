@@ -8,15 +8,23 @@ class Subject(models.Model):
     description = models.TextField( default = '', blank = True)
     image = models.ImageField(upload_to = "uploads/subjects/", blank = True , null=True, default = "test.png")
 
+    def __str__(self):
+        return self.title
+
 class StGroup(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
     student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
+    
+    def __str__(self):
+        return self.title
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.title
 
 class Grade(models.Model):
     grade = models.IntegerField(null = True, blank = True)
@@ -34,7 +42,7 @@ class Task(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True) #this field is present in Test itself
     description = models.TextField(default = '', blank = True) #this field is present in Test itself
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
-    created_at = models.DateTimeField(auto_now_add = True)
+    created_at = models.DateTimeField(auto_now_add = True, null = True, blank = True)
     created_by = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
 
     class Meta:

@@ -43,18 +43,27 @@ class Student_views:
 class Teacher_views:
     def t_profile(request):
         ctx = {}
-        return render(request,"teacher_views/t_profile.html",{})
+        return render(request,"teacher_views/t_profile.html",ctx)
 
     def t_tasks(request):
         ctx = {}
-        return render(request,"teacher_views/t_statistics.html",{})
+        return render(request,"teacher_views/t_statistics.html",ctx)
 
     def t_subjects(request):
-        ctx = {}
-        return render(request,"teacher_views/t_subjects.html",{})
+        print(request.user.teacher)
+        print("data")
+        subjects = Subject.objects.all().filter(teacher = request.user.teacher)
+        ctx = {
+        "subjects":subjects,
+        }
+        return render(request,"teacher_views/t_subjects.html",ctx)
 
     def t_statistics(request):
+
+
+
         ctx = {}
+
         return render(request,"teacher_views/t_tasks.html",{})
 
 
@@ -357,7 +366,10 @@ class Login:
                 ctx = {
                     "user" : user,
                 }
-                return render(request, "profile/profile.html", ctx)
+                t = Teacher.objects.get(user = user)
+                if t: return render(request, "teacher_views/t_profile.html", ctx)
+                else:  return render(request, "student_views/s_profile.html", ctx)
+
         else:
             user_form = UserForm()
             ctx = {
