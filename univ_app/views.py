@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from django.views.generic import ListView
+from .decorators import allowed_users
 
 
 
@@ -24,31 +25,39 @@ class Main:
 
 
 class Student_views:
+
+    @allowed_users(allowed_groups = ["student"])
     def s_profile(request):
         return render(request,"student_views/s_profile.html",{})
 
+    @allowed_users(allowed_groups = ["student"])
     def s_tasks(request):
         ctx = {}
         return render(request, "student_views/s_statistics.html", ctx)
 
+    @allowed_users(allowed_groups = ["student"])
     def s_subjects(request):
         ctx = {}
         return render(request, "student_views/s_subjects.html", ctx)
 
+    @allowed_users(allowed_groups = ["student"])
     def s_statistics(request):
         ctx = {}
         return render(request, "student_views/s_tasks.html", ctx)
 
 
 class Teacher_views:
+    @allowed_users(allowed_groups = ["teacher"])
     def t_profile(request):
         ctx = {}
         return render(request,"teacher_views/t_profile.html",ctx)
 
+    @allowed_users(allowed_groups = ["student"])
     def t_tasks(request):
         ctx = {}
         return render(request,"teacher_views/t_statistics.html",ctx)
 
+    @allowed_users(allowed_groups = ["teacher"])
     def t_subjects(request):
         print(request.user.teacher)
         print("data")
@@ -58,6 +67,7 @@ class Teacher_views:
         }
         return render(request,"teacher_views/t_subjects.html",ctx)
 
+    @allowed_users(allowed_groups = ["teacher"])
     def t_statistics(request):
 
 
@@ -367,8 +377,10 @@ class Login:
                     "user" : user,
                 }
                 t = Teacher.objects.get(user = user)
-                if t: return render(request, "teacher_views/t_profile.html", ctx)
-                else:  return render(request, "student_views/s_profile.html", ctx)
+                if t: return redirect("t_profile" )
+                else:  return redirect("s_profile" )
+                # if t: return render(request, "teacher_views/t_profile.html", ctx)
+                # else:  return render(request, "student_views/s_profile.html", ctx)
 
         else:
             user_form = UserForm()
