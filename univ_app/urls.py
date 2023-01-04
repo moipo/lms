@@ -35,6 +35,7 @@ urlpatterns = [
     #student_views:
     path('s_tasks/',Student_views.s_tasks, name = "s_tasks"),
     path('s_subjects/',Student_views.s_subjects, name = "s_subjects"),
+
     path('s_statistics/',Student_views.s_statistics, name = "s_statistics"),
     path('s_profile/',Student_views.s_profile, name = "s_profile"),
 
@@ -45,6 +46,6 @@ urlpatterns = [
     path('t_subjects/',Teacher_views.t_subjects, name = "t_subjects"),
     path('t_statistics/',Teacher_views.t_statistics, name = "t_statistics"),
     path('t_profile/',Teacher_views.t_profile, name = "t_profile"),
-
+    path('t_subject/<int:subj_id>',Teacher_views.t_subject, name = "t_subject"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

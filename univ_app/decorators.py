@@ -15,5 +15,5 @@ def allowed_users(allowed_groups: list = None ):
                 return view_func(request, *args, **kwargs)
             else:
                 return HttpResponse("У вас нет прав доступа к этой странице")
-        return wrapper #You are not allowed to view this page
+        return wrapper #
     return decorator

@@ -35,6 +35,8 @@ class Teacher(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
 
+    def __str__(self):
+        return self.user.first_name
 
 #CREATION
 #teacher creates
@@ -51,12 +53,13 @@ class Task(models.Model):
 #Test (imagefield)
 #CommonTask(FileField)
 class CommonTask(Task):
-    file = models.FileField(upload_to = "uploads/common_tasks/")
+    file = models.FileField(upload_to = "uploads/common_tasks/", blank = True, null = True)
+
+#class InfoTask
 
 
 
 
-#EXECUTION
 #student takes
 class AnsweredTask(models.Model):
     student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
