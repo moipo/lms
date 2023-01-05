@@ -50,40 +50,15 @@ class Task(models.Model):
     class Meta:
         abstract = True
 
-#Test (imagefield)
-#CommonTask(FileField)
+
 class CommonTask(Task):
     file = models.FileField(upload_to = "uploads/common_tasks/", blank = True, null = True)
-
-#class InfoTask
-
-
-
-
-#student takes
-class AnsweredTask(models.Model):
-    student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
-    grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
-    finished_at = models.DateTimeField(blank = True, null = True)
-
-    class Meta:
-        abstract = True
-
-class AnsweredCommonTask(AnsweredTask):
-    answer = models.TextField()
-    file = models.FileField(upload_to = "uploads/answered_common_tasks/")
-
-
-
-
-
-
 
 class Test(Task):
     slug = models.SlugField(max_length = 120 , blank = True, null = True)
     link = models.CharField(max_length=1000, default = '')
     image = models.ImageField(upload_to = "uploads/", blank = True , null=True, default = "test.png")
-    #upload_to = "uploads/Y%/%m/%d/"
+
     def save(self, *args, **kwargs):
         if self.slug is None:
             self.slug = slugify(self.title)
@@ -94,6 +69,52 @@ class Test(Task):
 
     def get_absolute_url(self):
         return f'/articles/{self.slug}/'
+
+class InfoTask(Task):
+    file = models.FileField(upload_to = "uploads/info_tasks/", blank = True, null = True)
+
+
+
+
+
+
+
+
+
+
+
+class AnsweredTask(models.Model):
+    student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
+    finished_at = models.DateTimeField(blank = True, null = True)
+
+    class Meta:
+        abstract = True
+
+
+
+class AnsweredCommonTask(AnsweredTask):
+    grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
+    answer = models.TextField()
+    file = models.FileField(upload_to = "uploads/answered_common_tasks/")
+
+
+class AnsweredInfoTask(AnsweredTask):
+    was_checked = models.BooleanField(blank = True, null = True)
+
+
+
+class TakenTest(AnsweredTask):
+    grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
+    related_test = models.ForeignKey ("Test", on_delete = models.CASCADE, null = True)
+    score = models.IntegerField()
+
+
+
+
+
+
+
+
 
 
 
@@ -139,9 +160,7 @@ class Answer(models.Model):
 
 
 
-class TakenTest(AnsweredTask):
-    related_test = models.ForeignKey ("Test", on_delete = models.CASCADE, null = True)
-    score = models.IntegerField()
+
 
 class AnsweredQuestion(models.Model):
     related_taken_test = models.ForeignKey ("TakenTest", on_delete = models.CASCADE, null = True)
