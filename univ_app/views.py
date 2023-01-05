@@ -8,7 +8,8 @@ from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from django.views.generic import ListView
 from .decorators import allowed_users
-from itertools import chain
+from .utils import get_task
+
 
 
 
@@ -53,10 +54,7 @@ class Teacher_views:
         ctx = {}
         return render(request,"teacher_views/t_profile.html",ctx)
 
-    @allowed_users(allowed_groups = ["teacher"])
-    def t_tasks(request):
-        ctx = {}
-        return render(request,"teacher_views/t_statistics.html",ctx)
+
 
     @allowed_users(allowed_groups = ["teacher"])
     def t_subjects(request):
@@ -71,28 +69,35 @@ class Teacher_views:
     @allowed_users(allowed_groups = ["teacher"])
     def t_subject(request, subj_id):
         subject = Subject.objects.get(id = subj_id)
-        common_tasks = subject.commontask_set.all()
-        print(common_tasks)
-        # info_tasks = subject.infotask_set.all()
-        # test_tasks = sucject.test_set.all()
-        # tasks = chain (chain(common_tasks, info_tasks, test_tasks))
-        # filter by time filter(key = "datetime")
+        tasks = subject.all_tasks
 
         ctx = {
         "subject":subject,
-        "tasks":common_tasks,
+        "tasks":tasks,
         }
 
         return render(request,"teacher_views/t_subject.html",ctx)
 
     @allowed_users(allowed_groups = ["teacher"])
+    def t_task(request, task_type, task_id):
+        task = get_task(task_type, task_id)
+        ctx = {
+        "task":task
+        }
+        return render(request,"teacher_views/t_task.html",ctx)
+
+    @allowed_users(allowed_groups = ["teacher"])
+    def t_tasks(request):
+
+        ctx = {
+
+        }
+        return render(request,"teacher_views/t_task.html",ctx)
+
+    @allowed_users(allowed_groups = ["teacher"])
     def t_statistics(request):
-
-
-
         ctx = {}
-
-        return render(request,"teacher_views/t_tasks.html",{})
+        return render(request,"teacher_views/t_statistics.html",{})
 
 
 

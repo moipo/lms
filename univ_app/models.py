@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from itertools import chain
 
-#*instance of subject
 class Subject(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
     description = models.TextField( default = '', blank = True)
@@ -10,6 +10,15 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def all_tasks(self):
+        common_tasks = self.commontask_set.all()
+        info_tasks = self.infotask_set.all()
+        test_tasks = self.test_set.all()
+        tasks = list(chain(common_tasks, info_tasks, test_tasks))
+        tasks.sort(key = lambda task : task.created_at)
+        return tasks
 
 class StGroup(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
@@ -49,6 +58,9 @@ class Task(models.Model):
 
     class Meta:
         abstract = True
+
+    def get_type(self):
+        return self.__class__.__name__
 
 
 class CommonTask(Task):
