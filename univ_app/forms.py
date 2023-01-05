@@ -103,3 +103,18 @@ class UserForm(forms.ModelForm):
         "password" : "пароль"
         }
         help_texts = {'username' : " "}
+
+
+
+
+class CommonTaskForm(forms.ModelForm):
+
+
+    class Meta:
+        model = CommonTask
+        fields = ["title", 'description', 'file']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        for name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'input'})

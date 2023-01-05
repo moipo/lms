@@ -2,7 +2,7 @@
 
 {% block t_subject %}
 
-<a href="" class = 'btn btn-success btn-lg m-2' >Добавить задачу</a>
+<a href="{%url 't_choose_task_type' subject.id%}" class = 'btn btn-success btn-lg m-2' >Добавить задачу</a>
 <div class="list-group">
 
   {%for task in tasks%}

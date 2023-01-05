@@ -43,11 +43,13 @@ urlpatterns = [
 
     #Teacher_views:
     path('t_task/<str:task_type>/<int:task_id>',Teacher_views.t_task, name = "t_task"),
+    path('t_create_task/<int:subject_id>/<str:task_type>',Teacher_views.t_create_task, name = "t_create_task"),
+    path('t_choose_task_type/<int:subject_id>',Teacher_views.t_choose_task_type, name = "t_choose_task_type"),
 
     path('t_subjects/',Teacher_views.t_subjects, name = "t_subjects"),
     path('t_statistics/',Teacher_views.t_statistics, name = "t_statistics"),
     path('t_profile/',Teacher_views.t_profile, name = "t_profile"),
     path('t_subject/<int:subj_id>',Teacher_views.t_subject, name = "t_subject"),
-    path('t_tasks',Teacher_views.t_tasks, name = "t_tasks"),
+    path('t_student_answers',Teacher_views.t_student_answers, name = "t_student_answers"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

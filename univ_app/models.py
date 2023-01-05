@@ -47,8 +47,7 @@ class Teacher(models.Model):
     def __str__(self):
         return self.user.first_name
 
-#CREATION
-#teacher creates
+
 class Task(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True) #this field is present in Test itself
     description = models.TextField(default = '', blank = True) #this field is present in Test itself

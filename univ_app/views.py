@@ -86,13 +86,49 @@ class Teacher_views:
         }
         return render(request,"teacher_views/t_task.html",ctx)
 
+    # @allowed_users(allowed_groups = ["teacher"])
+    # def t_create_task(request, task_type):
+    #     task = get_task(task_type, task_id)
+    #     ctx = {
+    #     "task":task
+    #     }
+    #     return render(request,"teacher_views/t_task.html",ctx)
+
     @allowed_users(allowed_groups = ["teacher"])
-    def t_tasks(request):
+    def t_choose_task_type(request, subject_id):
+
+        return render(request,"teacher_views/t_choose_task_type.html",{"subject_id":subject_id})
+
+
+    @allowed_users(allowed_groups = ["teacher"])
+    def t_create_task(request, subject_id=None, task_type=None):
+        teacher = request.user.teacher
+        form = CommonTaskForm()
+        if request.method == "POST":
+            if task_type == "CommonTask":
+                form = CommonTaskForm(request.POST, request.FILES)
+                if form.is_valid():
+                    common_task = form.save(commit=False)
+                    common_task.created_by = teacher
+                    common_task.save()
+                pass
+
+            # return redirect()
+
+        ctx = {
+        "form":form,
+        }
+        return render(request,"teacher_views/t_task.html",ctx)
+
+
+
+    @allowed_users(allowed_groups = ["teacher"])
+    def t_student_answers(request):
 
         ctx = {
 
         }
-        return render(request,"teacher_views/t_task.html",ctx)
+        return render(request,"teacher_views/t_student_answers.html",ctx)
 
     @allowed_users(allowed_groups = ["teacher"])
     def t_statistics(request):
