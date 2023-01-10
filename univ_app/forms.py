@@ -109,12 +109,14 @@ class UserForm(forms.ModelForm):
 
 class CommonTaskForm(forms.ModelForm):
 
-
     class Meta:
         model = CommonTask
         fields = ["title", 'description', 'file']
-
+        labels = {
+            "title": "название",
+            "description" : "описание",
+        }
     def __init__(self, *args, **kwargs):
-        super().__init__()
+        super(CommonTaskForm, self).__init__(*args, **kwargs)
         for name, field in self.fields.items():
-            field.widget.attrs.update({'class': 'input'})
+            field.widget.attrs.update({'class': 'form-control'})

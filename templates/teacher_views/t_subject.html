@@ -3,7 +3,13 @@
 {% block t_subject %}
 
 <a href="{%url 't_choose_task_type' subject.id%}" class = 'btn btn-success btn-lg m-2' >Добавить задачу</a>
+{% if messages %}
+  {%for message in messages%}
+    {{message}}
+  {%endfor%}
+{%endif%}
 <div class="list-group">
+
 
   {%for task in tasks%}
   <a href="{%url 't_task' task.get_type task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">

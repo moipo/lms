@@ -1,0 +1,20 @@
+{%extends "base.html"%}
+{% block t_create_task %}
+
+
+
+<div class="container">
+
+  {% if messages %}
+    {%for message in messages%}
+      {{message}}
+    {%endfor%}
+  {%endif%}
+  <form class="form-group" action="{% url 't_create_task' subject_id 'CommonTask'  %}" method="post" enctype="multipart/form-data">
+    {%csrf_token%}
+    {{form.as_p}}
+    <button class = "btn btn-success btn-lg" type="submit" name="button"></button>
+  </form>
+</div>
+
+{% endblock %}

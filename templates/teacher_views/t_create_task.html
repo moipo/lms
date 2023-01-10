@@ -1,9 +1,0 @@
-{%extends "base.html"%}
-{% block t_create_task %}
-
-
-<form class="form" action="{% url 't_create_task' %}" method="post" enctype="multipart/form-data">
-  {%csrf_token%}
-  {{form}}
-</form>
-{% endblock %}
