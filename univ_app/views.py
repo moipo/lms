@@ -88,13 +88,6 @@ def t_task(request, task_type, task_id):
     }
     return render(request,"teacher_views/t_task.html",ctx)
 
-# @allowed_users(allowed_groups = ["teacher"])
-# def t_create_task(request, task_type):
-#     task = get_task(task_type, task_id)
-#     ctx = {
-#     "task":task
-#     }
-#     return render(request,"teacher_views/t_task.html",ctx)
 
 @allowed_users(allowed_groups = ["teacher"])
 def t_choose_task_type(request, subject_id):
@@ -105,18 +98,28 @@ def t_choose_task_type(request, subject_id):
 def t_create_task(request, subject_id = None, task_type=None):
     teacher = request.user.teacher
     form = CommonTaskForm()
+    print(task_type)
     if request.method == "POST":
         if task_type == "CommonTask":
             form = CommonTaskForm(request.POST, request.FILES)
             if form.is_valid():
-                print("it works too")
                 common_task = form.save(commit=False)
                 common_task.created_by = teacher
                 common_task.subject = Subject.objects.get(id = subject_id)
                 common_task.save()
                 messages.success(request, "Задание было успешно создано и опубликовано")
                 return redirect('t_subject', subject_id)
-        messages.warning(request, "Что-то пошло не так.")
+
+        if task_type == "InfoTask":
+            form = InfoTaskForm(request.POST, request.FILES)
+            if form.is_valid():
+                info_task = form.save(commit=False)
+                info_task.created_by = teacher
+                info_task.subject = Subject.objects.get(id = subject_id)
+                info_task.save()
+                messages.success(request, "Информация была успешно опубликована")
+                return redirect('t_subject', subject_id)
+
         form = CommonTaskForm(request.POST)
         ctx = {
         "form":form,
@@ -127,8 +130,13 @@ def t_create_task(request, subject_id = None, task_type=None):
 
 
 
-        # return redirect()
 
+    if task_type == "Commontask":
+        pass
+    elif task_type == "Test":
+        return redirect("create_test", subject_id = subject_id)
+    elif task_type == "InfoTask":
+        form = InfoTaskForm()
     ctx = {
     "form":form,
     "subject_id":subject_id,
@@ -153,36 +161,19 @@ def t_statistics(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
-# Tester
-class TestList(ListView):
-    paginate_by = 10
-    model = Test
-    template_name = "tester/storage/test_list.html"
-
-
-
-
-
-def create_test(request):
+#Tester
+def create_test(request, subject_id):
     if request.method == "POST":
-        form_result = TestForm(request.POST,request.FILES)
-        if form_result.is_valid():
-            test_instance = form_result.save()
-            return redirect('create_questions', test_instance.pk)
+        form = TestForm(request.POST,request.FILES)
+        if form.is_valid():
+            test = form.save(commit = False)
+            test.subject = Subject.objects.get(id = subject_id)
+            test.save()
+            return redirect('create_questions', test.pk)
 
-    form_test = TestForm()
+    form = TestForm()
     ctx = {
-        "form_test": form_test,
+        "form_test": form,
     }
     return render(request, "tester/create_test/create_test.html", ctx)
 
@@ -224,27 +215,12 @@ def create_questions(request, testid):
         }
         return render(request,"tester/create_test/create_questions.html", ctx)
 
-def geturl(request, testid):
-
-    the_test = Test.objects.get(id = testid)
-
-    questions = Question.objects.filter(related_test=the_test)
-    if len(questions)==0:
+def finish_test_creation(request, testid):
+    test = Test.objects.get(id = testid)
+    if Question.objects.filter(related_test=test).count() == 0:
         the_test.delete()
         return render(request, "tester/create_test/cant_create_test.html", {})
-
-    path = reverse(Tester.start_a_test, args = [testid])
-    yoururl = str(request.META["HTTP_HOST"])  + str(path)
-
-    the_test.link = yoururl
-    the_test.save()
-
-    ctx = {
-    "testid":testid,
-    "yoururl": yoururl,
-    }
-
-    return render(request, "tester/create_test/geturl.html", ctx)
+    return redirect("t_subject", test.subject.id)
 
 
 
@@ -290,11 +266,6 @@ def take_test(request, testid, current_question_num, taken_test_id):
         can_delete_extra = False,
         extra = ans_length,
         )
-
-        #formset = GivenAnswerFormSet(request.POST)
-
-
-
 
         previous_question = question_set[current_question_num-1]
 
@@ -464,8 +435,7 @@ def login_form(request):
             t = Teacher.objects.get(user = user)
             if t: return redirect("t_profile" )
             else:  return redirect("s_profile" )
-            # if t: return render(request, "teacher_views/t_profile.html", ctx)
-            # else:  return render(request, "student_views/s_profile.html", ctx)
+
 
     else:
         user_form = UserForm()

@@ -108,7 +108,6 @@ class UserForm(forms.ModelForm):
 
 
 class CommonTaskForm(forms.ModelForm):
-
     class Meta:
         model = CommonTask
         fields = ["title", 'description', 'file']
@@ -118,5 +117,19 @@ class CommonTaskForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super(CommonTaskForm, self).__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
+
+
+class InfoTaskForm(forms.ModelForm):
+    class Meta:
+        model = InfoTask
+        fields = ["title", 'description', 'file']
+        labels = {
+            "title": "название",
+            "description" : "описание",
+        }
+    def __init__(self, *args, **kwargs):
+        super(InfoTaskForm, self).__init__(*args, **kwargs)
         for name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})

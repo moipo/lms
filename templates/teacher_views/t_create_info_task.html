@@ -1,10 +1,10 @@
 {%extends "base.html"%}
-{% block t_create_common_task %}
+{% block t_create_info_task %}
 
 
 
 <div class="container">
-  <form class="form-group" action="{% url 't_create_task' subject_id 'CommonTask'  %}" method="post" enctype="multipart/form-data">
+  <form class="form-group" action="{% url 't_create_task' subject_id 'InfoTask'  %}" method="post" enctype="multipart/form-data">
     {%csrf_token%}
     {{form.as_p}}
     <button class = "btn btn-success btn-lg" type="submit" name="button"></button>

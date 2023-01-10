@@ -11,12 +11,11 @@ urlpatterns = [
 
 
     #testser
-    path('test/create_test/',create_test, name = 'create_test'),
+    path('test/create_test/<int:subject_id>',create_test, name = 'create_test'),
     path('test/create_test/<int:testid>/create_questions/',create_questions, name = "create_questions"),
-    path('test/geturl/<int:testid>', geturl, name = "geturl"),
+    path('test/finish_test_creation/<int:testid>', finish_test_creation, name = "finish_test_creation"),
     path('test/start_a_test/<int:testid>', start_a_test, name = "start_a_test"),
     path('test/start_a_test/<int:testid>/take_test/<int:current_question_num>/<int:taken_test_id>/', take_test, name = "take_test"),
-    # path('test/storage/test_list', TestList.as_view(), name = "test_list"),
     path('test/show_result/<int:taken_test_id>', show_result, name = "show_result"),
     path('test/show_result_table/<int:taken_test_id>', show_result_table, name = "show_result_table"),
 

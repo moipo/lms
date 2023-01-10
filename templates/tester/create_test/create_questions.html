@@ -47,7 +47,7 @@
 
      </form>
 
-     <form action="{% url 'geturl' testid %}"> {%csrf_token%}
+     <form action="{% url 'finish_test_creation' testid %}">
        <button class = "btn btn-danger btn-lg ready_btn" type="submit" name="button">Тест готов</button>
      </form>
 
