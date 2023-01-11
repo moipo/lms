@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from django.views.generic import ListView
 from .decorators import allowed_users
-from .utils import get_task
+from .utils import get_task, is_teacher
 from django.contrib import messages
 
 
@@ -23,6 +23,8 @@ from django.contrib import messages
 
 def homepage(request):
     return render(request,"homepage/homepage.html",{})
+
+
 
 
 
@@ -51,34 +53,9 @@ def s_statistics(request):
 
 
 #Teacher
-@allowed_users(allowed_groups = ["teacher"])
-def t_profile(request):
-    ctx = {}
-    return render(request,"teacher_views/t_profile.html",ctx)
 
 
 
-@allowed_users(allowed_groups = ["teacher"])
-def t_subjects(request):
-    print(request.user.teacher)
-    print("data")
-    subjects = Subject.objects.all().filter(teacher = request.user.teacher)
-    ctx = {
-    "subjects":subjects,
-    }
-    return render(request,"teacher_views/t_subjects.html",ctx)
-
-@allowed_users(allowed_groups = ["teacher"])
-def t_subject(request, subj_id):
-    subject = Subject.objects.get(id = subj_id)
-    tasks = subject.all_tasks
-
-    ctx = {
-    "subject":subject,
-    "tasks":tasks,
-    }
-
-    return render(request,"teacher_views/t_subject.html",ctx)
 
 @allowed_users(allowed_groups = ["teacher"])
 def t_task(request, task_type, task_id):
@@ -156,6 +133,38 @@ def t_student_answers(request):
 def t_statistics(request):
     ctx = {}
     return render(request,"teacher_views/t_statistics.html",{})
+
+
+
+#Mutual views
+@allowed_users(allowed_groups = ["teacher","student"])
+def ts_subjects(request):
+    subjects = None
+    if is_student(user):
+        student = user.student
+        subjects = Subject.objects.all().filter(StGroup = )
+    subjects = Subject.objects.all().filter(teacher = request.user.teacher)
+    ctx = {
+    "subjects":subjects,
+    }
+    return render(request,"mutual_views/ts_subjects.html",ctx)
+
+@allowed_users(allowed_groups = ["teacher", "student"])
+def ts_subject(request, subj_id):
+    subject = Subject.objects.get(id = subj_id)
+    tasks = subject.all_tasks
+    ctx = {
+    "subject":subject,
+    "tasks":tasks,
+    }
+    return render(request,"mutual_views/ts_subject.html",ctx)
+
+@allowed_users(allowed_groups = ["teacher","student"])
+def ts_profile(request):
+    ctx = {}
+    return render(request,"mutual_views/ts_profile.html",ctx)
+
+
 
 
 
@@ -432,8 +441,7 @@ def login_form(request):
             ctx = {
                 "user" : user,
             }
-            t = Teacher.objects.get(user = user)
-            if t: return redirect("t_profile" )
+            if is_teacher(user): return redirect("t_profile" )
             else:  return redirect("s_profile" )
 
 

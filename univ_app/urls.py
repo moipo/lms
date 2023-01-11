@@ -21,32 +21,27 @@ urlpatterns = [
 
     #login
     path('login/', login_form, name = "login_form"),
-    # path('register/', General.register, name = "register"),
     path('log_out/', log_out, name = "log_out"),
-
-
-    #main
-    path('',homepage, name = "homepage"),
-
-
 
 
     #student_views:
     path('student/tasks/',s_tasks, name = "s_tasks"),
     path('student/subjects/',s_subjects, name = "s_subjects"),
     path('student/statistics/',s_statistics, name = "s_statistics"),
-    path('student/profile/',s_profile, name = "s_profile"),
-
 
 
     #Teacher_views:
     path('teacher/task/<str:task_type>/<int:task_id>',t_task, name = "t_task"),
     path('teacher/create_task/<int:subject_id>/<str:task_type>',t_create_task, name = "t_create_task"),
     path('teacher/choose_task_type/<int:subject_id>',t_choose_task_type, name = "t_choose_task_type"),
-    path('teacher/subjects/',t_subjects, name = "t_subjects"),
     path('teacher/statistics/',t_statistics, name = "t_statistics"),
-    path('teacher/profile/',t_profile, name = "t_profile"),
-    path('teacher/subject/<int:subj_id>',t_subject, name = "t_subject"),
     path('teacher/student_answers',t_student_answers, name = "t_student_answers"),
+
+
+    #Mutual_views
+    path('',homepage, name = "homepage"),
+    path('profile/',ts_profile, name = "ts_profile"),
+    path('subjects/',ts_subjects, name = "ts_subjects"),
+    path('subject/<int:subj_id>',ts_subject, name = "ts_subject"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

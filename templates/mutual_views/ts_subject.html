@@ -1,13 +1,16 @@
 {%extends "base.html"%}
 
-{% block t_subject %}
+{% block ts_subject %}
 
-<a href="{%url 't_choose_task_type' subject.id%}" class = 'btn btn-success btn-lg m-2' >Добавить задачу</a>
-{% if messages %}
-  {%for message in messages%}
-    {{message}}
-  {%endfor%}
-{%endif%}
+{% if has_group 'teacher'%}
+  <a href="{%url 't_choose_task_type' subject.id%}" class = 'btn btn-success btn-lg m-2' >Добавить задачу</a>
+  {% if messages %}
+    {%for message in messages%}
+      {{message}}
+    {%endfor%}
+  {%endif%}
+{% endif%}
+
 <div class="list-group">
 
 
