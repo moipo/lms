@@ -19,23 +19,23 @@ urlpatterns = [
     path('test/show_result/<int:taken_test_id>', show_result, name = "show_result"),
     path('test/show_result_table/<int:taken_test_id>', show_result_table, name = "show_result_table"),
 
-    #login
+    #Login
     path('login/', login_form, name = "login_form"),
     path('log_out/', log_out, name = "log_out"),
 
 
-    #student_views:
+    #Student_views:
     path('student/tasks/',s_tasks, name = "s_tasks"),
     path('student/statistics/',s_statistics, name = "s_statistics"),
+    path('student/answer_task/<str:task_type>/<int:task_id>',answer_task, name = "answer_task"),
 
 
     #Teacher_views:
-
     path('teacher/t_task_answers',t_task_answers, name = "t_task_answers"),
     path('teacher/create_task/<int:subject_id>/<str:task_type>',t_create_task, name = "t_create_task"),
     path('teacher/choose_task_type/<int:subject_id>',t_choose_task_type, name = "t_choose_task_type"),
     path('teacher/statistics/',t_statistics, name = "t_statistics"),
-    path('teacher/student_answers',t_student_answers, name = "t_student_answers"),
+    path('teacher/student_answers/',t_student_answers, name = "t_student_answers"),
 
 
     #Mutual_views

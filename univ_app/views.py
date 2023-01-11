@@ -29,35 +29,9 @@ def homepage(request):
 
 
 
-#student
-# @allowed_users(allowed_groups = ["student"])
-# def s_profile(request):
-#     return render(request,"student_views/s_profile.html",{})
-
-@allowed_users(allowed_groups = ["student"])
-def s_tasks(request):
-    ctx = {}
-    return render(request, "student_views/s_statistics.html", ctx)
-
-# @allowed_users(allowed_groups = ["student"])
-# def s_subjects(request):
-#     ctx = {}
-#     return render(request, "student_views/s_subjects.html", ctx)
-
-@allowed_users(allowed_groups = ["student"])
-def s_statistics(request):
-    ctx = {}
-    return render(request, "student_views/s_tasks.html", ctx)
-
-
 
 
 #Teacher
-
-
-
-
-
 
 
 @allowed_users(allowed_groups = ["teacher"])
@@ -77,7 +51,6 @@ def t_choose_task_type(request, subject_id):
 def t_create_task(request, subject_id = None, task_type=None):
     teacher = request.user.teacher
     form = CommonTaskForm()
-    print(task_type)
     if request.method == "POST":
         if task_type == "CommonTask":
             form = CommonTaskForm(request.POST, request.FILES)
@@ -106,10 +79,6 @@ def t_create_task(request, subject_id = None, task_type=None):
         }
         return render(request, "teacher_views/t_create_common_task.html", ctx)
 
-
-
-
-
     if task_type == "Commontask":
         pass
     elif task_type == "Test":
@@ -135,6 +104,74 @@ def t_student_answers(request):
 def t_statistics(request):
     ctx = {}
     return render(request,"teacher_views/t_statistics.html",{})
+
+
+
+
+
+
+@allowed_users(allowed_groups = ["student"])
+def s_tasks(request):
+    ctx = {}
+    return render(request, "student_views/s_statistics.html", ctx)
+
+
+@allowed_users(allowed_groups = ["student"])
+def s_statistics(request):
+    ctx = {}
+    return render(request, "student_views/s_tasks.html", ctx)
+
+
+@allowed_users(allowed_groups = ["student"])
+def answer_task(request, task_type = None, task_id = None):
+    student = request.user.student
+    common_task = CommonTask.objects.get(id = task_id)
+    form = AnsweredCommonTaskForm(request.POST or None)
+    if request.method == "POST":
+        if task_type == "CommonTask":
+            form = AnsweredCommonTaskForm(request.POST, request.FILES)
+            if form.is_valid():
+                answered_common_task = form.save(commit=False)
+                answered_common_task.student = student
+                answered_common_task.common_task = common_task
+                answered_common_task.save()
+                messages.success(request,"Ответ на задание успешно отправлен на проверку.")
+                return redirect('ts_subject', common_task.subject.id)
+
+
+
+
+        # else:
+        #     form = AnsweredCommonTaskForm(request.POST)
+        #     ctx = {
+        #     "form" : form,
+        #     }
+        #     return render(request,"student_views/answer_common_task.html", ctx )
+
+    # if task_type == "Commontask":
+    #     pass
+
+    elif task_type == "Test":
+        return redirect("start_a_test", task_id)
+
+    ctx = {
+    "form":form,
+    "task_type":task_type,
+    "task_id":task_id,
+    }
+    return render(request, "student_views/answer_task.html", ctx)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -177,6 +214,31 @@ def ts_task(request, task_type, task_id):
     "task":task
     }
     return render(request,"mutual_views/ts_task.html",ctx)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

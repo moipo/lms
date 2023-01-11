@@ -133,3 +133,17 @@ class InfoTaskForm(forms.ModelForm):
         super(InfoTaskForm, self).__init__(*args, **kwargs)
         for name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
+
+
+class AnsweredCommonTaskForm(forms.ModelForm):
+    class Meta:
+        model = AnsweredCommonTask
+        fields = ['answer', 'file']
+        labels = {
+            "description" : "описание",
+            'file': "прикрепить документ",
+        }
+    def __init__(self, *args, **kwargs):
+        super(AnsweredCommonTaskForm, self).__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})

@@ -106,8 +106,8 @@ class AnsweredTask(models.Model):
 class AnsweredCommonTask(AnsweredTask):
     grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
     answer = models.TextField()
-    file = models.FileField(upload_to = "uploads/answered_common_tasks/")
-
+    file = models.FileField(upload_to = "uploads/answered_common_tasks/" , blank = True, null = True)
+    common_task = models.ForeignKey("CommonTask", blank = True, null = True, on_delete = models.SET_NULL)
 
 class AnsweredInfoTask(AnsweredTask):
     was_checked = models.BooleanField(blank = True, null = True)

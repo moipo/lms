@@ -3,13 +3,16 @@
 
 {% block ts_subject %}
 
+
+{% if messages %}
+  {%for message in messages%}
+    {{message}}
+  {%endfor%}
+{%endif%}
+
+
 {% if request.user|has_group:'teacher' %}
   <a href="{%url 't_choose_task_type' subject.id%}" class = 'btn btn-success btn-lg m-2' >Добавить задачу</a>
-  {% if messages %}
-    {%for message in messages%}
-      {{message}}
-    {%endfor%}
-  {%endif%}
 {% endif%}
 
 <div class="list-group">
