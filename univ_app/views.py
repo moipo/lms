@@ -32,8 +32,6 @@ def homepage(request):
 
 
 #Teacher
-
-
 @allowed_users(allowed_groups = ["teacher"])
 def t_task_answers(request):
     ctx = {
@@ -244,6 +242,7 @@ def ts_task(request, task_type, task_id):
 
 
 #Tester
+@allowed_users(allowed_groups = ["teacher"])
 def create_test(request, subject_id):
     if request.method == "POST":
         form = TestForm(request.POST,request.FILES)
@@ -260,7 +259,7 @@ def create_test(request, subject_id):
     return render(request, "tester/create_test/create_test.html", ctx)
 
 
-
+@allowed_users(allowed_groups = ["teacher"])
 def create_questions(request, testid):
     if request.method == "POST":
 
@@ -297,6 +296,7 @@ def create_questions(request, testid):
         }
         return render(request,"tester/create_test/create_questions.html", ctx)
 
+@allowed_users(allowed_groups = ["teacher"])
 def finish_test_creation(request, testid):
     test = Test.objects.get(id = testid)
     if Question.objects.filter(related_test=test).count() == 0:
@@ -305,7 +305,7 @@ def finish_test_creation(request, testid):
     return redirect("ts_subject", test.subject.id)
 
 
-
+@allowed_users(allowed_groups = ["student"])
 def start_a_test(request, testid):
     the_test = Test.objects.get(id = testid)
     ctx = {
@@ -313,7 +313,7 @@ def start_a_test(request, testid):
     }
     return render(request,"tester/take_test/start_a_test.html", ctx )
 
-
+@allowed_users(allowed_groups = ["student"])
 def take_test(request, testid, current_question_num, taken_test_id):
 
 
@@ -332,10 +332,9 @@ def take_test(request, testid, current_question_num, taken_test_id):
 
         ans_length = 2
         try:
-            next_question = question_set[current_question_num] #выход за пределы индекса
-            print(next_question)
+            next_question = question_set[current_question_num]
             if next_question is not None:
-                next_answers = Answer.objects.filter(related_question = next_question) #cannot unpack non-iterable
+                next_answers = Answer.objects.filter(related_question = next_question)
                 ans_length = len(next_answers)
         except: pass
 
@@ -420,7 +419,7 @@ def take_test(request, testid, current_question_num, taken_test_id):
 
         the_answers = Answer.get_answers(this_question)
 
-        taken_test = TakenTest.objects.create(score = 0, related_test = the_test)
+        taken_test = TakenTest.objects.create(score = 0, related_test = the_test, student = request.user.student)
 
         given_answer_form = GivenAnswerForm()
 
@@ -451,7 +450,7 @@ def take_test(request, testid, current_question_num, taken_test_id):
         }
         return render(request,"tester/take_test/take_test.html", ctx )
 
-
+@allowed_users(allowed_groups = ["student"])
 def show_result(request, taken_test_id):
     taken_test = TakenTest.objects.get(pk = taken_test_id)
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test = taken_test)
@@ -464,7 +463,7 @@ def show_result(request, taken_test_id):
     }
     return render(request, "tester/take_test/show_result.html", ctx)
 
-
+@allowed_users(allowed_groups = ["student"])
 def show_result_table(request, taken_test_id):
     taken_test = TakenTest.objects.get(id = taken_test_id)
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test =  taken_test)
