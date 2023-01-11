@@ -1,10 +1,14 @@
 {%extends "base.html"%}
-
+{% load user_tags %}
 {% block ts_profile %}
 
+  <a href="{% url 'ts_subjects' %}">Мои предметы</a> <hr>
 
-<a href="{% url 's_tasks' %}">Мои задания</a> <hr>
-<a href="{% url 's_subjects' %}">Мои предметы</a> <hr>
-<a href="{% url 's_statistics' %}">Моя статистика</a> <hr>
-
-{% endblock s_profile %}
+  {% if request.user|has_group:'teacher' %}
+  <a href="{% url 't_statistics' %}">Моя статистика</a> <hr>
+  <a href="{% url 't_task_answers' %}">Мои задания</a> <hr>
+  {% else %}
+  <a href="{% url 's_tasks' %}">Мои задания</a> <hr>
+  <a href="{% url 's_statistics' %}">Моя статистика</a> <hr>
+  {%endif%}
+{% endblock ts_profile %}

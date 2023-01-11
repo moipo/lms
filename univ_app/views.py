@@ -30,19 +30,19 @@ def homepage(request):
 
 
 #student
-@allowed_users(allowed_groups = ["student"])
-def s_profile(request):
-    return render(request,"student_views/s_profile.html",{})
+# @allowed_users(allowed_groups = ["student"])
+# def s_profile(request):
+#     return render(request,"student_views/s_profile.html",{})
 
 @allowed_users(allowed_groups = ["student"])
 def s_tasks(request):
     ctx = {}
     return render(request, "student_views/s_statistics.html", ctx)
 
-@allowed_users(allowed_groups = ["student"])
-def s_subjects(request):
-    ctx = {}
-    return render(request, "student_views/s_subjects.html", ctx)
+# @allowed_users(allowed_groups = ["student"])
+# def s_subjects(request):
+#     ctx = {}
+#     return render(request, "student_views/s_subjects.html", ctx)
 
 @allowed_users(allowed_groups = ["student"])
 def s_statistics(request):
@@ -57,13 +57,15 @@ def s_statistics(request):
 
 
 
+
+
+
 @allowed_users(allowed_groups = ["teacher"])
-def t_task(request, task_type, task_id):
-    task = get_task(task_type, task_id)
+def t_task_answers(request):
     ctx = {
-    "task":task
     }
-    return render(request,"teacher_views/t_task.html",ctx)
+    return render(request,"teacher_views/t_student_answers.html",ctx)
+
 
 
 @allowed_users(allowed_groups = ["teacher"])
@@ -85,7 +87,7 @@ def t_create_task(request, subject_id = None, task_type=None):
                 common_task.subject = Subject.objects.get(id = subject_id)
                 common_task.save()
                 messages.success(request, "Задание было успешно создано и опубликовано")
-                return redirect('t_subject', subject_id)
+                return redirect('ts_subject', subject_id)
 
         if task_type == "InfoTask":
             form = InfoTaskForm(request.POST, request.FILES)
@@ -95,7 +97,7 @@ def t_create_task(request, subject_id = None, task_type=None):
                 info_task.subject = Subject.objects.get(id = subject_id)
                 info_task.save()
                 messages.success(request, "Информация была успешно опубликована")
-                return redirect('t_subject', subject_id)
+                return redirect('ts_subject', subject_id)
 
         form = CommonTaskForm(request.POST)
         ctx = {
@@ -139,11 +141,14 @@ def t_statistics(request):
 #Mutual views
 @allowed_users(allowed_groups = ["teacher","student"])
 def ts_subjects(request):
+    user = request.user
     subjects = None
-    if is_student(user):
-        student = user.student
-        subjects = Subject.objects.all().filter(StGroup = )
-    subjects = Subject.objects.all().filter(teacher = request.user.teacher)
+    if is_teacher(user):
+        teacher = user.teacher
+        subjects = Subject.objects.all().filter(teacher = teacher)
+    else:
+        student_group = user.student.st_group
+        subjects = Subject.objects.all().filter(st_group = student_group)
     ctx = {
     "subjects":subjects,
     }
@@ -165,7 +170,13 @@ def ts_profile(request):
     return render(request,"mutual_views/ts_profile.html",ctx)
 
 
-
+@allowed_users(allowed_groups = ["teacher","student"])
+def ts_task(request, task_type, task_id):
+    task = get_task(task_type, task_id)
+    ctx = {
+    "task":task
+    }
+    return render(request,"mutual_views/ts_task.html",ctx)
 
 
 
@@ -229,7 +240,7 @@ def finish_test_creation(request, testid):
     if Question.objects.filter(related_test=test).count() == 0:
         the_test.delete()
         return render(request, "tester/create_test/cant_create_test.html", {})
-    return redirect("t_subject", test.subject.id)
+    return redirect("ts_subject", test.subject.id)
 
 
 
@@ -441,8 +452,8 @@ def login_form(request):
             ctx = {
                 "user" : user,
             }
-            if is_teacher(user): return redirect("t_profile" )
-            else:  return redirect("s_profile" )
+            if is_teacher(user): return redirect("ts_profile" )
+            else:  return redirect("ts_profile" )
 
 
     else:

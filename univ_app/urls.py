@@ -26,12 +26,12 @@ urlpatterns = [
 
     #student_views:
     path('student/tasks/',s_tasks, name = "s_tasks"),
-    path('student/subjects/',s_subjects, name = "s_subjects"),
     path('student/statistics/',s_statistics, name = "s_statistics"),
 
 
     #Teacher_views:
-    path('teacher/task/<str:task_type>/<int:task_id>',t_task, name = "t_task"),
+
+    path('teacher/t_task_answers',t_task_answers, name = "t_task_answers"),
     path('teacher/create_task/<int:subject_id>/<str:task_type>',t_create_task, name = "t_create_task"),
     path('teacher/choose_task_type/<int:subject_id>',t_choose_task_type, name = "t_choose_task_type"),
     path('teacher/statistics/',t_statistics, name = "t_statistics"),
@@ -43,5 +43,6 @@ urlpatterns = [
     path('profile/',ts_profile, name = "ts_profile"),
     path('subjects/',ts_subjects, name = "ts_subjects"),
     path('subject/<int:subj_id>',ts_subject, name = "ts_subject"),
+    path('task/<str:task_type>/<int:task_id>',ts_task, name = "ts_task"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

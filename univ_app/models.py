@@ -7,6 +7,7 @@ class Subject(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
     description = models.TextField( default = '', blank = True)
     image = models.ImageField(upload_to = "uploads/subjects/", blank = True , null=True, default = "test.png")
+    st_group = models.ForeignKey("StGroup", blank = True, null = True, on_delete = models.SET_NULL)
 
     def __str__(self):
         return self.title
@@ -22,8 +23,6 @@ class Subject(models.Model):
 
 class StGroup(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
-    subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
-    student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
 
     def __str__(self):
         return self.title
@@ -31,6 +30,7 @@ class StGroup(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    st_group = models.ForeignKey("StGroup", blank = True, null = True, on_delete = models.SET_NULL)
 
     def __str__(self):
         return self.title
