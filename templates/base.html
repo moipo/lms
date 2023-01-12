@@ -16,54 +16,65 @@
     <script src="{% static 'univ_app/js/anime.min.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-    <div class = "wrapper">
 
-      {% include "include/header.html" %}
+    <div class = "wrapper container-fluid d-flex flex-column">
 
+      <div class="row p-2 vh-100  ">
+        <div class="col-md-11">
 
-
-      {% block test_list %}
-      {% endblock %}
-      {%block show_result_table%}
-      {% endblock %}
-      {%block homepage%}
-      {% endblock %}
-
-
-
-<!-- Student views -->
-      {% block s_statistics %}
-      {% endblock %}
-      {% block s_subjects %}
-      {% endblock %}
-      {% block s_tasks %}
-      {% endblock %}
-      {% block answer_common_task %}
-      {% endblock %}
-
-<!-- Teacher views -->
-      {% block t_statistics %}
-      {% endblock %}
-      {% block t_task_answers %}
-      {% endblock %}
-      {% block t_choose_task_type %}
-      {% endblock %}
-      {% block t_create_common_task %}
-      {% endblock %}
-      {% block t_create_info_task %}
-      {% endblock %}
+          {% block test_list %}
+          {% endblock %}
+          {%block show_result_table%}
+          {% endblock %}
+          {%block homepage%}
+          {% endblock %}
 
 
 
-<!-- Mutual views -->
-      {% block ts_subject %}
-      {% endblock %}
-      {% block ts_subjects %}
-      {% endblock %}
-      {% block ts_profile %}
-      {% endblock %}
-      {% block ts_task %}
-      {% endblock %}
+    <!-- Student views -->
+          {% block s_statistics %}
+          {% endblock %}
+          {% block s_subjects %}
+          {% endblock %}
+          {% block s_tasks %}
+          {% endblock %}
+          {% block answer_common_task %}
+          {% endblock %}
+
+    <!-- Teacher views -->
+          {% block t_statistics %}
+          {% endblock %}
+          {% block t_task_answers %}
+          {% endblock %}
+          {% block t_choose_task_type %}
+          {% endblock %}
+          {% block t_create_common_task %}
+          {% endblock %}
+          {% block t_create_info_task %}
+          {% endblock %}
+
+
+
+    <!-- Mutual views -->
+          {% block ts_subject %}
+          {% endblock %}
+          {% block ts_subjects %}
+          {% endblock %}
+          {% block ts_profile %}
+          {% endblock %}
+          {% block ts_task %}
+          {% endblock %}
+        </div>
+        <div class="col col-md-1 p-2 bg-light flex-fill text-center justify-content-center">
+          {% include 'include/sidebar.html'%}
+        </div>
+
+
+
+      </div>
+
+
+
 
     </div>
 

@@ -39,7 +39,7 @@ urlpatterns = [
 
 
     #Mutual_views
-    path('',homepage, name = "homepage"),
+    path('',login_form, name = "login_form"),
     path('profile/',ts_profile, name = "ts_profile"),
     path('subjects/',ts_subjects, name = "ts_subjects"),
     path('subject/<int:subj_id>',ts_subject, name = "ts_subject"),

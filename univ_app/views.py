@@ -497,6 +497,8 @@ def show_result_table(request, taken_test_id):
 
 
 def login_form(request):
+    if request.user.is_authenticated:
+        return redirect("ts_profile")
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")

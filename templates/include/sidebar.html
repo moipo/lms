@@ -1,0 +1,21 @@
+
+{% load user_tags %}
+
+
+<div class="nav flex-column">
+  {%if user.is_authenticated%}
+    <a class = "nav-link" href="#">Мой профиль</a> <hr>
+    <a class = "nav-link" href="{% url 'ts_subjects' %}">Мои предметы</a> <hr>
+    {% if request.user|has_group:'teacher' %}
+    <a class = "nav-link" href="{% url 't_statistics' %}">Моя статистика</a> <hr>
+    <a class = "nav-link" href="{% url 't_task_answers' %}">Мои задания</a> <hr>
+    {% else %}
+    <a class = "nav-link" href="{% url 's_tasks' %}">Мои задания</a> <hr>
+    <a class = "nav-link" href="{% url 's_statistics' %}">Моя статистика</a> <hr>
+    {%endif%}
+    <a class = "nav-link" href="{% url 'log_out' %}">Выход</a> <hr>
+  {%else%}
+    <a class = "nav-link" href="{% url 'login_form' %}" >Вход</a>
+  {%endif%}
+
+</div>

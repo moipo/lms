@@ -8,7 +8,7 @@
   {% endif %}
   <form action = "{% url 'login_form' %}" method="post"> {% csrf_token %}
     {{user_form.as_p}}
-    <button type="submit" style = "margin-left: 78px;"> Войти </button>
+    <button class = "btn btn-primary" type="submit" style = "margin-left: 78px;"> Войти </button>
   </form>
   <br>
   <br>
@@ -23,14 +23,14 @@
 
 <style>
   .signinup-form{
-    background-color: orange;
+    background-color: blue;
     margin: auto;
     width: 300px;
     height; 200px;
     padding: 40px;
     border-radius: 15px;
     margin-top: 70px;
-    color: #6c1a75;
+    color: white;
 
 
   }
@@ -42,6 +42,10 @@
 
   .reg_ref:hover{
     color:green;
+  }
+
+  .content{
+    background-color:#9fa8a3;
   }
 </style>
 {% endblock %}
