@@ -10,6 +10,7 @@ from django.views.generic import ListView
 from .decorators import allowed_users
 from .utils import get_task, is_teacher
 from django.contrib import messages
+from itertools import chain
 
 
 
@@ -102,6 +103,33 @@ def t_student_answers(request):
 def t_statistics(request):
     ctx = {}
     return render(request,"teacher_views/t_statistics.html",{})
+
+
+@allowed_users(allowed_groups = ["teacher"])
+def t_task_answers(request):
+    teacher = request.user.teacher
+
+    common_tasks = CommonTask.objects.filter(created_by = teacher)
+    print(common_tasks)
+    answered_common_tasks = AnsweredCommonTask.objects.filter(common_task__in = common_tasks)
+    print(answered_common_tasks)
+
+    tests = Test.objects.filter(created_by = teacher)
+    print(tests)
+    taken_tests = TakenTest.objects.filter(related_test__in = tests)
+    print(taken_tests)
+
+
+    task_answers = list(chain(answered_common_tasks, taken_tests))
+    print(task_answers)
+    ctx = {
+    "task_answers":task_answers,
+    }
+    return render(request,"teacher_views/t_task_answers.html",{})
+
+
+
+
 
 
 
@@ -532,4 +560,4 @@ def login_form(request):
 def log_out(request):
     if request.user.is_authenticated:
         logout(request)
-    return redirect('homepage')
+    return redirect('login_form')
