@@ -94,8 +94,10 @@ class Test(Task):
 
 class InfoTask(Task):
     file = models.FileField(upload_to = "uploads/info_tasks/", blank = True, null = True)
+    
 
-
+    def __str__(self):
+        return self.title
 
 
 
@@ -112,7 +114,17 @@ class AnsweredTask(models.Model):
     
     class Meta:
         abstract = True
-        
+    
+    
+    def related_task(self): 
+        class_name = self.__class__.__name__
+        if class_name == "AnsweredCommonTask":
+            return self.common_task
+        elif class_name == "TakenTest": 
+            return self.related_test
+        elif class_name == "AnsweredInfoTask":
+            return self.related_info_task
+    
     # def get_absolute_url(self):
     #     return reverse("t_task_answer", kwargs={"ans_task_type": self.__class__.__name__,
     #                                             "ans_task_id" : self.id})
@@ -136,7 +148,8 @@ class AnsweredCommonTask(AnsweredTask):
         return str(self.common_task)
 
 class AnsweredInfoTask(AnsweredTask):
-    ...
+    related_info_task = models.ForeignKey("InfoTask", blank = True, null = True, on_delete = models.SET_NULL)
+    
     # was_checked = models.BooleanField(blank = True, null = True)
 
 

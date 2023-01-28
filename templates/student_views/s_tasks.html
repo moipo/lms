@@ -1,22 +1,33 @@
 {%extends "base.html"%}
 
 {% block s_tasks %}
-asdf
-<div class="list-group">
-
-
+not done:
+    <div class="list-group">
     {%for task in not_done_tasks%}
-    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{task}} </h5>
-        <small class="text-muted">{{task.created_at}}</small>
-      </div>
-      <p class="mb-1">{{task.description}}</p>
-      <small class="text-muted"></small>
-    </a>
-    {%endfor%}
+    <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{task.related_task.title}} </h5>
+          <small class="text-muted">{{task.related_task.created_at}}</small>
+        </div>
+        <p class="mb-1">{{task.description}}</p>
+        <small class="text-muted"></small>
+      </a>
+      {%endfor%}
+    </div>
+
     <hr>
-    done:
-    
-  </div>
+done:
+    <div class="list-group">
+        {%for task in done_tasks%}
+        <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{task.related_task.title}} </h5>
+              <small class="text-muted">{{task.related_task.created_at}}</small>
+            </div>
+            <p class="mb-1">{{task.description}}</p>
+            <small class="text-muted"></small>
+          </a>
+          {%endfor%}
+        </div>
+  
 {% endblock %}
