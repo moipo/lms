@@ -24,6 +24,8 @@ class Subject(models.Model):
         tasks.sort(key = lambda task : task.created_at)
         return tasks
 
+    
+    
 class StGroup(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
 
@@ -103,7 +105,8 @@ class InfoTask(Task):
 class AnsweredTask(models.Model):
     student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
     finished_at = models.DateTimeField(auto_now_add = True,blank = True, null = True)
-
+    was_done = models.BooleanField(default = False, null = True, blank = True)
+    
     class Meta:
         abstract = True
         
@@ -117,10 +120,13 @@ class AnsweredTask(models.Model):
 class AnsweredCommonTask(AnsweredTask):
     # grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
     grade = models.IntegerField(null = True, blank = True)
-    answer = models.TextField()
+    answer = models.TextField(null = True, default = "")
     file = models.FileField(upload_to = "uploads/answered_common_tasks/" , blank = True, null = True)
     common_task = models.ForeignKey("CommonTask", blank = True, null = True, on_delete = models.SET_NULL)
-    done = models.BooleanField(default = False, null = True, blank = True)
+    comment_from_teacher = models.TextField(default = "", blank = True)
+    
+    was_evaluated = models.BooleanField(default = False, null = True, blank = True)
+    
     
     def __str__(self):
         return str(self.common_task)
@@ -135,8 +141,9 @@ class TakenTest(AnsweredTask):
     # grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
     grade = models.IntegerField(null = True, blank = True)
     related_test = models.ForeignKey ("Test", on_delete = models.CASCADE, null = True)
-    score = models.IntegerField()
+    score = models.IntegerField(blank = True, null = True)
     
+    was_evaluated = models.BooleanField(default = False, null = True, blank = True)
     
 
     def __str__(self):

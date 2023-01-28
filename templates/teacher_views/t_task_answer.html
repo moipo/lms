@@ -13,13 +13,22 @@
   {% if ans_task.file %}
     {{ans_task.file.url}}
   {%endif%}
-  
+  <hr>
+
   <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post">
     {%csrf_token%}
     <input name = "grade" class = "input-field" type = "number"> </input>
 
-    если оценка не требуется - оставьте поле пустым.
-    <button class = "btn btn-success btn-lg" type="submit" name="button">Оценить</button>
+    <br>
+    <button class = "btn btn-success btn-lg" type="submit" name="btn_accepted">Оценить/Зачесть</button>
+    <br>
+    если работу требуется зачесть без оценки - оставьте поле пустым.
+  </form>
+  <br>
+  <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post"> {%csrf_token%}
+    <input type = "textarea" class = "input-field" name = "comment_from_teacher"> Обратная связь </input> 
+    <br>
+    <button class = "btn btn-danger btn-lg" type="submit" name="btn_not_accepted">Работа не засчитана / Переделать</button>
   </form>
 </div>
 

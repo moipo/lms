@@ -88,13 +88,8 @@ def t_create_task(request, subject_id = None, task_type=None):
     return render(request,"teacher_views/t_create_common_task.html",ctx)
 
 
-# @allowed_users(allowed_groups = ["teacher"])
-# def t_student_answers(request):
 
-#     ctx = {
 
-#     }
-#     return render(request,"teacher_views/t_student_answers.html",ctx)
 
 @allowed_users(allowed_groups = ["teacher"])
 def t_statistics(request):
@@ -109,15 +104,8 @@ def t_task_answers(request):
     t_subjects = teacher.subject_set.all()
     
     t_common_tasks = CommonTask.objects.filter(subject__in = t_subjects)
-    t_tests = Test.objects.filter(subject__in = t_subjects)
     
-    answered_common_tasks = AnsweredCommonTask.objects.filter(common_task__in = t_common_tasks)
-    taken_tests = TakenTest.objects.filter(related_test__in = t_tests)
-    
-
-    task_answers = list(chain(answered_common_tasks, taken_tests))
-    # task_answers.sort(key = lambda x : x.finished_at, reverse = True) #delete all old tasks and uncomment
-    task_answers.sort(key = lambda x : x.finished_at if x.finished_at else pytz.UTC.localize(datetime.datetime(2022, 1, 28)) , reverse = True)
+    task_answers = AnsweredCommonTask.objects.filter(common_task__in = t_common_tasks , was_done = True, was_evaluated = False).order_by("finished_at")
 
     ctx = {
     "task_answers":task_answers,
@@ -133,14 +121,20 @@ def t_task_answer(request, ans_task_id):
     
     
     if request.method == "POST":
-        if grade is not "":
+        if request.POST.get('btn_accepted'):
             grade = request.POST.get("grade")
-            ans_task.grade = grade
-            ans_task.save()
+            if grade != "":
+                ans_task.grade = int(grade)
+            ans_task.was_evaluated = True
         else:
+            comment = request.POST.get("comment_from_teacher")
+            if comment:
+                ans_task.comment_from_teacher = comment
+            ans_task.was_done = False
+        ans_task.save()
+        return redirect('t_task_answers')    
             
-        return redirect('t_task_answers')
-    
+        
     ctx = {
         "common_task": common_task,
         "ans_task":ans_task,
@@ -177,22 +171,11 @@ def answer_task(request, task_type = None, task_id = None):
                 answered_common_task = form.save(commit=False)
                 answered_common_task.student = student
                 answered_common_task.common_task = common_task
+                answered_common_task.was_done = True
+                answered_common_task.finished_at = pytz.UTC.localize(datetime.datetime.now())
                 answered_common_task.save()
-                messages.success(request,"Ответ на задание успешно отправлен на проверку.")
+                messages.success(request,"Ответ на задание был успешно отправлен на проверку.")
                 return redirect('ts_subject', common_task.subject.id)
-
-
-
-
-        # else:
-        #     form = AnsweredCommonTaskForm(request.POST)
-        #     ctx = {
-        #     "form" : form,
-        #     }
-        #     return render(request,"student_views/answer_common_task.html", ctx )
-
-    # if task_type == "Commontask":
-    #     pass
 
     elif task_type == "Test":
         return redirect("start_a_test", task_id)
@@ -237,7 +220,10 @@ def ts_subjects(request):
 @allowed_users(allowed_groups = ["teacher", "student"])
 def ts_subject(request, subj_id):
     subject = Subject.objects.get(id = subj_id)
+    
+    user = request.user
     tasks = subject.all_tasks
+
     ctx = {
     "subject":subject,
     "tasks":tasks,
