@@ -32,10 +32,11 @@ urlpatterns = [
 
     #Teacher_views:
     path('teacher/t_task_answers',t_task_answers, name = "t_task_answers"),
+    path('teacher/t_task_answer/<int:ans_task_id>',t_task_answer, name = "t_task_answer"),
     path('teacher/create_task/<int:subject_id>/<str:task_type>',t_create_task, name = "t_create_task"),
     path('teacher/choose_task_type/<int:subject_id>',t_choose_task_type, name = "t_choose_task_type"),
     path('teacher/statistics/',t_statistics, name = "t_statistics"),
-    path('teacher/student_answers/',t_student_answers, name = "t_student_answers"),
+    # path('teacher/student_answers/',t_student_answers, name = "t_student_answers"),
 
 
     #Mutual_views

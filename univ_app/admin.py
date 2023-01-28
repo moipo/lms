@@ -23,8 +23,9 @@ class CommonTaskAdmin(admin.ModelAdmin):
     list_display = [x.name for x in CommonTask._meta.fields]
 admin.site.register(CommonTask, CommonTaskAdmin)
 
-
-
+class AnsweredCommonTaskAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in AnsweredCommonTask._meta.fields]
+admin.site.register(AnsweredCommonTask, AnsweredCommonTaskAdmin)
 
 
 

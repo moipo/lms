@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .forms import *
 from .models import *
@@ -8,8 +8,8 @@ from .decorators import allowed_users
 from .utils import get_task, is_teacher
 from django.contrib import messages
 from itertools import chain
-
-
+import datetime
+import pytz
 
 
 
@@ -30,11 +30,11 @@ def homepage(request):
 
 
 #Teacher views
-@allowed_users(allowed_groups = ["teacher"])
-def t_task_answers(request):
-    ctx = {
-    }
-    return render(request,"teacher_views/t_student_answers.html",ctx)
+# @allowed_users(allowed_groups = ["teacher"])
+# def t_task_answers(request):
+#     ctx = {
+#     }
+#     return render(request,"teacher_views/t_student_answers.html",ctx)
 
 
 
@@ -88,13 +88,13 @@ def t_create_task(request, subject_id = None, task_type=None):
     return render(request,"teacher_views/t_create_common_task.html",ctx)
 
 
-@allowed_users(allowed_groups = ["teacher"])
-def t_student_answers(request):
+# @allowed_users(allowed_groups = ["teacher"])
+# def t_student_answers(request):
 
-    ctx = {
+#     ctx = {
 
-    }
-    return render(request,"teacher_views/t_student_answers.html",ctx)
+#     }
+#     return render(request,"teacher_views/t_student_answers.html",ctx)
 
 @allowed_users(allowed_groups = ["teacher"])
 def t_statistics(request):
@@ -106,27 +106,18 @@ def t_statistics(request):
 def t_task_answers(request):
     teacher = request.user.teacher
     
-    # common_tasks = CommonTask.objects.filter(created_by = teacher)
-    # print(common_tasks)
-    # answered_common_tasks = AnsweredCommonTask.objects.filter(common_task__in = common_tasks)
-    # print(answered_common_tasks)
-
-    # tests = Test.objects.filter(created_by = teacher)
-    # print(tests)
-    # taken_tests = TakenTest.objects.all().filter(related_test__in = tests)
-    # print(TakenTest.objects.all())
-
-    # get all the students of the descipline
-    # filter: students + unchecked tasks
-
-    subject_set = teacher.subject_set()
-    print(CommonTask.objects.filter(subject__in = subject_set))
+    t_subjects = teacher.subject_set.all()
+    
+    t_common_tasks = CommonTask.objects.filter(subject__in = t_subjects)
+    t_tests = Test.objects.filter(subject__in = t_subjects)
+    
+    answered_common_tasks = AnsweredCommonTask.objects.filter(common_task__in = t_common_tasks)
+    taken_tests = TakenTest.objects.filter(related_test__in = t_tests)
     
 
-    # common_tasks = list(CommonTask.objects.all())
-    # taken_tests = list(TakenTest.objects.all())
-    
-    # task_answers = list(chain(common_tasks, taken_tests))
+    task_answers = list(chain(answered_common_tasks, taken_tests))
+    # task_answers.sort(key = lambda x : x.finished_at, reverse = True) #delete all old tasks and uncomment
+    task_answers.sort(key = lambda x : x.finished_at if x.finished_at else pytz.UTC.localize(datetime.datetime(2022, 1, 28)) , reverse = True)
 
     ctx = {
     "task_answers":task_answers,
@@ -135,7 +126,26 @@ def t_task_answers(request):
 
 
 
-
+@allowed_users(allowed_groups = ["teacher"])
+def t_task_answer(request, ans_task_id):
+    ans_task = get_object_or_404(AnsweredCommonTask, pk = ans_task_id)
+    common_task = ans_task.common_task
+    
+    
+    if request.method == "POST":
+        if grade is not "":
+            grade = request.POST.get("grade")
+            ans_task.grade = grade
+            ans_task.save()
+        else:
+            
+        return redirect('t_task_answers')
+    
+    ctx = {
+        "common_task": common_task,
+        "ans_task":ans_task,
+    }
+    return render(request,"teacher_views/t_task_answer.html", ctx)
 
 
 
@@ -157,12 +167,13 @@ def s_statistics(request):
 @allowed_users(allowed_groups = ["student"])
 def answer_task(request, task_type = None, task_id = None):
     student = request.user.student
-    common_task = CommonTask.objects.get(id = task_id)
+    
     form = AnsweredCommonTaskForm(request.POST or None)
     if request.method == "POST":
         if task_type == "CommonTask":
             form = AnsweredCommonTaskForm(request.POST, request.FILES)
             if form.is_valid():
+                common_task = CommonTask.objects.get(id = task_id)
                 answered_common_task = form.save(commit=False)
                 answered_common_task.student = student
                 answered_common_task.common_task = common_task
@@ -334,8 +345,9 @@ def create_questions(request, testid):
 def finish_test_creation(request, testid):
     test = Test.objects.get(id = testid)
     if Question.objects.filter(related_test=test).count() == 0:
-        the_test.delete()
-        return render(request, "tester/create_test/cant_create_test.html", {})
+        test.delete()
+        ctx = {"subject_id" : test.subject.id }
+        return render(request, "tester/create_test/cant_create_test.html",ctx )
     return redirect("ts_subject", test.subject.id)
 
 

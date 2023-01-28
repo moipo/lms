@@ -1,0 +1,26 @@
+{%extends "base.html"%}
+{% block t_task_answer %}
+
+
+
+<div class="container">
+  Задание:
+  {{common_task}}
+  {{common_task.description}}
+  <hr>
+  Работа студента {{ans_task.student}}:
+  {{ans_task.answer}}
+  {% if ans_task.file %}
+    {{ans_task.file.url}}
+  {%endif%}
+  
+  <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post">
+    {%csrf_token%}
+    <input name = "grade" class = "input-field" type = "number"> </input>
+
+    если оценка не требуется - оставьте поле пустым.
+    <button class = "btn btn-success btn-lg" type="submit" name="button">Оценить</button>
+  </form>
+</div>
+
+{% endblock %}
