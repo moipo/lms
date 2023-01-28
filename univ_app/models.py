@@ -26,6 +26,9 @@ class Subject(models.Model):
 
     
     
+       
+    
+    
 class StGroup(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
 
@@ -124,6 +127,7 @@ class AnsweredCommonTask(AnsweredTask):
     file = models.FileField(upload_to = "uploads/answered_common_tasks/" , blank = True, null = True)
     common_task = models.ForeignKey("CommonTask", blank = True, null = True, on_delete = models.SET_NULL)
     comment_from_teacher = models.TextField(default = "", blank = True)
+    
     
     was_evaluated = models.BooleanField(default = False, null = True, blank = True)
     

@@ -1,5 +1,22 @@
 {%extends "base.html"%}
 
 {% block s_tasks %}
+asdf
+<div class="list-group">
 
+
+    {%for task in not_done_tasks%}
+    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{task}} </h5>
+        <small class="text-muted">{{task.created_at}}</small>
+      </div>
+      <p class="mb-1">{{task.description}}</p>
+      <small class="text-muted"></small>
+    </a>
+    {%endfor%}
+    <hr>
+    done:
+    
+  </div>
 {% endblock %}

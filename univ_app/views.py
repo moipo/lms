@@ -5,9 +5,8 @@ from .models import *
 from django.urls import reverse
 from django.forms import inlineformset_factory
 from .decorators import allowed_users
-from .utils import get_task, is_teacher
+from .utils import get_task, is_teacher, get_all_student_not_done_tasks
 from django.contrib import messages
-from itertools import chain
 import datetime
 import pytz
 
@@ -148,8 +147,13 @@ def t_task_answer(request, ans_task_id):
 #Student
 @allowed_users(allowed_groups = ["student"])
 def s_tasks(request):
-    ctx = {}
-    return render(request, "student_views/s_statistics.html", ctx)
+    student = request.user.student
+    not_done_tasks = get_all_student_not_done_tasks(request.user.student)
+    # not_done_tasks = [2,3]
+    ctx = {
+        "not_done_tasks":not_done_tasks,
+    }
+    return render(request, "student_views/s_tasks.html", ctx)
 
 
 @allowed_users(allowed_groups = ["student"])
