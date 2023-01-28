@@ -8,7 +8,7 @@
     <a class = "nav-link" href="{% url 'ts_subjects' %}">Мои предметы</a> <hr>
     {% if request.user|has_group:'teacher' %}
     <a class = "nav-link" href="{% url 't_statistics' %}">Моя статистика</a> <hr>
-    <a class = "nav-link" href="{% url 't_task_answers' %}">Мои задания</a> <hr>
+    <a class = "nav-link" href="{% url 't_task_answers' %}">Ответы студентов</a> <hr>
     {% else %}
     <a class = "nav-link" href="{% url 's_tasks' %}">Мои задания</a> <hr>
     <a class = "nav-link" href="{% url 's_statistics' %}">Моя статистика</a> <hr>

@@ -3,10 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import *
 from .models import *
 from django.urls import reverse
-from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.forms import inlineformset_factory
-from django.views.generic import ListView
 from .decorators import allowed_users
 from .utils import get_task, is_teacher
 from django.contrib import messages
@@ -32,7 +29,7 @@ def homepage(request):
 
 
 
-#Teacher
+#Teacher views
 @allowed_users(allowed_groups = ["teacher"])
 def t_task_answers(request):
     ctx = {
@@ -108,24 +105,33 @@ def t_statistics(request):
 @allowed_users(allowed_groups = ["teacher"])
 def t_task_answers(request):
     teacher = request.user.teacher
+    
+    # common_tasks = CommonTask.objects.filter(created_by = teacher)
+    # print(common_tasks)
+    # answered_common_tasks = AnsweredCommonTask.objects.filter(common_task__in = common_tasks)
+    # print(answered_common_tasks)
 
-    common_tasks = CommonTask.objects.filter(created_by = teacher)
-    print(common_tasks)
-    answered_common_tasks = AnsweredCommonTask.objects.filter(common_task__in = common_tasks)
-    print(answered_common_tasks)
+    # tests = Test.objects.filter(created_by = teacher)
+    # print(tests)
+    # taken_tests = TakenTest.objects.all().filter(related_test__in = tests)
+    # print(TakenTest.objects.all())
 
-    tests = Test.objects.filter(created_by = teacher)
-    print(tests)
-    taken_tests = TakenTest.objects.filter(related_test__in = tests)
-    print(taken_tests)
+    # get all the students of the descipline
+    # filter: students + unchecked tasks
 
+    subject_set = teacher.subject_set()
+    print(CommonTask.objects.filter(subject__in = subject_set))
+    
 
-    task_answers = list(chain(answered_common_tasks, taken_tests))
-    print(task_answers)
+    # common_tasks = list(CommonTask.objects.all())
+    # taken_tests = list(TakenTest.objects.all())
+    
+    # task_answers = list(chain(common_tasks, taken_tests))
+
     ctx = {
     "task_answers":task_answers,
     }
-    return render(request,"teacher_views/t_task_answers.html",{})
+    return render(request,"teacher_views/t_task_answers.html", ctx)
 
 
 
@@ -135,7 +141,7 @@ def t_task_answers(request):
 
 
 
-
+#Student
 @allowed_users(allowed_groups = ["student"])
 def s_tasks(request):
     ctx = {}

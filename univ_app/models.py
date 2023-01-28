@@ -7,7 +7,9 @@ class Subject(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
     description = models.TextField( default = '', blank = True)
     image = models.ImageField(upload_to = "uploads/subjects/", blank = True , null=True, default = "test.png")
+    teacher = models.ForeignKey("Teacher", blank = True, null = True, on_delete = models.SET_NULL)
     st_group = models.ForeignKey("StGroup", blank = True, null = True, on_delete = models.SET_NULL)
+
 
     def __str__(self):
         return self.title
@@ -33,16 +35,16 @@ class Student(models.Model):
     st_group = models.ForeignKey("StGroup", blank = True, null = True, on_delete = models.SET_NULL)
 
     def __str__(self):
-        return self.title
+        return self.user.username
 
-class Grade(models.Model):
-    grade = models.IntegerField(null = True, blank = True)
+# class Grade(models.Model):
+#     grade = models.IntegerField(null = True, blank = True)
     # student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
     # answered_task = models.OneToOne("AnsweredTask", blank = True, null = True, on_delete = models.SET_NULL)
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
-    subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
+    
 
     def __str__(self):
         return self.user.first_name
@@ -64,6 +66,9 @@ class Task(models.Model):
 
 class CommonTask(Task):
     file = models.FileField(upload_to = "uploads/common_tasks/", blank = True, null = True)
+    
+    def __str__(self):
+        return self.title
 
 class Test(Task):
     slug = models.SlugField(max_length = 120 , blank = True, null = True)
@@ -104,10 +109,14 @@ class AnsweredTask(models.Model):
 
 
 class AnsweredCommonTask(AnsweredTask):
-    grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
+    # grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
+    grade = models.IntegerField(null = True, blank = True)
     answer = models.TextField()
     file = models.FileField(upload_to = "uploads/answered_common_tasks/" , blank = True, null = True)
     common_task = models.ForeignKey("CommonTask", blank = True, null = True, on_delete = models.SET_NULL)
+    
+    def __str__(self):
+        return str(self.common_task)
 
 class AnsweredInfoTask(AnsweredTask):
     was_checked = models.BooleanField(blank = True, null = True)
@@ -115,11 +124,15 @@ class AnsweredInfoTask(AnsweredTask):
 
 
 class TakenTest(AnsweredTask):
-    grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
+    # grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
+    grade = models.IntegerField(null = True, blank = True)
     related_test = models.ForeignKey ("Test", on_delete = models.CASCADE, null = True)
     score = models.IntegerField()
+    
+    
 
-
+    def __str__(self):
+        return str(self.related_test)
 
 
 

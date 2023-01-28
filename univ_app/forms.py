@@ -104,7 +104,9 @@ class UserForm(forms.ModelForm):
         }
         help_texts = {'username' : " "}
 
-
+        widgets= {
+            'password' :  forms.PasswordInput(attrs = {'class' : 'form-control'})
+        }
 
 
 class CommonTaskForm(forms.ModelForm):
