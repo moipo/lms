@@ -44,6 +44,7 @@ def t_choose_task_type(request, subject_id):
 
 @allowed_users(allowed_groups = ["teacher"])
 def t_create_task(request, subject_id = None, task_type=None):
+    print(task_type)
     teacher = request.user.teacher
     form = CommonTaskForm()
     if request.method == "POST":
@@ -59,8 +60,10 @@ def t_create_task(request, subject_id = None, task_type=None):
                 return redirect('ts_subject', subject_id)
 
         if task_type == "InfoTask":
+            print(task_type)
             form = InfoTaskForm(request.POST, request.FILES)
             if form.is_valid():
+                print(task_type)
                 info_task = form.save(commit=False)
                 info_task.created_by = teacher
                 info_task.subject = Subject.objects.get(id = subject_id)
@@ -83,9 +86,11 @@ def t_create_task(request, subject_id = None, task_type=None):
     elif task_type == "InfoTask":
         form = InfoTaskForm()
     ctx = {
+        "task_type":task_type,
     "form":form,
     "subject_id":subject_id,
     }
+    
     return render(request,"teacher_views/t_create_common_task.html",ctx)
 
 
@@ -190,11 +195,15 @@ def answer_task(request, task_type = None, task_id = None):
                 return redirect('ts_subject', common_task.subject.id)
             
 
-    elif task_type == "Test":
+    if task_type == "Test":
         return redirect("start_a_test", task_id)
 
-    # if task_type == "InfoTask":
-    #     return redirect('ts_subject', common_task.subject.id)
+    if task_type == "InfoTask":
+        info_task = get_task(task_type, task_id)
+        info_task.status = AnsweredTask.CHKD
+        info_task.subject.id
+        info_task.save()
+        return redirect('ts_subject', info_task.subject.id)
 
     ctx = {
     "form":form,

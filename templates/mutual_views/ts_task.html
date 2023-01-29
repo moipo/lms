@@ -17,6 +17,12 @@
 </div>
 
   {% if not request.user|has_group:'teacher' %}
-  <a class = "btn btn-success btn-lg" href ="{% url 'answer_task' task.get_type task.id %}" name="button">Выполнить задание</a>
+  <a class = "btn btn-success btn-lg" href ="{% url 'answer_task' task.get_type task.id %}" name="button">
+    {%if task.get_type == "InfoTask"%}
+    С материалами ознакомлен(а)
+    {%else%}
+    Выполнить задание
+    {%endif%}
+  </a>
   {% endif %}
 {% endblock %}

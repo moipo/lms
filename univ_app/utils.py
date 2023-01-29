@@ -43,4 +43,4 @@ def create_answered_task_instances_for_group(task):
             TakenTest.objects.create(student = student, related_test = task, status = AnsweredTask.ASND)
     elif task_type == "InfoTask":
         for student in student_set:
-            AnsweredInfoTask.objects.create(student = student, info_task = task, status = AnsweredTask.ASND)
+            AnsweredInfoTask.objects.create(student = student, related_info_task = task, status = AnsweredTask.ASND)
