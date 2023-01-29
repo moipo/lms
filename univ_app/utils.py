@@ -30,3 +30,10 @@ def get_all_done_tasks(student):
     done_tasks = list(chain(ans_common_tasks, taken_tests, info_tasks))
     # ans_tasks.sort(key = lambda task : task.finished_at)
     return done_tasks
+
+
+def create_answered_task_instances_for_all_students(task):
+    print(task.subject.st_group.student_set.all())
+    for student in task.subject.st_group.student_set.all():
+        AnsweredCommonTask.objects.create(student = student, common_task = task, status = AnsweredTask.ASND)
+    

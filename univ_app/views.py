@@ -5,7 +5,7 @@ from .models import *
 from django.urls import reverse
 from django.forms import inlineformset_factory
 from .decorators import allowed_users
-from .utils import get_task, is_teacher, get_all_not_done_tasks, get_all_done_tasks
+from .utils import get_task, is_teacher, get_all_not_done_tasks, get_all_done_tasks , create_answered_task_instances_for_all_students
 from django.contrib import messages
 import datetime
 import pytz
@@ -54,6 +54,7 @@ def t_create_task(request, subject_id = None, task_type=None):
                 common_task.created_by = teacher
                 common_task.subject = Subject.objects.get(id = subject_id)
                 common_task.save()
+                create_answered_task_instances_for_all_students(common_task)
                 messages.success(request, "Задание было успешно создано и опубликовано")
                 return redirect('ts_subject', subject_id)
 
