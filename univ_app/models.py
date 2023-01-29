@@ -67,7 +67,7 @@ class Task(models.Model):
         abstract = True
 
     def get_type(self):
-        return self.__class__.__name__
+        return str(self.__class__.__name__)
 
 
 class CommonTask(Task):
@@ -112,6 +112,7 @@ class AnsweredTask(models.Model):
     DONE = "DONE"
     PSSD = "PASSED"
     EVAL = "EVALUATED"
+    CHKD = "CHECKED" #for InfoTask
     #was evaluated, was done
     
     STATUS_CHOICES = (
@@ -119,6 +120,7 @@ class AnsweredTask(models.Model):
         (DONE, "Done"),
         (PSSD, "Passed"),
         (EVAL, "Evaluated"),
+        (CHKD, "CHECKED"),
     )
     
     student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)

@@ -32,8 +32,15 @@ def get_all_done_tasks(student):
     return done_tasks
 
 
-def create_answered_task_instances_for_all_students(task):
-    print(task.subject.st_group.student_set.all())
-    for student in task.subject.st_group.student_set.all():
-        AnsweredCommonTask.objects.create(student = student, common_task = task, status = AnsweredTask.ASND)
-    
+def create_answered_task_instances_for_group(task):
+    student_set = task.subject.st_group.student_set.all()
+    task_type = task.get_type()
+    if task_type == "CommonTask": 
+        for student in student_set:
+            AnsweredCommonTask.objects.create(student = student, common_task = task, status = AnsweredTask.ASND)
+    elif task_type == "Test":
+        for student in student_set:
+            TakenTest.objects.create(student = student, related_test = task, status = AnsweredTask.ASND)
+    elif task_type == "InfoTask":
+        for student in student_set:
+            AnsweredInfoTask.objects.create(student = student, info_task = task, status = AnsweredTask.ASND)

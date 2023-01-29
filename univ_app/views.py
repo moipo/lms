@@ -5,7 +5,7 @@ from .models import *
 from django.urls import reverse
 from django.forms import inlineformset_factory
 from .decorators import allowed_users
-from .utils import get_task, is_teacher, get_all_not_done_tasks, get_all_done_tasks , create_answered_task_instances_for_all_students
+from .utils import get_task, is_teacher, get_all_not_done_tasks, get_all_done_tasks , create_answered_task_instances_for_group
 from django.contrib import messages
 import datetime
 import pytz
@@ -54,7 +54,7 @@ def t_create_task(request, subject_id = None, task_type=None):
                 common_task.created_by = teacher
                 common_task.subject = Subject.objects.get(id = subject_id)
                 common_task.save()
-                create_answered_task_instances_for_all_students(common_task)
+                create_answered_task_instances_for_group(common_task)
                 messages.success(request, "Задание было успешно создано и опубликовано")
                 return redirect('ts_subject', subject_id)
 
@@ -65,6 +65,7 @@ def t_create_task(request, subject_id = None, task_type=None):
                 info_task.created_by = teacher
                 info_task.subject = Subject.objects.get(id = subject_id)
                 info_task.save()
+                create_answered_task_instances_for_group(info_task)
                 messages.success(request, "Информация была успешно опубликована")
                 return redirect('ts_subject', subject_id)
 
@@ -192,6 +193,8 @@ def answer_task(request, task_type = None, task_id = None):
     elif task_type == "Test":
         return redirect("start_a_test", task_id)
 
+    # if task_type == "InfoTask":
+    #     return redirect('ts_subject', common_task.subject.id)
 
     ctx = {
     "form":form,
@@ -285,7 +288,27 @@ def ts_task(request, task_type, task_id):
 
 
 
-#Tester
+
+
+
+
+
+
+"""
+
+                                    Tester (part of an old project):
+
+"""
+
+
+
+
+
+
+
+
+
+
 @allowed_users(allowed_groups = ["teacher"])
 def create_test(request, subject_id):
     if request.method == "POST":
@@ -347,6 +370,7 @@ def finish_test_creation(request, testid):
         test.delete()
         ctx = {"subject_id" : test.subject.id }
         return render(request, "tester/create_test/cant_create_test.html",ctx )
+    create_answered_task_instances_for_group(test)
     return redirect("ts_subject", test.subject.id)
 
 
@@ -465,6 +489,7 @@ def take_test(request, testid, current_question_num, taken_test_id):
         the_answers = Answer.get_answers(this_question)
 
         taken_test = TakenTest.objects.create(score = 0, related_test = the_test, student = request.user.student)
+        
 
         given_answer_form = GivenAnswerForm()
 
@@ -500,7 +525,13 @@ def show_result(request, taken_test_id):
     taken_test = TakenTest.objects.get(pk = taken_test_id)
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test = taken_test)
     taken_test.score = sum([1 if ans_question.correct else 0 for ans_question in answered_questions])
+    taken_test.status = AnsweredTask.DONE
     taken_test.save()
+    
+    #delete excessive taken_test instance
+    TakenTest.objects.filter(student = request.user.student, related_test = taken_test.related_test)[0].delete()
+    
+    
     q_amount = len(answered_questions)
     ctx = {
     "taken_test":taken_test,
