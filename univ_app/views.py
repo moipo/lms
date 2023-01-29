@@ -11,21 +11,8 @@ import datetime
 import pytz
 
 
-
-
-
-
-
-
-
 def homepage(request):
     return render(request,"homepage/homepage.html",{})
-
-
-
-
-
-
 
 
 
@@ -129,27 +116,38 @@ def s_tasks(request):
         "eval_tasks":eval_tasks,
         "passed_tasks":passed_tasks,
     }
+    print(eval_tasks.values_list("grade"))
+    
     return render(request, "student_views/s_tasks.html", ctx)
 
 
 @allowed_users(allowed_groups = ["student"])
 def s_statistics(request):
-    ctx = {}
-    return render(request, "student_views/s_tasks.html", ctx)
+    student = request.user.student
+    assigned_tasks = student.get_all_tasks_by_type(AnsweredTask.ASND)
+    done_tasks = student.get_all_tasks_by_type(AnsweredTask.DONE)
+    eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVAL)
+    passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PSSD)
+    ctx = {
+        "assigned_tasks":assigned_tasks,
+        "done_tasks":done_tasks,
+        "eval_tasks":eval_tasks,
+        "passed_tasks":passed_tasks,
+    } 
+    return render(request, "student_views/s_statistics.html", ctx)
 
 
+#кнопка "выполнить задание"
 @allowed_users(allowed_groups = ["student"])
 def answer_task(request, task_type = None, task_id = None):
     student = request.user.student
     
-    form = AnsweredCommonTaskForm(request.POST or None)
     if request.method == "POST":
         if task_type == "CommonTask":
             common_task = CommonTask.objects.get(id = task_id)
             qs = student.answeredcommontask_set.filter(common_task = common_task)
             if qs: last_attempt = qs[0]
             else: last_attempt = None
-
             form = AnsweredCommonTaskForm(request.POST, request.FILES, instance = last_attempt)
             if form.is_valid():
                 answered_common_task = form.save(commit=False)
@@ -161,6 +159,14 @@ def answer_task(request, task_type = None, task_id = None):
                 messages.success(request,"Ответ на задание был успешно отправлен на проверку.")
                 return redirect('ts_subject', common_task.subject.id)
             
+    if task_type == "CommonTask":
+        form = AnsweredCommonTaskForm(request.POST or None)
+        ctx = {
+        "form":form,
+        "task_type":task_type,
+        "task_id":task_id,
+        }
+        return render(request, "student_views/answer_task.html", ctx)
 
     if task_type == "Test":
         return redirect("start_a_test", task_id)
@@ -168,22 +174,8 @@ def answer_task(request, task_type = None, task_id = None):
     if task_type == "InfoTask":
         info_task = get_task(task_type, task_id)
         info_task.status = AnsweredTask.CHKD
-        info_task.subject.id
         info_task.save()
         return redirect('ts_subject', info_task.subject.id)
-
-    ctx = {
-    "form":form,
-    "task_type":task_type,
-    "task_id":task_id,
-    }
-    return render(request, "student_views/answer_task.html", ctx)
-
-
-
-
-
-
 
 
 
@@ -212,10 +204,7 @@ def ts_subjects(request):
 @allowed_users(allowed_groups = ["teacher", "student"])
 def ts_subject(request, subj_id):
     subject = Subject.objects.get(id = subj_id)
-    
-    user = request.user
     tasks = subject.all_tasks
-
     ctx = {
     "subject":subject,
     "tasks":tasks,
@@ -498,17 +487,22 @@ def take_test(request, testid, current_question_num, taken_test_id):
 
 @allowed_users(allowed_groups = ["student"])
 def show_result(request, taken_test_id):
+    
+    
     taken_test = TakenTest.objects.get(pk = taken_test_id)
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test = taken_test)
-    taken_test.score = sum([1 if ans_question.correct else 0 for ans_question in answered_questions])
-    taken_test.status = AnsweredTask.DONE
+    score = sum([1 if ans_question.correct else 0 for ans_question in answered_questions])
+    q_amount = len(answered_questions)
+    taken_test.score 
+    taken_test.status = AnsweredTask.EVAL
+    taken_test.grade = int((score / q_amount)* 5) 
     taken_test.save()
     
     #delete excessive taken_test instance
     TakenTest.objects.filter(student = request.user.student, related_test = taken_test.related_test)[0].delete()
     
     
-    q_amount = len(answered_questions)
+    
     ctx = {
     "taken_test":taken_test,
     "q_amount" : q_amount,
