@@ -144,12 +144,12 @@ def t_task_answer(request, ans_task_id):
 
 
 
-#Student
+#Student views
 @allowed_users(allowed_groups = ["student"])
 def s_tasks(request):
     student = request.user.student
-    not_done_tasks = get_all_not_done_tasks(request.user.student)
-    done_tasks = get_all_done_tasks(request.user.student)
+    not_done_tasks = get_all_not_done_tasks(student)
+    done_tasks = get_all_done_tasks(student)
     ctx = {
         "not_done_tasks":not_done_tasks,
         "done_tasks":done_tasks
@@ -170,9 +170,15 @@ def answer_task(request, task_type = None, task_id = None):
     form = AnsweredCommonTaskForm(request.POST or None)
     if request.method == "POST":
         if task_type == "CommonTask":
-            form = AnsweredCommonTaskForm(request.POST, request.FILES)
+            common_task = CommonTask.objects.get(id = task_id)
+            qs = student.answeredcommontask_set.filter(common_task = common_task)
+            if qs: last_attempt = qs[0]
+            else: last_attempt = None
+            # AnsweredCommonTask.objects.filter(common_task = common_task, student = student)
+            
+
+            form = AnsweredCommonTaskForm(request.POST, request.FILES, instance = last_attempt)
             if form.is_valid():
-                common_task = CommonTask.objects.get(id = task_id)
                 answered_common_task = form.save(commit=False)
                 answered_common_task.student = student
                 answered_common_task.common_task = common_task
@@ -181,6 +187,24 @@ def answer_task(request, task_type = None, task_id = None):
                 answered_common_task.save()
                 messages.success(request,"Ответ на задание был успешно отправлен на проверку.")
                 return redirect('ts_subject', common_task.subject.id)
+            
+            
+            # if last_attempt:
+            #     pass
+            # else:
+            
+            
+            #     form = AnsweredCommonTaskForm(request.POST, request.FILES)
+            #     if form.is_valid():
+                    
+            #         answered_common_task = form.save(commit=False)
+            #         answered_common_task.student = student
+            #         answered_common_task.common_task = common_task
+            #         answered_common_task.was_done = True
+            #         answered_common_task.finished_at = pytz.UTC.localize(datetime.datetime.now())
+            #         answered_common_task.save()
+            #         messages.success(request,"Ответ на задание был успешно отправлен на проверку.")
+            #         return redirect('ts_subject', common_task.subject.id)
 
     elif task_type == "Test":
         return redirect("start_a_test", task_id)

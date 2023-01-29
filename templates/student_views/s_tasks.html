@@ -6,6 +6,7 @@ not done:
     {%for task in not_done_tasks%}
     <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{task.related_task.subject}} </h5>
           <h5 class="mb-1">{{task.related_task.title}} </h5>
           <small class="text-muted">{{task.related_task.created_at}}</small>
         </div>
@@ -21,6 +22,7 @@ done:
         {%for task in done_tasks%}
         <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{task.related_task.subject}} </h5>
               <h5 class="mb-1">{{task.related_task.title}} </h5>
               <small class="text-muted">{{task.related_task.created_at}}</small>
             </div>
