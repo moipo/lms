@@ -108,9 +108,22 @@ class InfoTask(Task):
 
 
 class AnsweredTask(models.Model):
+    ASND = "ASSIGNED"
+    DONE = "DONE"
+    PSSD = "PASSED"
+    EVAL = "EVALUATED"
+    #was evaluated, was done
+    
+    STATUS_CHOICES = (
+        (ASND, "Assigned"),
+        (DONE, "Done"),
+        (PSSD, "Passed"),
+        (EVAL, "Evaluated"),
+    )
+    
     student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
     finished_at = models.DateTimeField(auto_now_add = True,blank = True, null = True)
-    was_done = models.BooleanField(default = False, null = True, blank = True)
+    status = models.CharField(max_length = 255, choices=STATUS_CHOICES, default = ASND, blank = True)
     
     class Meta:
         abstract = True
@@ -133,6 +146,9 @@ class AnsweredTask(models.Model):
 
 
 class AnsweredCommonTask(AnsweredTask):
+    
+    
+    
     # grade = models.OneToOneField("Grade", blank = True, null = True, on_delete = models.SET_NULL)
     grade = models.IntegerField(null = True, blank = True)
     answer = models.TextField(null = True, default = "")
@@ -140,8 +156,6 @@ class AnsweredCommonTask(AnsweredTask):
     common_task = models.ForeignKey("CommonTask", blank = True, null = True, on_delete = models.SET_NULL)
     comment_from_teacher = models.TextField(default = "", blank = True)
     
-    
-    was_evaluated = models.BooleanField(default = False, null = True, blank = True)
     
     
     def __str__(self):
@@ -160,7 +174,6 @@ class TakenTest(AnsweredTask):
     related_test = models.ForeignKey ("Test", on_delete = models.CASCADE, null = True)
     score = models.IntegerField(blank = True, null = True)
     
-    was_evaluated = models.BooleanField(default = False, null = True, blank = True)
     
 
     def __str__(self):

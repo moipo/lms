@@ -15,18 +15,18 @@ def is_teacher(user):
 
 
 def get_all_not_done_tasks(student):
-    ans_common_tasks = AnsweredCommonTask.objects.filter(student = student, was_done = False)
-    taken_tests = TakenTest.objects.filter(student = student, was_done = False)
-    info_tasks = AnsweredInfoTask.objects.filter(student = student, was_done = False)
+    ans_common_tasks = AnsweredCommonTask.objects.filter(student = student, status = AnsweredTask.ASND)
+    taken_tests = TakenTest.objects.filter(student = student, status = AnsweredTask.ASND)
+    info_tasks = AnsweredInfoTask.objects.filter(student = student, status = AnsweredTask.ASND)
     not_done_tasks = list(chain(ans_common_tasks, taken_tests, info_tasks))
     # ans_tasks.sort(key = lambda task : task.finished_at)
     return not_done_tasks
 
 
 def get_all_done_tasks(student):
-    ans_common_tasks = AnsweredCommonTask.objects.filter(student = student, was_done = True)
-    taken_tests = TakenTest.objects.filter(student = student, was_done = True)
-    info_tasks = AnsweredInfoTask.objects.filter(student = student, was_done = True)
+    ans_common_tasks = AnsweredCommonTask.objects.filter(student = student, status = AnsweredTask.DONE)
+    taken_tests = TakenTest.objects.filter(student = student, status = AnsweredTask.DONE)
+    info_tasks = AnsweredInfoTask.objects.filter(student = student, status = AnsweredTask.DONE)
     done_tasks = list(chain(ans_common_tasks, taken_tests, info_tasks))
     # ans_tasks.sort(key = lambda task : task.finished_at)
     return done_tasks

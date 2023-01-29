@@ -104,7 +104,7 @@ def t_task_answers(request):
     
     t_common_tasks = CommonTask.objects.filter(subject__in = t_subjects)
     
-    task_answers = AnsweredCommonTask.objects.filter(common_task__in = t_common_tasks , was_done = True, was_evaluated = False).order_by("finished_at")
+    task_answers = AnsweredCommonTask.objects.filter(common_task__in = t_common_tasks , status = AnsweredTask.DONE).order_by("finished_at")
 
     ctx = {
     "task_answers":task_answers,
@@ -122,14 +122,16 @@ def t_task_answer(request, ans_task_id):
     if request.method == "POST":
         if request.POST.get('btn_accepted'):
             grade = request.POST.get("grade")
-            if grade != "":
+            if grade == "":
+                ans_task.status = AnsweredTask.PSSD
+            else:
                 ans_task.grade = int(grade)
-            ans_task.was_evaluated = True
+                ans_task.status = AnsweredTask.EVAL
         else:
             comment = request.POST.get("comment_from_teacher")
             if comment:
                 ans_task.comment_from_teacher = comment
-            ans_task.was_done = False
+            ans_task.status = AnsweredTask.ASND
         ans_task.save()
         return redirect('t_task_answers')    
             
@@ -166,7 +168,6 @@ def s_statistics(request):
 @allowed_users(allowed_groups = ["student"])
 def answer_task(request, task_type = None, task_id = None):
     student = request.user.student
-    
     form = AnsweredCommonTaskForm(request.POST or None)
     if request.method == "POST":
         if task_type == "CommonTask":
@@ -174,41 +175,21 @@ def answer_task(request, task_type = None, task_id = None):
             qs = student.answeredcommontask_set.filter(common_task = common_task)
             if qs: last_attempt = qs[0]
             else: last_attempt = None
-            # AnsweredCommonTask.objects.filter(common_task = common_task, student = student)
-            
 
             form = AnsweredCommonTaskForm(request.POST, request.FILES, instance = last_attempt)
             if form.is_valid():
                 answered_common_task = form.save(commit=False)
                 answered_common_task.student = student
                 answered_common_task.common_task = common_task
-                answered_common_task.was_done = True
+                answered_common_task.status = AnsweredTask.DONE
                 answered_common_task.finished_at = pytz.UTC.localize(datetime.datetime.now())
                 answered_common_task.save()
                 messages.success(request,"Ответ на задание был успешно отправлен на проверку.")
                 return redirect('ts_subject', common_task.subject.id)
             
-            
-            # if last_attempt:
-            #     pass
-            # else:
-            
-            
-            #     form = AnsweredCommonTaskForm(request.POST, request.FILES)
-            #     if form.is_valid():
-                    
-            #         answered_common_task = form.save(commit=False)
-            #         answered_common_task.student = student
-            #         answered_common_task.common_task = common_task
-            #         answered_common_task.was_done = True
-            #         answered_common_task.finished_at = pytz.UTC.localize(datetime.datetime.now())
-            #         answered_common_task.save()
-            #         messages.success(request,"Ответ на задание был успешно отправлен на проверку.")
-            #         return redirect('ts_subject', common_task.subject.id)
 
     elif task_type == "Test":
         return redirect("start_a_test", task_id)
-
 
 
     ctx = {
