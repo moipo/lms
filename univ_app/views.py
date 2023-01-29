@@ -5,7 +5,7 @@ from .models import *
 from django.urls import reverse
 from django.forms import inlineformset_factory
 from .decorators import allowed_users
-from .utils import get_task, is_teacher, get_all_not_done_tasks, get_all_done_tasks , create_answered_task_instances_for_group
+from .utils import get_task, is_teacher, create_answered_task_instances_for_group
 from django.contrib import messages
 import datetime
 import pytz
@@ -28,14 +28,6 @@ def homepage(request):
 
 
 
-#Teacher views
-# @allowed_users(allowed_groups = ["teacher"])
-# def t_task_answers(request):
-#     ctx = {
-#     }
-#     return render(request,"teacher_views/t_student_answers.html",ctx)
-
-
 
 @allowed_users(allowed_groups = ["teacher"])
 def t_choose_task_type(request, subject_id):
@@ -44,57 +36,32 @@ def t_choose_task_type(request, subject_id):
 
 @allowed_users(allowed_groups = ["teacher"])
 def t_create_task(request, subject_id = None, task_type=None):
-    print(task_type)
+    
     teacher = request.user.teacher
-    form = CommonTaskForm()
+
     if request.method == "POST":
-        if task_type == "CommonTask":
-            form = CommonTaskForm(request.POST, request.FILES)
-            if form.is_valid():
-                common_task = form.save(commit=False)
-                common_task.created_by = teacher
-                common_task.subject = Subject.objects.get(id = subject_id)
-                common_task.save()
-                create_answered_task_instances_for_group(common_task)
-                messages.success(request, "Задание было успешно создано и опубликовано")
-                return redirect('ts_subject', subject_id)
+        if task_type == "CommonTask": form = CommonTaskForm(request.POST, request.FILES)
+        elif task_type == "InfoTask": form = InfoTaskForm(request.POST, request.FILES)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.created_by = teacher
+            task.subject = Subject.objects.get(id = subject_id)
+            task.save()
+            create_answered_task_instances_for_group(task)
+            messages.success(request, "Задание было успешно создано и опубликовано")
+            return redirect('ts_subject', subject_id)
 
-        if task_type == "InfoTask":
-            print(task_type)
-            form = InfoTaskForm(request.POST, request.FILES)
-            if form.is_valid():
-                print(task_type)
-                info_task = form.save(commit=False)
-                info_task.created_by = teacher
-                info_task.subject = Subject.objects.get(id = subject_id)
-                info_task.save()
-                create_answered_task_instances_for_group(info_task)
-                messages.success(request, "Информация была успешно опубликована")
-                return redirect('ts_subject', subject_id)
-
-        form = CommonTaskForm(request.POST)
-        ctx = {
-        "form":form,
-        "subject_id":subject_id,
-        }
-        return render(request, "teacher_views/t_create_common_task.html", ctx)
-
-    if task_type == "Commontask":
-        pass
-    elif task_type == "Test":
-        return redirect("create_test", subject_id = subject_id)
-    elif task_type == "InfoTask":
-        form = InfoTaskForm()
+    if task_type == "CommonTask": form = CommonTaskForm()
+    elif task_type == "InfoTask": form = InfoTaskForm()
+    elif task_type == "Test": return redirect("create_test", subject_id = subject_id)
+    
     ctx = {
-        "task_type":task_type,
+    "task_type":task_type,
     "form":form,
     "subject_id":subject_id,
     }
     
     return render(request,"teacher_views/t_create_common_task.html",ctx)
-
-
-
 
 
 @allowed_users(allowed_groups = ["teacher"])
@@ -106,13 +73,9 @@ def t_statistics(request):
 @allowed_users(allowed_groups = ["teacher"])
 def t_task_answers(request):
     teacher = request.user.teacher
-    
     t_subjects = teacher.subject_set.all()
-    
     t_common_tasks = CommonTask.objects.filter(subject__in = t_subjects)
-    
     task_answers = AnsweredCommonTask.objects.filter(common_task__in = t_common_tasks , status = AnsweredTask.DONE).order_by("finished_at")
-
     ctx = {
     "task_answers":task_answers,
     }
@@ -125,9 +88,9 @@ def t_task_answer(request, ans_task_id):
     ans_task = get_object_or_404(AnsweredCommonTask, pk = ans_task_id)
     common_task = ans_task.common_task
     
-    
     if request.method == "POST":
-        if request.POST.get('btn_accepted'):
+        task_was_accepted = request.POST.get('btn_accepted') is not None
+        if task_was_accepted:
             grade = request.POST.get("grade")
             if grade == "":
                 ans_task.status = AnsweredTask.PSSD
@@ -135,14 +98,12 @@ def t_task_answer(request, ans_task_id):
                 ans_task.grade = int(grade)
                 ans_task.status = AnsweredTask.EVAL
         else:
-            comment = request.POST.get("comment_from_teacher")
-            if comment:
-                ans_task.comment_from_teacher = comment
             ans_task.status = AnsweredTask.ASND
+        comment = request.POST.get("comment_from_teacher")
+        if comment: ans_task.comment_from_teacher = comment
         ans_task.save()
         return redirect('t_task_answers')    
             
-        
     ctx = {
         "common_task": common_task,
         "ans_task":ans_task,
@@ -153,15 +114,20 @@ def t_task_answer(request, ans_task_id):
 
 
 
+
 #Student views
 @allowed_users(allowed_groups = ["student"])
 def s_tasks(request):
     student = request.user.student
-    not_done_tasks = get_all_not_done_tasks(student)
-    done_tasks = get_all_done_tasks(student)
+    assigned_tasks = student.get_all_tasks_by_type(AnsweredTask.ASND)
+    done_tasks = student.get_all_tasks_by_type(AnsweredTask.DONE)
+    eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVAL)
+    passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PSSD)
     ctx = {
-        "not_done_tasks":not_done_tasks,
-        "done_tasks":done_tasks
+        "assigned_tasks":assigned_tasks,
+        "done_tasks":done_tasks,
+        "eval_tasks":eval_tasks,
+        "passed_tasks":passed_tasks,
     }
     return render(request, "student_views/s_tasks.html", ctx)
 
@@ -175,6 +141,7 @@ def s_statistics(request):
 @allowed_users(allowed_groups = ["student"])
 def answer_task(request, task_type = None, task_id = None):
     student = request.user.student
+    
     form = AnsweredCommonTaskForm(request.POST or None)
     if request.method == "POST":
         if task_type == "CommonTask":

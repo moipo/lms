@@ -39,9 +39,19 @@ class StGroup(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     st_group = models.ForeignKey("StGroup", blank = True, null = True, on_delete = models.SET_NULL)
-
+    profile_picture = models.ImageField(upload_to = "uploads/profile_pictures/%Y/%m", blank = True, null = True)
+    
     def __str__(self):
         return self.user.username
+    
+    def get_all_tasks_by_type(self,some_type):
+        ans_common_tasks = AnsweredCommonTask.objects.filter(student = self, status = some_type)
+        taken_tests = TakenTest.objects.filter(student = self, status = some_type)
+        info_tasks = AnsweredInfoTask.objects.filter(student = self, status = some_type)
+        tasks = list(chain(ans_common_tasks, taken_tests, info_tasks))
+        # ans_tasks.sort(key = lambda task : task.finished_at)
+        return tasks   
+   
 
 # class Grade(models.Model):
 #     grade = models.IntegerField(null = True, blank = True)
@@ -50,6 +60,7 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+    profile_picture = models.ImageField(upload_to = "uploads/profile_pictures/%Y/%m", blank = True, null = True)
     
 
     def __str__(self):
