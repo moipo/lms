@@ -39,7 +39,7 @@ class StGroup(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     st_group = models.ForeignKey("StGroup", blank = True, null = True, on_delete = models.SET_NULL)
-    profile_picture = models.ImageField(upload_to = "uploads/profile_pictures/%Y/%m", blank = True, null = True)
+    profile_picture = models.ImageField(upload_to = "uploads/profile_pictures/%Y/", default = "student.jpg", null = True)
     
     def __str__(self):
         return self.user.username
@@ -60,7 +60,7 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
-    profile_picture = models.ImageField(upload_to = "uploads/profile_pictures/%Y/%m", blank = True, null = True)
+    profile_picture = models.ImageField(upload_to = "uploads/profile_pictures/%Y/", default = "teacher.jpg", null = True)
     
 
     def __str__(self):

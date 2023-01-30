@@ -150,3 +150,5 @@ class AnsweredCommonTaskForm(forms.ModelForm):
         for name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
 
+class PictureForm(forms.Form):
+    field_name = forms.ImageField( required = False)

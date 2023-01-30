@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.forms import inlineformset_factory
 from .decorators import allowed_users
 from .utils import get_task, is_teacher, create_answered_task_instances_for_group
+from collections import Counter
 from django.contrib import messages
 import datetime
 import pytz
@@ -53,8 +54,21 @@ def t_create_task(request, subject_id = None, task_type=None):
 
 @allowed_users(allowed_groups = ["teacher"])
 def t_statistics(request):
-    ctx = {}
-    return render(request,"teacher_views/t_statistics.html",{})
+    teacher = request.user.teacher
+    subjects = Subject.objects.all().filter(teacher = teacher)
+    ctx = {
+    "subjects":subjects,
+    }
+    return render(request,"teacher_views/t_statistics.html",ctx)
+
+@allowed_users(allowed_groups = ["teacher"])
+def t_statistics_subject(request, subject_id):
+    teacher = request.user.teacher
+    subjects = Subject.objects.all().filter(teacher = teacher)
+    ctx = {
+    "subjects":subjects,
+    }
+    return render(request,"teacher_views/t_statistics_subject.html",ctx)
 
 
 @allowed_users(allowed_groups = ["teacher"])
@@ -116,7 +130,7 @@ def s_tasks(request):
         "eval_tasks":eval_tasks,
         "passed_tasks":passed_tasks,
     }
-    print(eval_tasks.values_list("grade"))
+
     
     return render(request, "student_views/s_tasks.html", ctx)
 
@@ -128,12 +142,22 @@ def s_statistics(request):
     done_tasks = student.get_all_tasks_by_type(AnsweredTask.DONE)
     eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVAL)
     passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PSSD)
+    
+    standart_grades = [task.grade for task in eval_tasks if task.grade in {1,2,3,4,5}]
+    grades_cnt = dict.fromkeys([1,2,3,4,5],0)
+    for key,value in Counter(standart_grades).items():
+        grades_cnt[key] += value
+    task_grades = list(grades_cnt.values())
+ 
     ctx = {
         "assigned_tasks":assigned_tasks,
         "done_tasks":done_tasks,
         "eval_tasks":eval_tasks,
         "passed_tasks":passed_tasks,
+        'task_grades' : task_grades,
     } 
+    
+    
     return render(request, "student_views/s_statistics.html", ctx)
 
 
@@ -260,9 +284,9 @@ def ts_task(request, task_type, task_id):
 
 
 """
-
+***************************************************************************************************************
                                     Tester (part of an old project):
-
+***************************************************************************************************************
 """
 
 

@@ -36,6 +36,7 @@ urlpatterns = [
     path('teacher/create_task/<int:subject_id>/<str:task_type>',t_create_task, name = "t_create_task"),
     path('teacher/choose_task_type/<int:subject_id>',t_choose_task_type, name = "t_choose_task_type"),
     path('teacher/statistics/',t_statistics, name = "t_statistics"),
+    path('teacher/t_statistics_subject/<int:subject_id>',t_statistics_subject, name = "t_statistics_subject"),
     # path('teacher/student_answers/',t_student_answers, name = "t_student_answers"),
 
 

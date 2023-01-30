@@ -1,6 +1,6 @@
 {%extends "base.html"%}
 
-{% block s_statistics %}
+{% block t_statistics_subject %}
 
 
 <canvas id="bar-chart" width="800" height="450"></canvas>
@@ -20,7 +20,7 @@ var barChartSetUp = {
       {
         label: "Оценка",
         backgroundColor: "#3e95cd",//["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-        data: {{task_grades|safe}}//[2478,5267,734,784,433]
+        data: [2478,5267,734,784,433]//{{task_grades|safe}} 
       }
     ]
   },
