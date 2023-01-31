@@ -155,10 +155,15 @@ def s_group_files_subject(request,subject_id):
     if request.method == "POST":
         form = DocumentForm(request.POST,request.FILES)
         if form.is_valid():
+            print("is_valid")
             instance = form.save(commit = False)
             instance.student = student
             instance.subject = subject
             instance.save()
+        else:
+            #implicit iterations clear previous messages
+            list(messages.get_messages(request))
+            messages.warning(request, "Выбран неверный формат файла")
 
     
     
@@ -256,7 +261,7 @@ def s_answer_task(request, task_type = None, task_id = None):
         "task_type":task_type,
         "task_id":task_id,
         }
-        return render(request, "student_views/answer_task.html", ctx)
+        return render(request, "student_views/s_answer_task.html", ctx)
 
     if task_type == "Test":
         return redirect("start_a_test", task_id)

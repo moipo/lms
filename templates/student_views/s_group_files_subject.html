@@ -10,7 +10,7 @@
   
   
   <hr>
-  <div class="d-flex flex-row ">
+  <div class="d-flex flex-wrap ">
     {%for doc in docs%}
     <div class="card border-success align-items-center text-center mb-3 mx-3" style="max-width: 11rem;">
       <div class="card-body text-primary">
@@ -21,12 +21,29 @@
     </div>
     {%endfor%}
   </div>
+
+
+
+  {%if messages%}
+  <ul>
+    {%for message in messages%}
+      <li>{{message}}</li>
+    {%endfor%}
+  </ul>
+  {%endif%}
+  
   <form class="form-group" action="{% url 's_group_files_subject' subject.id   %}" method="post" enctype="multipart/form-data">
     {%csrf_token%}
     {{form.as_p}}
+
+
+
     <button class = "btn btn-success btn-lg" type="submit" name="button"> загрузить документ </button>
   </form>
+
+
 </div>
+
 
 
 

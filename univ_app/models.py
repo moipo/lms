@@ -29,7 +29,7 @@ class Document(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
     subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
     student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
-    doc = models.FileField(upload_to = "uploads/documents/", blank = True, null = True)
+    doc = models.FileField(upload_to = "uploads/documents/", null = True)
     
     @property
     def filename(self):

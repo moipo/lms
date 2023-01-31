@@ -30,7 +30,7 @@
 {% comment %} </div> {% endcomment %}
 
   {% if not request.user|has_group:'teacher' %}
-  <a class = "btn btn-success btn-lg" href ="{% url 'answer_task' task.get_type task.id %}" name="button">
+  <a class = "btn btn-success btn-lg" href ="{% url 's_answer_task' task.get_type task.id %}" name="button">
 
     {%if task.get_type == "InfoTask"%}
     С материалами ознакомлен(а)

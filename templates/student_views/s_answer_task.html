@@ -4,7 +4,7 @@
 
 
 <div class="container">
-  <form class="form-group" action="{% url 'answer_task' task_type task_id   %}" method="post" enctype="multipart/form-data">
+  <form class="form-group" action="{% url 's_answer_task' task_type task_id   %}" method="post" enctype="multipart/form-data">
     {%csrf_token%}
     {{form.as_p}}
     <button class = "btn btn-success btn-lg" type="submit" name="button"></button>
