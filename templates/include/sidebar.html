@@ -36,6 +36,7 @@
     {% else %}
     <a class = "nav-link" href="{% url 's_tasks' %}">Мои задания</a> <hr>
     <a class = "nav-link" href="{% url 's_statistics' %}">Моя статистика</a> <hr>
+    <a class = "nav-link" href="{% url 's_group_files' %}">Файлы группы</a> <hr>
     {%endif%}
     <a class = "nav-link" href="{% url 'log_out' %}">Выход</a> <hr>
   {%else%}

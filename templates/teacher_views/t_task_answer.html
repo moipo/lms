@@ -10,9 +10,10 @@
   <hr>
   Работа студента {{ans_task.student}}:
   {{ans_task.answer}}
-  {% if ans_task.file %}
-    {{ans_task.file.url}}
-  {%endif%}
+  {% if ans_task.file%}
+  <hr>
+  <a class="mb-1" href = {{ans_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+  {%endif%} 
   <hr>
 
   <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post">

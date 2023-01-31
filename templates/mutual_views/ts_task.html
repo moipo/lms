@@ -3,26 +3,53 @@
 {% block ts_task %}
 
 
-<div class="list-group">
-  <div class="flex-column align-items-start">
-    <div class="d-flex w-60 justify-content-between">
+{% comment %} <div class="list-group"> {% endcomment %}
+  {% comment %} <div class="flex-column align-items-start"> {% endcomment %}
+    {% comment %} <div class="d-flex w-60 justify-content-between"> {% endcomment %}
       <h5 class="mb-1">{{task.title}} </h5>
+      {% if task.file%}
+      <a class="mb-1" href = {{task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+      {%endif%} 
+      
+      <hr>
+      {% if ans_common_task.comment_from_teacher%}
+      комментарий преподавателя: 
+      {{ans_common_task.comment_from_teacher}}
+      <hr>
+      {%endif%} 
+
+
+
       <small class="text-muted">{{task.created_at}}</small>
-    </div>
+    {% comment %} </div> {% endcomment %}
     <p class="mb-1">{{task.description}}</p>
     <small class="text-muted"></small>
-  </div>
+  {% comment %} </div> {% endcomment %}
 
 
-</div>
+{% comment %} </div> {% endcomment %}
 
   {% if not request.user|has_group:'teacher' %}
   <a class = "btn btn-success btn-lg" href ="{% url 'answer_task' task.get_type task.id %}" name="button">
+
     {%if task.get_type == "InfoTask"%}
     С материалами ознакомлен(а)
     {%else%}
-    Выполнить задание
-    {%endif%}
+
+    {%if ans_common_task.status == "DONE"%}
+      Изменить ответ
+    {%else%}
+      Выполнить задание
+    {%endif%} 
+
   </a>
-  {% endif %}
+
+      
+
+    
+   {% endif %}
+
+   {%endif%}
+
 {% endblock %}
+

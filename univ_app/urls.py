@@ -28,6 +28,8 @@ urlpatterns = [
     path('student/tasks/',s_tasks, name = "s_tasks"),
     path('student/statistics/',s_statistics, name = "s_statistics"),
     path('student/answer_task/<str:task_type>/<int:task_id>',answer_task, name = "answer_task"),
+    path('student/s_group_files/',s_group_files, name = "s_group_files"),
+    path('student/s_group_files/subject/<int:subject_id>',s_group_files_subject, name = "s_group_files_subject"),
 
 
     #Teacher_views:

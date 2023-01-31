@@ -134,6 +134,23 @@ def s_tasks(request):
     
     return render(request, "student_views/s_tasks.html", ctx)
 
+def s_group_files(request):
+    
+    student_group = request.user.student.st_group
+    subjects = Subject.objects.all().filter(st_group = student_group)
+    
+    ctx = {
+    "subjects":subjects,
+    }
+    
+    return render(request, "student_views/s_group_files.html", ctx)
+
+def s_group_files_subject(request,subject_id):
+    subject = Subject.objects.get(id = subject_id)
+    
+    ctx = {}
+    return render(request, "student_views/s_group_files_subject.html", ctx)
+
 
 @allowed_users(allowed_groups = ["student"])
 def s_statistics(request):
@@ -244,9 +261,20 @@ def ts_profile(request):
 @allowed_users(allowed_groups = ["teacher","student"])
 def ts_task(request, task_type, task_id):
     task = get_task(task_type, task_id)
+    
     ctx = {
     "task":task
     }
+     
+    #show teacher's comment:
+    user = request.user
+    if not is_teacher(user) and task_type == "CommonTask":
+        student = user.student 
+        ans_task = AnsweredCommonTask.objects.get(student = student, common_task = task)
+        ctx['ans_common_task'] = ans_task
+    
+
+
     return render(request,"mutual_views/ts_task.html",ctx)
 
 
