@@ -26,3 +26,13 @@ def create_answered_task_instances_for_group(task):
     elif task_type == "InfoTask":
         for student in student_set:
             AnsweredInfoTask.objects.create(student = student, related_info_task = task, status = AnsweredTask.ASND)
+
+def get_ans_task(task, student):
+    task_type = task.get_type()
+    if task_type== "CommonTask": 
+        ans_task = AnsweredCommonTask.objects.get(common_task = task, student = student)
+    elif task_type == "Test":
+        ans_task = TakenTest.objects.get(related_test = task, student = student)
+    elif task_type == "InfoTask":
+        ans_task = AnsweredInfoTask.objects.get(related_info_task = task, student = student)
+    return ans_task

@@ -28,7 +28,7 @@
 
       <hr>
     {%endif%}
-    <a class = "nav-link" href="#">Мой профиль</a> <hr>
+    
     <a class = "nav-link" href="{% url 'ts_subjects' %}">Мои дисциплины</a> <hr>
     {% if request.user|has_group:'teacher' %}
     <a class = "nav-link" href="{% url 't_statistics' %}">Моя статистика</a> <hr>

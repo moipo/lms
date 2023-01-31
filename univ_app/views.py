@@ -5,7 +5,7 @@ from .models import *
 from django.urls import reverse
 from django.forms import inlineformset_factory
 from .decorators import allowed_users
-from .utils import get_task, is_teacher, create_answered_task_instances_for_group
+from .utils import get_task, is_teacher, create_answered_task_instances_for_group, get_ans_task
 from collections import Counter
 from django.contrib import messages
 import datetime
@@ -268,8 +268,9 @@ def s_answer_task(request, task_type = None, task_id = None):
 
     if task_type == "InfoTask":
         info_task = get_task(task_type, task_id)
-        info_task.status = AnsweredTask.CHKD
-        info_task.save()
+        answered_info_task = get_ans_task(info_task,student)
+        answered_info_task.status = AnsweredTask.PSSD
+        answered_info_task.save()
         return redirect('ts_subject', info_task.subject.id)
 
 
@@ -320,13 +321,20 @@ def ts_task(request, task_type, task_id):
     "task":task
     }
      
+     
+     
     #show teacher's comment:
-    user = request.user
-    if not is_teacher(user) and task_type == "CommonTask":
-        student = user.student 
-        ans_task = AnsweredCommonTask.objects.get(student = student, common_task = task)
-        ctx['ans_common_task'] = ans_task
     
+    # if not is_teacher(user) and task_type == "CommonTask":
+    #     student = user.student 
+    #     ans_task = AnsweredCommonTask.objects.get(student = student, common_task = task)
+    #     ctx['ans_common_task'] = ans_task
+    
+    user = request.user
+    if not is_teacher(user):
+        ans_task = get_ans_task(task, user.student)
+        ctx['ans_task'] = ans_task
+
 
 
     return render(request,"mutual_views/ts_task.html",ctx)

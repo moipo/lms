@@ -1,7 +1,8 @@
 {%extends "base.html"%}
 {%load user_tags%}
 {% block ts_task %}
-
+{{ans_task.status}}
+<hr>
 
 {% comment %} <div class="list-group"> {% endcomment %}
   {% comment %} <div class="flex-column align-items-start"> {% endcomment %}
@@ -12,7 +13,7 @@
       {%endif%} 
       
       <hr>
-      {% if ans_common_task.comment_from_teacher%}
+      {% if ans_task.comment_from_teacher%}
       комментарий преподавателя: 
       {{ans_common_task.comment_from_teacher}}
       <hr>
@@ -30,24 +31,27 @@
 {% comment %} </div> {% endcomment %}
 
   {% if not request.user|has_group:'teacher' %}
-  <a class = "btn btn-success btn-lg" href ="{% url 's_answer_task' task.get_type task.id %}" name="button">
 
-    {%if task.get_type == "InfoTask"%}
-    С материалами ознакомлен(а)
-    {%else%}
 
-    {%if ans_common_task.status == "DONE"%}
-      Изменить ответ
-    {%else%}
-      Выполнить задание
-    {%endif%} 
-
-  </a>
-
-      
 
     
-   {% endif %}
+      {%if ans_task.status == "PASSED" or ans_task.status == "EVALUATED" %}
+
+      {%else%}
+      <a class = "btn btn-success btn-lg" href ="{% url 's_answer_task' task.get_type task.id %}" name="button">
+        {%if task.get_type == "InfoTask"%}
+        С материалами ознакомился(ась)
+        {%else%}
+          {%if ans_task.status == "DONE"%}
+          Изменить ответ
+          {%elif ans_task.status == "ASSIGNED"%}
+          Выполнить задание
+          {%endif%}
+
+          
+        {%endif%} 
+      {%endif%}
+    </a>
 
    {%endif%}
 
