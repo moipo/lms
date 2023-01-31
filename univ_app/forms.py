@@ -152,3 +152,16 @@ class AnsweredCommonTaskForm(forms.ModelForm):
 
 class PictureForm(forms.Form):
     field_name = forms.ImageField( required = False)
+    
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ['doc']
+        labels = {
+            'doc': "создать новый документ",
+        }
+    def __init__(self, *args, **kwargs):
+        super(DocumentForm, self).__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})

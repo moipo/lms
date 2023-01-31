@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-from django.shortcuts import reverse
 from itertools import chain
+import os
 
 class Subject(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
@@ -27,9 +27,13 @@ class Subject(models.Model):
     
 class Document(models.Model):
     title = models.CharField(max_length=200, default = '', blank = True)
-    st_group = models.ForeignKey("StGroup", blank = True, null = True, on_delete = models.SET_NULL)
+    subject = models.ForeignKey("Subject", blank = True, null = True, on_delete = models.SET_NULL)
     student = models.ForeignKey("Student", blank = True, null = True, on_delete = models.SET_NULL)
     doc = models.FileField(upload_to = "uploads/documents/", blank = True, null = True)
+    
+    @property
+    def filename(self):
+        return os.path.basename(self.doc.name)
        
     
     

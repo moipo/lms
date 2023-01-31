@@ -134,10 +134,10 @@ def s_tasks(request):
     
     return render(request, "student_views/s_tasks.html", ctx)
 
+@allowed_users(allowed_groups = ["student"])
 def s_group_files(request):
-    
-    student_group = request.user.student.st_group
-    subjects = Subject.objects.all().filter(st_group = student_group)
+    st_group = request.user.student.st_group
+    subjects = Subject.objects.all().filter(st_group = st_group)
     
     ctx = {
     "subjects":subjects,
@@ -145,11 +145,60 @@ def s_group_files(request):
     
     return render(request, "student_views/s_group_files.html", ctx)
 
+@allowed_users(allowed_groups = ["student"])
 def s_group_files_subject(request,subject_id):
+    
+    student = request.user.student
     subject = Subject.objects.get(id = subject_id)
     
-    ctx = {}
+    
+    if request.method == "POST":
+        form = DocumentForm(request.POST,request.FILES)
+        if form.is_valid():
+            instance = form.save(commit = False)
+            instance.student = student
+            instance.subject = subject
+            instance.save()
+
+    
+    
+    docs = subject.document_set.all()
+    form = DocumentForm()
+    ctx = {
+        "docs":docs,
+        "subject" : subject,
+        "form":form,
+    }
     return render(request, "student_views/s_group_files_subject.html", ctx)
+
+
+# @allowed_users(allowed_groups = ["student"])
+# def add_document(request,subject_id):
+    
+    
+    
+
+#     if request.method == "POST":
+#         pass
+    
+#     ctx = {
+#     "task_type":task_type,
+#     "form":form,
+#     "subject_id":subject_id,
+#     }
+    
+    
+    
+#     subject = Subject.objects.get(id = subject_id)
+#     docs = subject.document_set.all()
+    
+    
+#     ctx = {
+#         "docs":docs,
+#         "subject" : subject,
+#     }
+#     return render(request, "student_views/s_group_files_subject.html", ctx)
+
 
 
 @allowed_users(allowed_groups = ["student"])
@@ -180,7 +229,7 @@ def s_statistics(request):
 
 #кнопка "выполнить задание"
 @allowed_users(allowed_groups = ["student"])
-def answer_task(request, task_type = None, task_id = None):
+def s_answer_task(request, task_type = None, task_id = None):
     student = request.user.student
     
     if request.method == "POST":

@@ -27,18 +27,19 @@ urlpatterns = [
     #Student_views:
     path('student/tasks/',s_tasks, name = "s_tasks"),
     path('student/statistics/',s_statistics, name = "s_statistics"),
-    path('student/answer_task/<str:task_type>/<int:task_id>',answer_task, name = "answer_task"),
-    path('student/s_group_files/',s_group_files, name = "s_group_files"),
-    path('student/s_group_files/subject/<int:subject_id>',s_group_files_subject, name = "s_group_files_subject"),
+    path('student/answer_task/<str:task_type>/<int:task_id>',s_answer_task, name = "s_answer_task"),
+    path('student/group_files/',s_group_files, name = "s_group_files"),
+    path('student/group_files/subject/<int:subject_id>',s_group_files_subject, name = "s_group_files_subject"),
+    # path('student/s_group_files/subject/<int:subject_id>/add_document/',add_document, name = "add_document"),
 
 
     #Teacher_views:
-    path('teacher/t_task_answers',t_task_answers, name = "t_task_answers"),
-    path('teacher/t_task_answer/<int:ans_task_id>',t_task_answer, name = "t_task_answer"),
+    path('teacher/task_answers',t_task_answers, name = "t_task_answers"),
+    path('teacher/task_answer/<int:ans_task_id>',t_task_answer, name = "t_task_answer"),
     path('teacher/create_task/<int:subject_id>/<str:task_type>',t_create_task, name = "t_create_task"),
     path('teacher/choose_task_type/<int:subject_id>',t_choose_task_type, name = "t_choose_task_type"),
     path('teacher/statistics/',t_statistics, name = "t_statistics"),
-    path('teacher/t_statistics_subject/<int:subject_id>',t_statistics_subject, name = "t_statistics_subject"),
+    path('teacher/statistics_subject/<int:subject_id>',t_statistics_subject, name = "t_statistics_subject"),
     # path('teacher/student_answers/',t_student_answers, name = "t_student_answers"),
 
 

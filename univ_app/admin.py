@@ -28,7 +28,9 @@ class AnsweredCommonTaskAdmin(admin.ModelAdmin):
 admin.site.register(AnsweredCommonTask, AnsweredCommonTaskAdmin)
 
 
-
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in Document._meta.fields]
+admin.site.register(Document, DocumentAdmin)
 
 
 
