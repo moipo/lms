@@ -4,15 +4,23 @@
 
 <div class = "container-fluid">
 
-  {%for doc in docs%}
-  <a class="mb-1" href = {{doc.doc.url}}> <i class="fa fa-file fa-5x"></i> </a>
-  название: {{doc.filename}}
-  владелец: {{doc.student}}
-  {%endfor%}
+ 
+  
+  
+  
+  
   <hr>
-
-
-
+  <div class="d-flex flex-row ">
+    {%for doc in docs%}
+    <div class="card border-success align-items-center text-center mb-3 mx-3" style="max-width: 11rem;">
+      <div class="card-body text-primary">
+        <p class="card-text"><a class="mb-1" href = {{doc.doc.url}}> <i class="fa fa-file fa-5x"></i> </a></p>
+      </div>
+      <div class=" text-primary card-footer bg-transparent border-primary">название: {{doc.filename|slice:":20"}}</div>
+      <div class=" text-primary card-footer bg-transparent border-primary">владелец: {{doc.student|slice:":20"}}</div>
+    </div>
+    {%endfor%}
+  </div>
   <form class="form-group" action="{% url 's_group_files_subject' subject.id   %}" method="post" enctype="multipart/form-data">
     {%csrf_token%}
     {{form.as_p}}
