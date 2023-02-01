@@ -27,6 +27,9 @@ class AnsweredCommonTaskAdmin(admin.ModelAdmin):
     list_display = [x.name for x in AnsweredCommonTask._meta.fields]
 admin.site.register(AnsweredCommonTask, AnsweredCommonTaskAdmin)
 
+class InfoTaskAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in InfoTask._meta.fields]
+admin.site.register(InfoTask, InfoTaskAdmin)
 
 class DocumentAdmin(admin.ModelAdmin):
     list_display = [x.name for x in Document._meta.fields]
