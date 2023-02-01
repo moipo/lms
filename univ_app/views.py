@@ -61,12 +61,50 @@ def t_statistics(request):
     }
     return render(request,"teacher_views/t_statistics.html",ctx)
 
+#need to add row SQL
 @allowed_users(allowed_groups = ["teacher"])
 def t_statistics_subject(request, subject_id):
     teacher = request.user.teacher
-    subjects = Subject.objects.all().filter(teacher = teacher)
+    subject = Subject.objects.get(id = subject_id)
+    
+    common_tasks = subject.commontask_set.all()
+    tests = subject.test_set.all()
+    
+    ans_common_tasks = AnsweredCommonTask.objects.filter(common_task__in = common_tasks)
+    taken_tests = TakenTest.objects.filter(related_test__in = tests)
+    
+    tasks_amount = taken_tests.count() + ans_common_tasks.count()
+    
+    assigned_tasks_cnt = taken_tests.filter(status = AnsweredTask.ASND).count() + ans_common_tasks.filter(status = AnsweredTask.ASND).count()
+    done_tasks_cnt = taken_tests.filter(status = AnsweredTask.DONE).count() + ans_common_tasks.filter(status = AnsweredTask.DONE).count()
+    passed_tasks_cnt =  taken_tests.filter(status = AnsweredTask.PSSD).count() + ans_common_tasks.filter(status = AnsweredTask.PSSD).count()
+    eval_tasks_cnt = taken_tests.filter(status = AnsweredTask.EVAL).count() + ans_common_tasks.filter(status = AnsweredTask.EVAL).count()
+    
+    eval_ans_common_tasks  = taken_tests.filter(status = AnsweredTask.EVAL) 
+    eval_taken_tests = ans_common_tasks.filter(status = AnsweredTask.EVAL)
+    
+    ans_common_tasks_grades = eval_ans_common_tasks.values_list("grade", flat = True)
+    taken_test_grades = eval_taken_tests.values_list("grade", flat = True)
+    
+    avg_grade = (sum(ans_common_tasks_grades) + sum(taken_test_grades))/eval_tasks_cnt
+    
+    students = subject.st_group.student_set.all()
+    student_avg_grades = []
+    for student in students:
+        s_ct_gr = eval_ans_common_tasks.filter(student = student).values_list("grade", flat = True)
+        s_tt_gr = taken_test_grades.filter(student = student).values_list("grade", flat = True)
+        student_avg_grades.append((sum(s_ct_gr) + sum(s_tt_gr) )/(len(s_ct_gr) + len(s_tt_gr)))
+
     ctx = {
-    "subjects":subjects,
+    "subject":subject,
+    "tasks_amount": tasks_amount, 
+    "assigned_tasks_cnt":assigned_tasks_cnt,
+    "done_tasks_cnt" : done_tasks_cnt,
+    "passed_tasks_cnt" : passed_tasks_cnt,
+    "eval_tasks_cnt" : eval_tasks_cnt,
+    "avg_grade" : avg_grade,
+    "students" : students,
+    "student_avg_grades" : student_avg_grades,
     }
     return render(request,"teacher_views/t_statistics_subject.html",ctx)
 
@@ -99,7 +137,7 @@ def t_task_answer(request, ans_task_id):
                 ans_task.grade = int(grade)
                 ans_task.status = AnsweredTask.EVAL
         else:
-            ans_task.status = AnsweredTask.ASND
+            ans_task.status = AnsweredTask.CHKD
         comment = request.POST.get("comment_from_teacher")
         if comment: ans_task.comment_from_teacher = comment
         ans_task.save()
@@ -124,11 +162,13 @@ def s_tasks(request):
     done_tasks = student.get_all_tasks_by_type(AnsweredTask.DONE)
     eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVAL)
     passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PSSD)
+    checked_tasks = student.get_all_tasks_by_type(AnsweredTask.CHKD)
     ctx = {
         "assigned_tasks":assigned_tasks,
         "done_tasks":done_tasks,
         "eval_tasks":eval_tasks,
         "passed_tasks":passed_tasks,
+        "checked_tasks" : checked_tasks,
     }
 
     
@@ -155,7 +195,7 @@ def s_group_files_subject(request,subject_id):
     if request.method == "POST":
         form = DocumentForm(request.POST,request.FILES)
         if form.is_valid():
-            print("is_valid")
+            
             instance = form.save(commit = False)
             instance.student = student
             instance.subject = subject
