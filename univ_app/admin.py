@@ -35,6 +35,10 @@ class DocumentAdmin(admin.ModelAdmin):
     list_display = [x.name for x in Document._meta.fields]
 admin.site.register(Document, DocumentAdmin)
 
+class AnsweredInfoTaskAdmin(admin.ModelAdmin):
+    list_display = [x.name for x in AnsweredInfoTask._meta.fields]
+admin.site.register(AnsweredInfoTask, AnsweredInfoTaskAdmin)
+
 
 
 

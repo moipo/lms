@@ -1,8 +1,9 @@
 {%extends "base.html"%}
 
 {% block s_tasks %}
+
 <hr>
-Назначенные:
+  Назначены:
     <div class="list-group">
     {%for task in assigned_tasks%}
     <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
@@ -72,7 +73,7 @@
   <hr>
   Материалы:
       <div class="list-group">
-      {%for task in eval_tasks%}
+      {%for task in checked_tasks%}
       <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
@@ -84,6 +85,6 @@
           <small class="text-muted"></small>
         </a>
         {%endfor%}
-      </div>   
+      </div>    
 
 {% endblock %}

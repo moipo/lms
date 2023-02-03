@@ -61,10 +61,10 @@ def t_statistics(request):
     }
     return render(request,"teacher_views/t_statistics.html",ctx)
 
-#need to add row SQL
+
 @allowed_users(allowed_groups = ["teacher"])
 def t_statistics_subject(request, subject_id):
-    teacher = request.user.teacher
+    
     subject = Subject.objects.get(id = subject_id)
     
     common_tasks = subject.commontask_set.all()
@@ -74,6 +74,8 @@ def t_statistics_subject(request, subject_id):
     taken_tests = TakenTest.objects.filter(related_test__in = tests)
     
     tasks_amount = taken_tests.count() + ans_common_tasks.count()
+    
+    #infotask is not considered a task
     
     assigned_tasks_cnt = taken_tests.filter(status = AnsweredTask.ASND).count() + ans_common_tasks.filter(status = AnsweredTask.ASND).count()
     done_tasks_cnt = taken_tests.filter(status = AnsweredTask.DONE).count() + ans_common_tasks.filter(status = AnsweredTask.DONE).count()
@@ -93,7 +95,9 @@ def t_statistics_subject(request, subject_id):
     for student in students:
         s_ct_gr = eval_ans_common_tasks.filter(student = student).values_list("grade", flat = True)
         s_tt_gr = taken_test_grades.filter(student = student).values_list("grade", flat = True)
-        student_avg_grades.append((sum(s_ct_gr) + sum(s_tt_gr) )/(len(s_ct_gr) + len(s_tt_gr)))
+        #avg grade, considering, that if task wasn't done then grade is zero.
+        student_avg_grades.append((sum(s_ct_gr) + sum(s_tt_gr) )/assigned_tasks_cnt+eval_tasks_cnt)
+                                #   /(len(s_ct_gr) + len(s_tt_gr))) - normal avg
 
     ctx = {
     "subject":subject,
@@ -137,7 +141,7 @@ def t_task_answer(request, ans_task_id):
                 ans_task.grade = int(grade)
                 ans_task.status = AnsweredTask.EVAL
         else:
-            ans_task.status = AnsweredTask.CHKD
+            ans_task.status = AnsweredTask.ASND
         comment = request.POST.get("comment_from_teacher")
         if comment: ans_task.comment_from_teacher = comment
         ans_task.save()
@@ -163,6 +167,7 @@ def s_tasks(request):
     eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVAL)
     passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PSSD)
     checked_tasks = student.get_all_tasks_by_type(AnsweredTask.CHKD)
+    print(checked_tasks)
     ctx = {
         "assigned_tasks":assigned_tasks,
         "done_tasks":done_tasks,
@@ -217,33 +222,6 @@ def s_group_files_subject(request,subject_id):
     return render(request, "student_views/s_group_files_subject.html", ctx)
 
 
-# @allowed_users(allowed_groups = ["student"])
-# def add_document(request,subject_id):
-    
-    
-    
-
-#     if request.method == "POST":
-#         pass
-    
-#     ctx = {
-#     "task_type":task_type,
-#     "form":form,
-#     "subject_id":subject_id,
-#     }
-    
-    
-    
-#     subject = Subject.objects.get(id = subject_id)
-#     docs = subject.document_set.all()
-    
-    
-#     ctx = {
-#         "docs":docs,
-#         "subject" : subject,
-#     }
-#     return render(request, "student_views/s_group_files_subject.html", ctx)
-
 
 
 @allowed_users(allowed_groups = ["student"])
@@ -292,7 +270,8 @@ def s_answer_task(request, task_type = None, task_id = None):
                 answered_common_task.finished_at = pytz.UTC.localize(datetime.datetime.now())
                 answered_common_task.save()
                 messages.success(request,"Ответ на задание был успешно отправлен на проверку.")
-                return redirect('ts_subject', common_task.subject.id)
+                return redirect('s_tasks')
+                # return redirect('ts_subject', common_task.subject.id)
             
     if task_type == "CommonTask":
         form = AnsweredCommonTaskForm(request.POST or None)
@@ -309,9 +288,10 @@ def s_answer_task(request, task_type = None, task_id = None):
     if task_type == "InfoTask":
         info_task = get_task(task_type, task_id)
         answered_info_task = get_ans_task(info_task,student)
-        answered_info_task.status = AnsweredTask.PSSD
+        answered_info_task.status = AnsweredTask.CHKD
         answered_info_task.save()
-        return redirect('ts_subject', info_task.subject.id)
+        return redirect('s_tasks')
+        # return redirect('ts_subject', info_task.subject.id)
 
 
 
@@ -354,28 +334,17 @@ def ts_profile(request):
 
 
 @allowed_users(allowed_groups = ["teacher","student"])
-def ts_task(request, task_type, task_id):
+def ts_task(request, task_type=0, task_id=0):
     task = get_task(task_type, task_id)
     
     ctx = {
     "task":task
     }
-     
-     
-     
-    #show teacher's comment:
-    
-    # if not is_teacher(user) and task_type == "CommonTask":
-    #     student = user.student 
-    #     ans_task = AnsweredCommonTask.objects.get(student = student, common_task = task)
-    #     ctx['ans_common_task'] = ans_task
     
     user = request.user
     if not is_teacher(user):
         ans_task = get_ans_task(task, user.student)
         ctx['ans_task'] = ans_task
-
-
 
     return render(request,"mutual_views/ts_task.html",ctx)
 
@@ -647,7 +616,7 @@ def show_result(request, taken_test_id):
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test = taken_test)
     score = sum([1 if ans_question.correct else 0 for ans_question in answered_questions])
     q_amount = len(answered_questions)
-    taken_test.score 
+    taken_test.score = score
     taken_test.status = AnsweredTask.EVAL
     taken_test.grade = int((score / q_amount)* 5) 
     taken_test.save()

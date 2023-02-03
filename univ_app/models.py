@@ -97,7 +97,7 @@ class CommonTask(Task):
         return self.title
 
 class Test(Task):
-    slug = models.SlugField(max_length = 120 , blank = True, null = True, unique = True)
+    slug = models.SlugField(max_length = 120 , blank = True, null = True)
     link = models.CharField(max_length=1000, default = '')
     image = models.ImageField(upload_to = "uploads/", blank = True , null=True, default = "test.png")
 
@@ -175,7 +175,7 @@ class AnsweredCommonTask(AnsweredTask):
     grade = models.IntegerField(null = True, blank = True)
     answer = models.TextField(null = True, default = "")
     file = models.FileField(upload_to = "uploads/answered_common_tasks/" , blank = True, null = True)
-    common_task = models.ForeignKey("CommonTask", blank = True, null = True, on_delete = models.SET_NULL)
+    common_task = models.ForeignKey("CommonTask", blank = True, null = True, on_delete = models.CASCADE)
     comment_from_teacher = models.TextField(default = "", blank = True)
     
     
@@ -184,7 +184,7 @@ class AnsweredCommonTask(AnsweredTask):
         return str(self.common_task)
 
 class AnsweredInfoTask(AnsweredTask):
-    related_info_task = models.ForeignKey("InfoTask", blank = True, null = True, on_delete = models.SET_NULL)
+    related_info_task = models.ForeignKey("InfoTask", blank = True, null = True, on_delete = models.CASCADE)
     
     # was_checked = models.BooleanField(blank = True, null = True)
 
