@@ -28,12 +28,12 @@ var barChart = document.getElementById("bar-chart")
 var barChartSetUp = {
   type: 'bar',
   data: {
-    labels: ["1", "2", "3", "4", "5"],
+    labels: {{student_names|safe}} ,//["1", "2", "3", "4", "5"],
     datasets: [
       {
         label: "Оценка",
         backgroundColor: "#3e95cd",//["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-        data: [2478,5267,734,784,433]//{{task_grades|safe}} 
+        data: {{student_avg_grades|safe}} //[2478,5267,734,784,433]//{{task_grades|safe}} 
       }
     ]
   },

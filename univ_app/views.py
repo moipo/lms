@@ -75,6 +75,9 @@ def t_statistics_subject(request, subject_id):
     
     tasks_amount = taken_tests.count() + ans_common_tasks.count()
     
+    
+    
+    
     #infotask is not considered a task
     
     assigned_tasks_cnt = taken_tests.filter(status = AnsweredTask.ASND).count() + ans_common_tasks.filter(status = AnsweredTask.ASND).count()
@@ -92,12 +95,18 @@ def t_statistics_subject(request, subject_id):
     
     students = subject.st_group.student_set.all()
     student_avg_grades = []
+
     for student in students:
         s_ct_gr = eval_ans_common_tasks.filter(student = student).values_list("grade", flat = True)
         s_tt_gr = taken_test_grades.filter(student = student).values_list("grade", flat = True)
         #avg grade, considering, that if task wasn't done then grade is zero.
-        student_avg_grades.append((sum(s_ct_gr) + sum(s_tt_gr) )/assigned_tasks_cnt+eval_tasks_cnt)
-                                #   /(len(s_ct_gr) + len(s_tt_gr))) - normal avg
+        # student_avg_grades.append((sum(s_ct_gr) + sum(s_tt_gr) )/assigned_tasks_cnt+eval_tasks_cnt)
+        student_all_tasks_cnt = ans_common_tasks.filter(student = student).exclude(status="PASSED").count() + taken_tests.filter(student=student).exclude(status="PASSED").count()
+        avg_grade = (sum(s_ct_gr) + sum(s_tt_gr) )/student_all_tasks_cnt
+        # AnsweredCommonTask.objects.filter(student = student).count*
+        student_avg_grades.append(round(avg_grade,2) if avg_grade else 0)
+                                #   (len(s_ct_gr) + len(s_tt_gr)))
+                                #   ) - normal avg
 
     ctx = {
     "subject":subject,
@@ -108,6 +117,7 @@ def t_statistics_subject(request, subject_id):
     "eval_tasks_cnt" : eval_tasks_cnt,
     "avg_grade" : avg_grade,
     "students" : students,
+    "student_names" : [str(st) for st in students],
     "student_avg_grades" : student_avg_grades,
     }
     return render(request,"teacher_views/t_statistics_subject.html",ctx)
