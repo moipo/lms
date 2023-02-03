@@ -102,9 +102,9 @@ def t_statistics_subject(request, subject_id):
         #avg grade, considering, that if task wasn't done then grade is zero.
         # student_avg_grades.append((sum(s_ct_gr) + sum(s_tt_gr) )/assigned_tasks_cnt+eval_tasks_cnt)
         student_all_tasks_cnt = ans_common_tasks.filter(student = student).exclude(status="PASSED").count() + taken_tests.filter(student=student).exclude(status="PASSED").count()
-        avg_grade = (sum(s_ct_gr) + sum(s_tt_gr) )/student_all_tasks_cnt
+        avg_st_grade = (sum(s_ct_gr) + sum(s_tt_gr) )/student_all_tasks_cnt
         # AnsweredCommonTask.objects.filter(student = student).count*
-        student_avg_grades.append(round(avg_grade,2) if avg_grade else 0)
+        student_avg_grades.append(round(avg_st_grade,2) if avg_st_grade else 0)
                                 #   (len(s_ct_gr) + len(s_tt_gr)))
                                 #   ) - normal avg
 
@@ -112,11 +112,12 @@ def t_statistics_subject(request, subject_id):
     "subject":subject,
     "tasks_amount": tasks_amount, 
     "assigned_tasks_cnt":assigned_tasks_cnt,
+    "tasks_performed": tasks_amount - assigned_tasks_cnt,
     "done_tasks_cnt" : done_tasks_cnt,
-    "passed_tasks_cnt" : passed_tasks_cnt,
-    "eval_tasks_cnt" : eval_tasks_cnt,
-    "avg_grade" : avg_grade,
-    "students" : students,
+    # "passed_tasks_cnt" : passed_tasks_cnt,
+    # "eval_tasks_cnt" : eval_tasks_cnt,
+    "avg_grade" : round(avg_grade,2),
+    # "students" : students,
     "student_names" : [str(st) for st in students],
     "student_avg_grades" : student_avg_grades,
     }
