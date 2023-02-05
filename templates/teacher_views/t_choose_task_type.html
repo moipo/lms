@@ -2,9 +2,9 @@
 {%load static%}
 {% block t_choose_task_type %}
 
-<div class="list-group">
+{% comment %} <div class="list-group"> {% endcomment %}
 
-  <a href="{% url 't_create_task' subject_id 'CommonTask'%}" class="list-group-item list-group-item-action flex-column align-items-start">
+  {% comment %} <a href="{% url 't_create_task' subject_id 'CommonTask'%}" class="list-group-item list-group-item-action flex-column align-items-start">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1"> Стандартное задание </h5>
     </div>
@@ -19,41 +19,48 @@
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1"> Выложить файлы/сообщение </h5>
     </div>
-  </a>
+  </a> {% endcomment %}
 
 
 
-  <div class = "container-fluid">
+  <div class = "container-fluid mt-5 pt-5">
   
-    <div class="d-flex justify-content-around">
+    <div class="d-flex align-items-center justify-content-around">
 
-
-      <div class="card" style="width: 28rem;">
-        <img class="card-img-top" src="{% static 'univ_app/img/CommonTaskPreview.png' %}" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">Стандартное задание</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+      <a href = "{% url 't_create_task' subject_id 'CommonTask'%}" class="link-dark">
+        <div class="card" style="width: 28rem;">
+          <h5 class="card-title text-center">Стандартное задание</h5>
+          <img class="card-img-top" src="{% static 'univ_app/img/CommonTaskPreview.png' %}" alt="Card image cap">
+          <div class="card-body">
+            
+            {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+          </div>
         </div>
-      </div>
-
-      <div class="card" style="width: 28rem;">
-        <img class="card-img-top" src="{% static 'univ_app/img/test_preview.jpg' %}" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">Тест</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+      </a>
+      <a href = "{% url 't_create_task' subject_id 'Test'%}" class="link-dark">
+        <div class="card" style="width: 28rem;">
+          <h5 class="card-title text-center">Тест</h5>
+          <img class="card-img-top" src="{% static 'univ_app/img/test_preview.jpg' %}" alt="Card image cap">
+          <div class="card-body">
+            
+            {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+          </div>
         </div>
-      </div>
+      </a>
 
-      <div class="card" style="width: 28rem;">
-        <img class="card-img-top" src="{% static 'univ_app/img/infotask_preview.png' %}" alt="Card image cap">
-        <div class="card-body">
+      <a href = "t_create_task' subject_id 'InfoTask" class="link-dark">
+        <div class="card" style="width: 28rem;">
           <h5 class="card-title">Выложить файлы/материалы/сообщение</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          <img class="card-img-top" src="{% static 'univ_app/img/infotask_preview.png' %}" alt="Card image cap">
+          <div class="card-body">
+            
+            {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+          </div>
         </div>
-      </div>
+      </a>
 
     </div>
 
@@ -66,5 +73,5 @@
 
 
   
-</div>
+{% comment %} </div> {% endcomment %}
 {% endblock %}

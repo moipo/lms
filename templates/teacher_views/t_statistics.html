@@ -1,18 +1,30 @@
 {%extends "base.html"%}
 
 {% block t_statistics %}
+{%load user_tags%}
 <div class="list-group">
 
+
     {%for subject in subjects%}
-    <a href="{% url 't_statistics_subject' subject.id%}" class="list-group-item list-group-item-action flex-column align-items-start">
+    <a href="{% url 't_statistics_subject' subject.id%}" class="list-group-item  list-group-item-info list-group-item-action flex-column align-items-start my-1">
       <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{subject}} Группа 302</h5>
-        <small class="text-muted">3 days ago</small>
+        <h5 class="mb-1">{{subject}} </h5>
+        <small class="text-muted"></small>
       </div>
-      <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-      <small class="text-muted">Donec id elit non mi porta.</small>
+      <p class="mb-1">
+        {% if request.user|has_group:'teacher' %}
+        Группа: {{subject.st_group}}
+        {%else%}
+        Преподаватель: {{subject.teacher}} 
+        {%endif%}
+      </p>
+      <small class="text-muted"></small>
     </a>
+    
     {%endfor%}
+
+
+
   
   </div>
 {% endblock %}
