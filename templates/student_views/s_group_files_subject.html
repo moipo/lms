@@ -12,6 +12,7 @@
       </div>
       <div class=" text-primary card-footer bg-transparent border-primary">название: {{doc.filename|slice:":20"}}</div>
       <div class=" text-primary card-footer bg-transparent border-primary">владелец: {{doc.student|slice:":20"}}</div>
+      <div class=" text-primary card-footer bg-transparent border-primary"><a href = "{%url 'delete_doc' subject.id doc.id%}" class ="btn btn-danger" > удалить</a></div>
     </div>
     {%endfor%}
   </div>

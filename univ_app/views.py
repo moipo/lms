@@ -235,6 +235,16 @@ def s_group_files_subject(request,subject_id):
     }
     return render(request, "student_views/s_group_files_subject.html", ctx)
 
+@allowed_users(allowed_groups = ["student"])
+def delete_doc(request, subject_id, doc_id):
+    doc = get_object_or_404(Document, pk = doc_id)
+    student = request.user.student
+    if doc.student == student:
+        doc.delete()
+        messages.warning(request, "Документ успешно удален")
+    else:
+        messages.warning(request, "У вас нет прав на удаление данного файла")
+    return redirect('s_group_files_subject',subject_id)
 
 
 
@@ -262,6 +272,9 @@ def s_statistics(request):
     
     
     return render(request, "student_views/s_statistics.html", ctx)
+
+
+
 
 
 #кнопка "выполнить задание"
@@ -698,8 +711,8 @@ def login_form(request):
             ctx = {
                 "user" : user,
             }
-            if is_teacher(user): return redirect("ts_profile" )
-            else:  return redirect("ts_profile" )
+            if is_teacher(user): return redirect("ts_subjects" )
+            else:  return redirect("ts_subjects" )
 
 
     else:

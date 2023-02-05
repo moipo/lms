@@ -159,7 +159,7 @@ class DocumentForm(forms.ModelForm):
         model = Document
         fields = ['doc']
         labels = {
-            'doc': "Выберете документ",
+            'doc': "Выберете документ для добавления",
         }
     def __init__(self, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)

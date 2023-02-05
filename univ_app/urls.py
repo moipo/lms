@@ -30,6 +30,7 @@ urlpatterns = [
     path('student/answer_task/<str:task_type>/<int:task_id>',s_answer_task, name = "s_answer_task"),
     path('student/group_files/',s_group_files, name = "s_group_files"),
     path('student/group_files/subject/<int:subject_id>',s_group_files_subject, name = "s_group_files_subject"),
+    path('student/delete_doc/<int:subject_id>/<int:doc_id>/',delete_doc, name = "delete_doc"),
     # path('student/s_group_files/subject/<int:subject_id>/add_document/',add_document, name = "add_document"),
 
 
