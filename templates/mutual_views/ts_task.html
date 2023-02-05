@@ -1,59 +1,82 @@
 {%extends "base.html"%}
 {%load user_tags%}
 {% block ts_task %}
-{{ans_task.status}}
-<hr>
 
-{% comment %} <div class="list-group"> {% endcomment %}
-  {% comment %} <div class="flex-column align-items-start"> {% endcomment %}
-    {% comment %} <div class="d-flex w-60 justify-content-between"> {% endcomment %}
-      <h5 class="mb-1">{{task.title}} </h5>
-      {% if task.file%}
-      <a class="mb-1" href = {{task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
-      {%endif%} 
-      
-      <hr>
-      {% if ans_task.comment_from_teacher%}
-      комментарий преподавателя: 
-      {{ans_common_task.comment_from_teacher}}
-      <hr>
-      {%endif%} 
+
+      <div class = "container justify-content-between mx-auto"> 
+        <h5 class="mb-1 text-center">{{task.title}} 
+
+          {% if task.file%}
+          <br>
+          <br>
+          <a class="mb-1" href = {{task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+          {%endif%} 
+        </h5>
+
+        <hr>
+        
 
 
 
-      <small class="text-muted">{{task.created_at}}</small>
-    {% comment %} </div> {% endcomment %}
-    <p class="mb-1">{{task.description}}</p>
-    <small class="text-muted"></small>
-  {% comment %} </div> {% endcomment %}
-
-
-{% comment %} </div> {% endcomment %}
-
-  {% if not request.user|has_group:'teacher' %}
 
 
 
-    
-      {%if ans_task.status == "PASSED" or ans_task.status == "EVALUATED" %}
 
-      {%else%}
-      <a class = "btn btn-success btn-lg" href ="{% url 's_answer_task' task.get_type task.id %}" name="button">
-        {%if task.get_type == "InfoTask"%}
-        С материалами ознакомился(ась)
-        {%else%}
-          {%if ans_task.status == "DONE"%}
-          Изменить ответ
-          {%elif ans_task.status == "ASSIGNED"%}
-          Выполнить задание
-          {%endif%}
+        <small class="text-muted">{{task.created_at}}</small>
+          <h5 class = "text-center"> Описание:</h5>
+          <p class="mb-1">{{task.description}}</p>
+          <hr>
+        <small class="text-muted"></small>
 
-          
+
+        {% if ans_task.file%}
+        <h5 class = "text-center">
+          Выполненное задание: 
+          <br>
+          <br>
+          <a class="mb-1" href = {{ans_common_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+        </h5>
+          <hr>
         {%endif%} 
-      {%endif%}
-    </a>
 
-   {%endif%}
+        {% if ans_task.comment_from_teacher%}
+            <h5 class = "text-center"> 
+              Комментарий преподавателя: 
+            </h5>
+            <br>
+            <br>
+            {{ans_task.comment_from_teacher}}
+          <hr>
+        {%endif%} 
+
+
+      
+
+
+
+
+
+
+
+        {% if not request.user|has_group:'teacher' %}
+        {%if ans_task.status == "PASSED" or ans_task.status == "EVALUATED" %}
+
+        {%else%}
+        
+        <a class = "btn btn-success btn-lg " href ="{% url 's_answer_task' task.get_type task.id %}" name="button">
+          {%if task.get_type == "InfoTask"%}
+            С материалами ознакомился(ась)
+          {%else%}
+            {%if ans_task.status == "DONE"%}
+              Изменить ответ
+            {%elif ans_task.status == "ASSIGNED"%}
+              Выполнить задание
+            {%endif%}
+          {%endif%} 
+        {%endif%}
+      </a>
+    {%endif%}
+  </div>
 
 {% endblock %}
 

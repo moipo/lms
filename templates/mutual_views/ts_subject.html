@@ -12,12 +12,20 @@
 
 
 {% if request.user|has_group:'teacher' %}
-  <a href="{%url 't_choose_task_type' subject.id%}" class = 'btn btn-success btn-lg m-2' >Добавить задачу</a>
+  <a href="{%url 't_choose_task_type' subject.id%}" class = 'btn btn-success btn-lg m-2 btn-block w-100' >Добавить задание</a>
+  <hr>
 {% endif%}
 
+
+
+{%if not tasks%}
+<h4 class = "text-center">
+Задания ещё не были назначены
+<h4>
+{%endif%}
 <div class="list-group">
 
-
+  
   {%for task in tasks%}
   <a href="{%url 'ts_task' task.get_type task.id %}" class="list-group-item  list-group-item-action list-group-item-dark flex-column align-items-start my-1">
     <div class="d-flex w-100 justify-content-between">
