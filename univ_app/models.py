@@ -50,7 +50,7 @@ class Student(models.Model):
     profile_picture = models.ImageField(upload_to = "uploads/profile_pictures/%Y/", default = "student.jpg", null = True)
     
     def __str__(self):
-        return self.user.username
+        return self.user.first_name
     
     def get_all_tasks_by_type(self,some_type):
         ans_common_tasks = AnsweredCommonTask.objects.filter(student = self, status = some_type)

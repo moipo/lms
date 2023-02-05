@@ -91,7 +91,7 @@ def t_statistics_subject(request, subject_id):
     ans_common_tasks_grades = eval_ans_common_tasks.values_list("grade", flat = True)
     taken_test_grades = eval_taken_tests.values_list("grade", flat = True)
     
-    avg_grade = (sum(ans_common_tasks_grades) + sum(taken_test_grades))/eval_tasks_cnt
+    avg_grade = (sum(ans_common_tasks_grades) + sum(taken_test_grades))/eval_tasks_cnt if eval_tasks_cnt else 1
     
     students = subject.st_group.student_set.all()
     student_avg_grades = []
@@ -102,7 +102,10 @@ def t_statistics_subject(request, subject_id):
         #avg grade, considering, that if task wasn't done then grade is zero.
         # student_avg_grades.append((sum(s_ct_gr) + sum(s_tt_gr) )/assigned_tasks_cnt+eval_tasks_cnt)
         student_all_tasks_cnt = ans_common_tasks.filter(student = student).exclude(status="PASSED").count() + taken_tests.filter(student=student).exclude(status="PASSED").count()
-        avg_st_grade = (sum(s_ct_gr) + sum(s_tt_gr) )/student_all_tasks_cnt
+        try:
+            avg_st_grade = (sum(s_ct_gr) + sum(s_tt_gr) )/student_all_tasks_cnt 
+        except:
+            avg_st_grade = 0
         # AnsweredCommonTask.objects.filter(student = student).count*
         student_avg_grades.append(round(avg_st_grade,2) if avg_st_grade else 0)
                                 #   (len(s_ct_gr) + len(s_tt_gr)))
@@ -116,7 +119,7 @@ def t_statistics_subject(request, subject_id):
     "done_tasks_cnt" : done_tasks_cnt,
     # "passed_tasks_cnt" : passed_tasks_cnt,
     # "eval_tasks_cnt" : eval_tasks_cnt,
-    "avg_grade" : round(avg_grade,2),
+    "avg_grade" : round(sum(student_avg_grades)/len(student_avg_grades),2),
     # "students" : students,
     "student_names" : [str(st) for st in students],
     "student_avg_grades" : student_avg_grades,
