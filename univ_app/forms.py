@@ -12,12 +12,11 @@ class GivenAnswerForm(forms.ModelForm):
 
 
 class AnswerFormNotModel(forms.Form):
-    answer = forms.CharField(max_length=200, widget = forms.Textarea )
-    is_right = forms.BooleanField(required = False)
+    answer = forms.CharField(max_length=200, widget = forms.Textarea , label = "Ответ")
+    is_right = forms.BooleanField(required = False, label = "является верным")
 
     is_right.widget.attrs.update({'value':"1",'placeholder':'Является верным'})
     answer.widget.attrs.update({'cols':'90','rows':'1', 'placeholder':'Ответ'})
-
 
 
 

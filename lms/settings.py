@@ -65,8 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'univ_app.context_processors.get_profile_picture_form'
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },

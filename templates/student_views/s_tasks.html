@@ -11,7 +11,7 @@
           <h5 class="mb-1">{{task.related_task.subject}} </h5>
           <h5 class="mb-1">{{task.related_task.title}} </h5>
           <h5 class="mb-1"></h5>
-          <small class="text-muted">{{task.related_task.created_at}}</small>
+          <small class="text-muted">{{task.related_task.created_at|date:"SHORT_DATE_FORMAT"}}</small>
         </div>
         <p class="mb-1">{{task.description}}</p>
         <small class="text-muted"></small>
@@ -28,7 +28,7 @@
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
             <h5 class="mb-1"></h5>
-            <small class="text-muted">{{task.related_task.created_at}}</small>
+            <small class="text-muted">{{task.related_task.created_at|date:"SHORT_DATE_FORMAT"}}</small>
           </div>
           <p class="mb-1">{{task.description}}</p>
           <small class="text-muted"></small>
@@ -45,7 +45,7 @@
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
             <h5 class="mb-1">Оценка: {{task.grade}} </h5>
-            <small class="text-muted">{{task.related_task.created_at}}</small>
+            <small class="text-muted">{{task.related_task.created_at|date:"SHORT_DATE_FORMAT"}}</small>
           </div>
           <p class="mb-1">{{task.description}}</p>
           <small class="text-muted"></small>
@@ -62,7 +62,7 @@
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
             <h5 class="mb-1"></h5>
-            <small class="text-muted">{{task.related_task.created_at}}</small>
+            <small class="text-muted">{{task.related_task.created_at|date:"SHORT_DATE_FORMAT"}}</small>
           </div>
           <p class="mb-1">{{task.description}}</p>
           <small class="text-muted"></small>
@@ -79,7 +79,7 @@
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
             <h5 class="mb-1"></h5>
-            <small class="text-muted">{{task.related_task.created_at}}</small>
+            <small class="text-muted">{{task.related_task.created_at|date:"SHORT_DATE_FORMAT"}}</small>
           </div>
           <p class="mb-1">{{task.description}}</p>
           <small class="text-muted"></small>

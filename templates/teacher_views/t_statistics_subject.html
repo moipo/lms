@@ -2,12 +2,10 @@
 
 {% block t_statistics_subject %}
 
-Предмет: {{subject}} <hr>
-Заданий назначено: {{tasks_amount}} <hr>
-Заданий выполнено: {{tasks_performed}} <hr>
-Заданий осталось выполнить: {{assigned_tasks_cnt}} <hr>
-Групповые показатели:
-Средний балл: {{avg_grade}}
+
+
+Показатели по предмету "{{subject}}":
+Средний балл: {{avg_grade}},  Заданий назначено-{{tasks_amount}},  Заданий выполнено-{{tasks_performed}} ,  Заданий осталось выполнить - {{assigned_tasks_cnt}} 
 <canvas id="bar-chart" width="800" height="450"></canvas>
 
 

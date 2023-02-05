@@ -86,7 +86,7 @@
 {% if request.user|has_group:'teacher' %}
 
 <div class = "row">
-  <div class = "col-md-5 border border-3 border-success rounded p-3"
+  <div class = "col-md-5 border border-3 border-success rounded p-3">
     <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post">
       {%csrf_token%}
       оценка:
@@ -101,7 +101,7 @@
   </div>
   <div class = "col-md-1">
   </div>
-  <div class = "col-md-5 border border-3 border-danger rounded p-3"
+  <div class = "col-md-5 border border-3 border-danger rounded p-3">
     <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post"> {%csrf_token%}
       Комментирий:
       <input type = "textarea" class = "input-field" name = "comment_from_teacher"> </input> 
