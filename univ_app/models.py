@@ -89,6 +89,12 @@ class Task(models.Model):
     def get_type(self):
         return str(self.__class__.__name__)
 
+    def get_type_for_user(self):
+        type_name = self.get_type()
+        if type_name == "CommonTask": return "Задание"
+        if type_name == "Test": return "Тест"
+        if type_name == "InfoTask": return "Материалы"
+        
 
 class CommonTask(Task):
     file = models.FileField(upload_to = "uploads/common_tasks/", blank = True, null = True)

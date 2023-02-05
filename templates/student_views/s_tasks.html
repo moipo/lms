@@ -6,7 +6,7 @@
   Назначены:
     <div class="list-group">
     {%for task in assigned_tasks%}
-    <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+    <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-danger my-1 list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">{{task.related_task.subject}} </h5>
           <h5 class="mb-1">{{task.related_task.title}} </h5>
@@ -23,7 +23,7 @@
   На проверке:
       <div class="list-group">
       {%for task in done_tasks%}
-      <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-dark my-1 list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
@@ -40,7 +40,7 @@
   Сданы с оценкой:
       <div class="list-group">
       {%for task in eval_tasks%}
-      <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-success list-group-item-action flex-column align-items-start my-1">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
@@ -57,7 +57,7 @@
   Сданы без оценки:
       <div class="list-group">
       {%for task in passed_tasks%}
-      <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-success my-1 list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
@@ -74,7 +74,7 @@
   Материалы:
       <div class="list-group">
       {%for task in checked_tasks%}
-      <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-dark my-1 list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
