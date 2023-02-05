@@ -28,16 +28,17 @@
           <hr>
         <small class="text-muted"></small>
 
-
-        {% if ans_task.file%}
-        <h5 class = "text-center">
-          Выполненное задание: 
-          <br>
-          <br>
-          <a class="mb-1" href = {{ans_common_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
-        </h5>
-          <hr>
-        {%endif%} 
+        {%if ans_task%}
+          {% if ans_task.file%}
+          <h5 class = "text-center">
+            Выполненное задание: {{ans_task.answer}}
+            <br>
+            <br>
+            <a class="mb-1" href = {{ans_common_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+          </h5>
+            <hr>
+          {%endif%} 
+        {%endif%}
 
         {% if ans_task.comment_from_teacher%}
             <h5 class = "text-center"> 

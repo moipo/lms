@@ -1,36 +1,124 @@
 {%extends "base.html"%}
 {% block t_task_answer %}
+{%load user_tags%}
 
 
+<div class = "container justify-content-between mx-auto"> 
+  <h5 class="mb-1 text-center">{{common_task.title}} 
 
-<div class="container">
-  Задание:
-  {{common_task}}
-  {{common_task.description}}
+    {% if common_task.file%}
+    <br>
+    <br>
+    <a class="mb-1" href = {{common_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+    {%endif%} 
+  </h5>
+
   <hr>
-  Работа студента {{ans_task.student}}:
+  
+
+
+
+
+
+
+
+  <small class="text-muted">{{common_task.created_at}}</small>
+    <h5 class = "text-center"> Описание:</h5>
+    <p class="mb-1">{{common_task.description}}</p>
+    <hr>
+  <small class="text-muted"></small>
+
+ 
+
+  
+  <h5 class = "text-center">
+    Выполненное задание:
+    
+    {% if ans_task.file%}
+    <br>
+    <br>
+    <a class="mb-1" href = {{ans_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+    {%endif%} 
+  </h5>
   {{ans_task.answer}}
-  {% if ans_task.file%}
-  <hr>
-  <a class="mb-1" href = {{ans_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+  
+    <hr>
+  
+
+  {% if ans_task.comment_from_teacher%}
+      <h5 class = "text-center"> 
+        Комментарий преподавателя: 
+      </h5>
+      <br>
+      <br>
+      {{ans_task.comment_from_teacher}}
+    <hr>
   {%endif%} 
-  <hr>
 
-  <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post">
-    {%csrf_token%}
-    <input name = "grade" class = "input-field" type = "number"> </input>
 
-    <br>
-    <button class = "btn btn-success btn-lg" type="submit" name="btn_accepted">Оценить/Зачесть</button>
-    <br>
-    если работу требуется зачесть без оценки - оставьте поле пустым.
-  </form>
-  <br>
-  <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post"> {%csrf_token%}
-    <input type = "textarea" class = "input-field" name = "comment_from_teacher"> Обратная связь </input> 
-    <br>
-    <button class = "btn btn-danger btn-lg" type="submit" name="btn_not_accepted">Работа не засчитана / Переделать</button>
-  </form>
+
+
+
+
+
+
+
+
+  {% if not request.user|has_group:'teacher' %}
+  {%if ans_task.status == "PASSED" or ans_task.status == "EVALUATED" %}
+
+  {%else%}
+  
+  <a class = "btn btn-success btn-lg " href ="{% url 's_answer_task' common_task.get_type common_task.id %}" name="button">
+    {%if common_task.get_type == "InfoTask"%}
+      С материалами ознакомился(ась)
+    {%else%}
+      {%if ans_task.status == "DONE"%}
+        Изменить ответ
+      {%elif ans_task.status == "ASSIGNED"%}
+        Выполнить задание
+      {%endif%}
+    {%endif%} 
+  {%endif%}
+</a>
+{%endif%}
+
+{% if request.user|has_group:'teacher' %}
+
+<div class = "row">
+  <div class = "col-md-5 border border-3 border-success rounded p-3"
+    <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post">
+      {%csrf_token%}
+      оценка:
+      <input name = "grade" class = "input-field" type = "number"> </input>
+      <br>
+      если работу требуется зачесть без оценки - оставьте поле пустым.
+      
+      <button class = "btn btn-success btn-lg w-100 mt-3" type="submit" name="btn_accepted">Оценить/Зачесть</button>
+      
+     
+    </form>
+  </div>
+  <div class = "col-md-1">
+  </div>
+  <div class = "col-md-5 border border-3 border-danger rounded p-3"
+    <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post"> {%csrf_token%}
+      Комментирий:
+      <input type = "textarea" class = "input-field" name = "comment_from_teacher"> </input> 
+      <br><br>
+      <button class = "btn btn-danger btn-lg w-100 mt-3" type="submit" name="btn_not_accepted">Работа не засчитана / Переделать</button>
+    </form>
+  </div>
+
 </div>
+
+
+{%endif%}
+
+
+</div>
+
+
+
 
 {% endblock %}

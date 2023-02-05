@@ -164,6 +164,7 @@ def t_task_answer(request, ans_task_id):
     ctx = {
         "common_task": common_task,
         "ans_task":ans_task,
+        
     }
     return render(request,"teacher_views/t_task_answer.html", ctx)
 
@@ -181,7 +182,6 @@ def s_tasks(request):
     eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVAL)
     passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PSSD)
     checked_tasks = student.get_all_tasks_by_type(AnsweredTask.CHKD)
-    print(checked_tasks)
     ctx = {
         "assigned_tasks":assigned_tasks,
         "done_tasks":done_tasks,
