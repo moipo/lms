@@ -18,7 +18,7 @@ commands to run locally(Linux):
 
         source myvenv/bin/activate 
 
-        cd tester && pip install -r requirements.txt 
+        cd lms && pip install -r requirements.txt 
 
         python3 manage.py runserver 
 
