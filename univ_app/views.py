@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .forms import *
@@ -21,19 +23,24 @@ def t_choose_task_type(request, subject_id):
     return render(request, "teacher_views/t_choose_task_type.html", {"subject_id": subject_id})
 
 
+class TaskTypes(Enum):
+    common_task = 'CommonTask'
+    test = 'Test'
+    info_task = 'InfoTask'
+
+
 @allowed_users(allowed_groups=["teacher"])
 def t_create_task(request, subject_id=None, task_type=None):
 
-    teacher = request.user.teacher
-
     if request.method == "POST":
-        if task_type == "CommonTask":
+        if task_type == TaskTypes.common_task.value:
             form = CommonTaskForm(request.POST, request.FILES)
-        elif task_type == "InfoTask":
+        elif task_type == TaskTypes.info_task.value:
             form = InfoTaskForm(request.POST, request.FILES)
+
         if form.is_valid():
             task = form.save(commit=False)
-            task.created_by = teacher
+            task.created_by = request.user.teacher
             task.subject = Subject.objects.get(id=subject_id)
             task.save()
             create_answered_task_instances_for_group(task)
@@ -41,11 +48,11 @@ def t_create_task(request, subject_id=None, task_type=None):
                 request, "Задание было успешно создано и опубликовано")
             return redirect('ts_subject', subject_id)
 
-    if task_type == "CommonTask":
+    if task_type == TaskTypes.common_task.value:
         form = CommonTaskForm()
-    elif task_type == "InfoTask":
+    elif task_type == TaskTypes.info_task.value:
         form = InfoTaskForm()
-    elif task_type == "Test":
+    elif task_type == TaskTypes.test.value:
         return redirect("create_test", subject_id=subject_id)
 
     ctx = {
@@ -80,8 +87,6 @@ def t_statistics_subject(request, subject_id):
     taken_tests = TakenTest.objects.filter(related_test__in=tests)
 
     tasks_amount = taken_tests.count() + ans_common_tasks.count()
-
-    # infotask is not considered a task
 
     assigned_tasks_cnt = taken_tests.filter(status=AnsweredTask.ASND).count(
     ) + ans_common_tasks.filter(status=AnsweredTask.ASND).count()
@@ -362,13 +367,6 @@ def ts_task(request, task_type=0, task_id=0):
         ctx['ans_task'] = ans_task
 
     return render(request, "mutual_views/ts_task.html", ctx)
-
-
-"""
-***************************************************************************************************************
-                                    Tester (part of an old project):
-***************************************************************************************************************
-"""
 
 
 @allowed_users(allowed_groups=["teacher"])
