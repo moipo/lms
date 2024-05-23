@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0005_remove_test_creator_delete_user'),
+        ("univ_app", "0005_remove_test_creator_delete_user"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='question',
-            name='importance',
-            field=models.IntegerField(default=5, validators=[django.core.validators.MaxValueValidator(10), django.core.validators.MinValueValidator(1)]),
+            model_name="question",
+            name="importance",
+            field=models.IntegerField(
+                default=5,
+                validators=[
+                    django.core.validators.MaxValueValidator(10),
+                    django.core.validators.MinValueValidator(1),
+                ],
+            ),
         ),
     ]

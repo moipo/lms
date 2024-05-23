@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0033_remove_answeredinfotask_was_checked_and_more'),
+        ("univ_app", "0033_remove_answeredinfotask_was_checked_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='answeredcommontask',
-            name='comment_from_teacher',
-            field=models.TextField(blank=True, default=''),
+            model_name="answeredcommontask",
+            name="comment_from_teacher",
+            field=models.TextField(blank=True, default=""),
         ),
     ]

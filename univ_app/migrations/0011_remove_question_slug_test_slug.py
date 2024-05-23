@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0010_question_slug'),
+        ("univ_app", "0010_question_slug"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='question',
-            name='slug',
+            model_name="question",
+            name="slug",
         ),
         migrations.AddField(
-            model_name='test',
-            name='slug',
+            model_name="test",
+            name="slug",
             field=models.SlugField(blank=True, max_length=120, null=True),
         ),
     ]

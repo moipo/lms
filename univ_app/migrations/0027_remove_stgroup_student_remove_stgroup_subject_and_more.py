@@ -7,26 +7,36 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0026_answeredinfotask_infotask'),
+        ("univ_app", "0026_answeredinfotask_infotask"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='stgroup',
-            name='student',
+            model_name="stgroup",
+            name="student",
         ),
         migrations.RemoveField(
-            model_name='stgroup',
-            name='subject',
+            model_name="stgroup",
+            name="subject",
         ),
         migrations.AddField(
-            model_name='student',
-            name='st_group',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='univ_app.stgroup'),
+            model_name="student",
+            name="st_group",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="univ_app.stgroup",
+            ),
         ),
         migrations.AddField(
-            model_name='subject',
-            name='st_group',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='univ_app.stgroup'),
+            model_name="subject",
+            name="st_group",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="univ_app.stgroup",
+            ),
         ),
     ]

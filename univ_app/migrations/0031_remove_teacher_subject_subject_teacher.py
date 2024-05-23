@@ -7,17 +7,25 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0030_alter_answeredcommontask_grade_alter_takentest_grade_and_more'),
+        (
+            "univ_app",
+            "0030_alter_answeredcommontask_grade_alter_takentest_grade_and_more",
+        ),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='teacher',
-            name='subject',
+            model_name="teacher",
+            name="subject",
         ),
         migrations.AddField(
-            model_name='subject',
-            name='teacher',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='univ_app.teacher'),
+            model_name="subject",
+            name="teacher",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="univ_app.teacher",
+            ),
         ),
     ]

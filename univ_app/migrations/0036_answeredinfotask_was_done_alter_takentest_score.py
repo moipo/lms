@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0035_takentest_was_done_takentest_was_evaluated_and_more'),
+        ("univ_app", "0035_takentest_was_done_takentest_was_evaluated_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='answeredinfotask',
-            name='was_done',
+            model_name="answeredinfotask",
+            name="was_done",
             field=models.BooleanField(blank=True, default=False, null=True),
         ),
         migrations.AlterField(
-            model_name='takentest',
-            name='score',
+            model_name="takentest",
+            name="score",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

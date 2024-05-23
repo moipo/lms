@@ -6,17 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0013_alter_test_options_remove_test_score'),
+        ("univ_app", "0013_alter_test_options_remove_test_score"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='question',
-            name='importance',
+            model_name="question",
+            name="importance",
         ),
         migrations.AddField(
-            model_name='test',
-            name='image',
-            field=models.ImageField(blank=True, default='test.png', upload_to='uploads/Y%/%m/%d'),
+            model_name="test",
+            name="image",
+            field=models.ImageField(
+                blank=True, default="test.png", upload_to="uploads/Y%/%m/%d"
+            ),
         ),
     ]

@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0034_answeredcommontask_comment_from_teacher'),
+        ("univ_app", "0034_answeredcommontask_comment_from_teacher"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='takentest',
-            name='was_done',
+            model_name="takentest",
+            name="was_done",
             field=models.BooleanField(blank=True, default=False, null=True),
         ),
         migrations.AddField(
-            model_name='takentest',
-            name='was_evaluated',
+            model_name="takentest",
+            name="was_evaluated",
             field=models.BooleanField(blank=True, default=False, null=True),
         ),
         migrations.AlterField(
-            model_name='answeredcommontask',
-            name='answer',
-            field=models.TextField(default='', null=True),
+            model_name="answeredcommontask",
+            name="answer",
+            field=models.TextField(default="", null=True),
         ),
     ]

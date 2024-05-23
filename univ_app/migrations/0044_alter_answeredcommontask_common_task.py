@@ -7,13 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0043_alter_test_slug'),
+        ("univ_app", "0043_alter_test_slug"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='answeredcommontask',
-            name='common_task',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='univ_app.commontask'),
+            model_name="answeredcommontask",
+            name="common_task",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="univ_app.commontask",
+            ),
         ),
     ]

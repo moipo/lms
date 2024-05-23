@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0011_remove_question_slug_test_slug'),
+        ("univ_app", "0011_remove_question_slug_test_slug"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='answer',
-            name='related_question',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='univ_app.question'),
+            model_name="answer",
+            name="related_question",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="univ_app.question",
+            ),
         ),
     ]

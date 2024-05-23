@@ -4,3 +4,6 @@ Pillow==9.2.0
 PyExifTool==0.5.5
 pytz==2022.7.1
 sqlparse==0.4.3
+mypy==1.10.0
+black==24.4.2
+pylint==3.2.2

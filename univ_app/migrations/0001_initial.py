@@ -8,52 +8,96 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Test',
+            name="Test",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100)),
-                ('description', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=100)),
+                ("description", models.TextField()),
             ],
             options={
-                'ordering': ['title'],
+                "ordering": ["title"],
             },
         ),
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nickname', models.CharField(max_length=100)),
-                ('password', models.CharField(max_length=100)),
-                ('taken_tests', models.ManyToManyField(to='univ_app.test')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nickname", models.CharField(max_length=100)),
+                ("password", models.CharField(max_length=100)),
+                ("taken_tests", models.ManyToManyField(to="univ_app.test")),
             ],
         ),
         migrations.AddField(
-            model_name='test',
-            name='creator',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='univ_app.user'),
+            model_name="test",
+            name="creator",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="univ_app.user"
+            ),
         ),
         migrations.CreateModel(
-            name='Question',
+            name="Question",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('question', models.CharField(max_length=1000)),
-                ('importance', models.IntegerField(default=5)),
-                ('related_test', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='univ_app.test')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("question", models.CharField(max_length=1000)),
+                ("importance", models.IntegerField(default=5)),
+                (
+                    "related_test",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="univ_app.test"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Answer',
+            name="Answer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('answer', models.CharField(max_length=1000)),
-                ('was_chosen', models.BooleanField(default=False)),
-                ('is_right', models.BooleanField(default=False)),
-                ('related_question', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='univ_app.question')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("answer", models.CharField(max_length=1000)),
+                ("was_chosen", models.BooleanField(default=False)),
+                ("is_right", models.BooleanField(default=False)),
+                (
+                    "related_question",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="univ_app.question",
+                    ),
+                ),
             ],
         ),
     ]

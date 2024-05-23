@@ -9,13 +9,21 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('univ_app', '0023_grade_subject_takentest_finished_at_test_created_at_and_more'),
+        (
+            "univ_app",
+            "0023_grade_subject_takentest_finished_at_test_created_at_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='student',
-            name='user',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="student",
+            name="user",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

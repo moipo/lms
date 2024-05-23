@@ -1,5 +1,7 @@
 
 
+Python version - 3.10
+
 Demo teacher credentials:
     login: teacher1         
     password: some_password

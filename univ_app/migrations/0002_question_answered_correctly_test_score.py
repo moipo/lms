@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0001_initial'),
+        ("univ_app", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='question',
-            name='answered_correctly',
+            model_name="question",
+            name="answered_correctly",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='test',
-            name='score',
+            model_name="test",
+            name="score",
             field=models.IntegerField(default=0),
         ),
     ]

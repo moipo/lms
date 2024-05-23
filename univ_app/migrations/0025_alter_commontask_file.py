@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0024_alter_student_user'),
+        ("univ_app", "0024_alter_student_user"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='commontask',
-            name='file',
-            field=models.FileField(blank=True, null=True, upload_to='uploads/common_tasks/'),
+            model_name="commontask",
+            name="file",
+            field=models.FileField(
+                blank=True, null=True, upload_to="uploads/common_tasks/"
+            ),
         ),
     ]

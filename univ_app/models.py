@@ -6,14 +6,17 @@ import os
 
 
 class Subject(models.Model):
-    title = models.CharField(max_length=200, default='', blank=True)
-    description = models.TextField(default='', blank=True)
+    title = models.CharField(max_length=200, default="", blank=True)
+    description = models.TextField(default="", blank=True)
     image = models.ImageField(
-        upload_to="uploads/subjects/", blank=True, null=True, default="test.png")
+        upload_to="uploads/subjects/", blank=True, null=True, default="test.png"
+    )
     teacher = models.ForeignKey(
-        "Teacher", blank=True, null=True, on_delete=models.SET_NULL)
+        "Teacher", blank=True, null=True, on_delete=models.SET_NULL
+    )
     st_group = models.ForeignKey(
-        "StGroup", blank=True, null=True, on_delete=models.SET_NULL)
+        "StGroup", blank=True, null=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return self.title
@@ -29,11 +32,13 @@ class Subject(models.Model):
 
 
 class Document(models.Model):
-    title = models.CharField(max_length=200, default='', blank=True)
+    title = models.CharField(max_length=200, default="", blank=True)
     subject = models.ForeignKey(
-        "Subject", blank=True, null=True, on_delete=models.SET_NULL)
+        "Subject", blank=True, null=True, on_delete=models.SET_NULL
+    )
     student = models.ForeignKey(
-        "Student", blank=True, null=True, on_delete=models.SET_NULL)
+        "Student", blank=True, null=True, on_delete=models.SET_NULL
+    )
     doc = models.FileField(upload_to="uploads/documents/", null=True)
 
     @property
@@ -42,38 +47,39 @@ class Document(models.Model):
 
 
 class StGroup(models.Model):
-    title = models.CharField(max_length=200, default='', blank=True)
+    title = models.CharField(max_length=200, default="", blank=True)
 
     def __str__(self):
         return self.title
 
 
 class Student(models.Model):
-    user = models.OneToOneField(
-        User, null=True, blank=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     st_group = models.ForeignKey(
-        "StGroup", blank=True, null=True, on_delete=models.SET_NULL)
+        "StGroup", blank=True, null=True, on_delete=models.SET_NULL
+    )
     profile_picture = models.ImageField(
-        upload_to="uploads/profile_pictures/%Y/", default="student.jpg", null=True)
+        upload_to="uploads/profile_pictures/%Y/", default="student.jpg", null=True
+    )
 
     def __str__(self):
         return self.user.first_name
 
     def get_all_tasks_by_type(self, some_type):
         ans_common_tasks = AnsweredCommonTask.objects.filter(
-            student=self, status=some_type)
+            student=self, status=some_type
+        )
         taken_tests = TakenTest.objects.filter(student=self, status=some_type)
-        info_tasks = AnsweredInfoTask.objects.filter(
-            student=self, status=some_type)
+        info_tasks = AnsweredInfoTask.objects.filter(student=self, status=some_type)
         tasks = list(chain(ans_common_tasks, taken_tests, info_tasks))
         return tasks
 
 
 class Teacher(models.Model):
-    user = models.OneToOneField(
-        User, null=True, blank=True, on_delete=models.SET_NULL)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
     profile_picture = models.ImageField(
-        upload_to="uploads/profile_pictures/%Y/", default="teacher.jpg", null=True)
+        upload_to="uploads/profile_pictures/%Y/", default="teacher.jpg", null=True
+    )
 
     def __str__(self):
         return self.user.first_name
@@ -81,14 +87,16 @@ class Teacher(models.Model):
 
 class Task(models.Model):
     # this field is present in Test itself
-    title = models.CharField(max_length=200, default='', blank=True)
+    title = models.CharField(max_length=200, default="", blank=True)
     # this field is present in Test itself
-    description = models.TextField(default='', blank=True)
+    description = models.TextField(default="", blank=True)
     subject = models.ForeignKey(
-        "Subject", blank=True, null=True, on_delete=models.SET_NULL)
+        "Subject", blank=True, null=True, on_delete=models.SET_NULL
+    )
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     created_by = models.ForeignKey(
-        "Teacher", blank=True, null=True, on_delete=models.SET_NULL)
+        "Teacher", blank=True, null=True, on_delete=models.SET_NULL
+    )
 
     class Meta:
         abstract = True
@@ -107,8 +115,7 @@ class Task(models.Model):
 
 
 class CommonTask(Task):
-    file = models.FileField(
-        upload_to="uploads/common_tasks/", blank=True, null=True)
+    file = models.FileField(upload_to="uploads/common_tasks/", blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -116,25 +123,25 @@ class CommonTask(Task):
 
 class Test(Task):
     slug = models.SlugField(max_length=120, blank=True, null=True)
-    link = models.CharField(max_length=1000, default='')
-    image = models.ImageField(upload_to="uploads/",
-                              blank=True, null=True, default="test.png")
+    link = models.CharField(max_length=1000, default="")
+    image = models.ImageField(
+        upload_to="uploads/", blank=True, null=True, default="test.png"
+    )
 
     def save(self, *args, **kwargs):
         if self.slug is None:
-            self.slug = slugify(self.title) + '-' + str(self.id)
+            self.slug = slugify(self.title) + "-" + str(self.id)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return f'/articles/{self.slug}/'
+        return f"/articles/{self.slug}/"
 
 
 class InfoTask(Task):
-    file = models.FileField(
-        upload_to="uploads/info_tasks/", blank=True, null=True)
+    file = models.FileField(upload_to="uploads/info_tasks/", blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -156,11 +163,12 @@ class AnsweredTask(models.Model):
     )
 
     student = models.ForeignKey(
-        "Student", blank=True, null=True, on_delete=models.SET_NULL)
-    finished_at = models.DateTimeField(
-        auto_now_add=True, blank=True, null=True)
+        "Student", blank=True, null=True, on_delete=models.SET_NULL
+    )
+    finished_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     status = models.CharField(
-        max_length=255, choices=STATUS_CHOICES, default=ASND, blank=True)
+        max_length=255, choices=STATUS_CHOICES, default=ASND, blank=True
+    )
 
     class Meta:
         abstract = True
@@ -179,9 +187,11 @@ class AnsweredCommonTask(AnsweredTask):
     grade = models.IntegerField(null=True, blank=True)
     answer = models.TextField(null=True, default="")
     file = models.FileField(
-        upload_to="uploads/answered_common_tasks/", blank=True, null=True)
+        upload_to="uploads/answered_common_tasks/", blank=True, null=True
+    )
     common_task = models.ForeignKey(
-        "CommonTask", blank=True, null=True, on_delete=models.CASCADE)
+        "CommonTask", blank=True, null=True, on_delete=models.CASCADE
+    )
     comment_from_teacher = models.TextField(default="", blank=True)
 
     def __str__(self):
@@ -190,13 +200,13 @@ class AnsweredCommonTask(AnsweredTask):
 
 class AnsweredInfoTask(AnsweredTask):
     related_info_task = models.ForeignKey(
-        "InfoTask", blank=True, null=True, on_delete=models.CASCADE)
+        "InfoTask", blank=True, null=True, on_delete=models.CASCADE
+    )
 
 
 class TakenTest(AnsweredTask):
     grade = models.IntegerField(null=True, blank=True)
-    related_test = models.ForeignKey(
-        "Test", on_delete=models.CASCADE, null=True)
+    related_test = models.ForeignKey("Test", on_delete=models.CASCADE, null=True)
     score = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
@@ -206,8 +216,7 @@ class TakenTest(AnsweredTask):
 class Question(models.Model):
     question = models.TextField(default="")
     answered_correctly = models.BooleanField(default=False)
-    related_test = models.ForeignKey(
-        "Test", on_delete=models.CASCADE, null=True)
+    related_test = models.ForeignKey("Test", on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.question
@@ -222,7 +231,8 @@ class Answer(models.Model):
     was_chosen = models.BooleanField(default=False)
     is_right = models.BooleanField(default=False)
     related_question = models.ForeignKey(
-        "Question", on_delete=models.CASCADE, null=True)
+        "Question", on_delete=models.CASCADE, null=True
+    )
 
     def get_answers(the_question: Question):
         the_answers = Answer.objects.filter(related_question=the_question)
@@ -237,13 +247,16 @@ class Answer(models.Model):
 
 class AnsweredQuestion(models.Model):
     related_taken_test = models.ForeignKey(
-        "TakenTest", on_delete=models.CASCADE, null=True)
+        "TakenTest", on_delete=models.CASCADE, null=True
+    )
     related_question = models.ForeignKey(
-        "Question", on_delete=models.CASCADE, null=True)
+        "Question", on_delete=models.CASCADE, null=True
+    )
     correct = models.BooleanField(default=False)
 
 
 class GivenAnswer(models.Model):
     related_answered_question = models.ForeignKey(
-        "AnsweredQuestion", on_delete=models.CASCADE, null=True)
+        "AnsweredQuestion", on_delete=models.CASCADE, null=True
+    )
     checked = models.BooleanField(default=False)

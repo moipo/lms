@@ -6,42 +6,42 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0032_alter_answeredcommontask_finished_at_and_more'),
+        ("univ_app", "0032_alter_answeredcommontask_finished_at_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='answeredinfotask',
-            name='was_checked',
+            model_name="answeredinfotask",
+            name="was_checked",
         ),
         migrations.AddField(
-            model_name='answeredcommontask',
-            name='was_done',
+            model_name="answeredcommontask",
+            name="was_done",
             field=models.BooleanField(blank=True, default=False, null=True),
         ),
         migrations.AddField(
-            model_name='answeredcommontask',
-            name='was_evaluated',
+            model_name="answeredcommontask",
+            name="was_evaluated",
             field=models.BooleanField(blank=True, default=False, null=True),
         ),
         migrations.AlterField(
-            model_name='answeredcommontask',
-            name='finished_at',
+            model_name="answeredcommontask",
+            name="finished_at",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='answeredinfotask',
-            name='finished_at',
+            model_name="answeredinfotask",
+            name="finished_at",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='takentest',
-            name='finished_at',
+            model_name="takentest",
+            name="finished_at",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='test',
-            name='slug',
+            model_name="test",
+            name="slug",
             field=models.SlugField(blank=True, max_length=120, null=True, unique=True),
         ),
     ]

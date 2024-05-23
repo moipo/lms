@@ -6,43 +6,73 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('univ_app', '0037_answeredinfotask_related_info_task'),
+        ("univ_app", "0037_answeredinfotask_related_info_task"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='answeredcommontask',
-            name='was_done',
+            model_name="answeredcommontask",
+            name="was_done",
         ),
         migrations.RemoveField(
-            model_name='answeredcommontask',
-            name='was_evaluated',
+            model_name="answeredcommontask",
+            name="was_evaluated",
         ),
         migrations.RemoveField(
-            model_name='answeredinfotask',
-            name='was_done',
+            model_name="answeredinfotask",
+            name="was_done",
         ),
         migrations.RemoveField(
-            model_name='takentest',
-            name='was_done',
+            model_name="takentest",
+            name="was_done",
         ),
         migrations.RemoveField(
-            model_name='takentest',
-            name='was_evaluated',
+            model_name="takentest",
+            name="was_evaluated",
         ),
         migrations.AddField(
-            model_name='answeredcommontask',
-            name='status',
-            field=models.CharField(blank=True, choices=[('ASSIGNED', 'Assigned'), ('DONE', 'Done'), ('PASSED', 'Passed'), ('EVALUATED', 'Evaluated')], default='ASSIGNED', max_length=255),
+            model_name="answeredcommontask",
+            name="status",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("ASSIGNED", "Assigned"),
+                    ("DONE", "Done"),
+                    ("PASSED", "Passed"),
+                    ("EVALUATED", "Evaluated"),
+                ],
+                default="ASSIGNED",
+                max_length=255,
+            ),
         ),
         migrations.AddField(
-            model_name='answeredinfotask',
-            name='status',
-            field=models.CharField(blank=True, choices=[('ASSIGNED', 'Assigned'), ('DONE', 'Done'), ('PASSED', 'Passed'), ('EVALUATED', 'Evaluated')], default='ASSIGNED', max_length=255),
+            model_name="answeredinfotask",
+            name="status",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("ASSIGNED", "Assigned"),
+                    ("DONE", "Done"),
+                    ("PASSED", "Passed"),
+                    ("EVALUATED", "Evaluated"),
+                ],
+                default="ASSIGNED",
+                max_length=255,
+            ),
         ),
         migrations.AddField(
-            model_name='takentest',
-            name='status',
-            field=models.CharField(blank=True, choices=[('ASSIGNED', 'Assigned'), ('DONE', 'Done'), ('PASSED', 'Passed'), ('EVALUATED', 'Evaluated')], default='ASSIGNED', max_length=255),
+            model_name="takentest",
+            name="status",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("ASSIGNED", "Assigned"),
+                    ("DONE", "Done"),
+                    ("PASSED", "Passed"),
+                    ("EVALUATED", "Evaluated"),
+                ],
+                default="ASSIGNED",
+                max_length=255,
+            ),
         ),
     ]
