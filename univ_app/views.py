@@ -307,7 +307,7 @@ def s_answer_task(request, task_type=None, task_id=None):
                 )
                 return redirect("s_tasks")
 
-    if task_type == "CommonTask":
+    if task_type == TaskTypes.common_task.value:
         form = AnsweredCommonTaskForm(request.POST or None)
         ctx = {
             "form": form,
@@ -316,10 +316,10 @@ def s_answer_task(request, task_type=None, task_id=None):
         }
         return render(request, "student_views/s_answer_task.html", ctx)
 
-    if task_type == "Test":
+    if task_type == TaskTypes.test.value:
         return redirect("start_a_test", task_id)
 
-    if task_type == "InfoTask":
+    if task_type == TaskTypes.info_task.value:
         info_task = get_task(task_type, task_id)
         answered_info_task = get_ans_task(info_task, student)
         answered_info_task.status = AnsweredTask.CHKD
@@ -398,10 +398,10 @@ def create_questions(request, testid):
 
         question = request.POST.get("question")
 
-        the_test = Test.objects.get(id=testid)
-        previous_questions = Question.get_test_questions(the_test)
+        test = Test.objects.get(id=testid)
+        previous_questions = Question.get_test_questions(test)
 
-        the_question = Question.objects.create(question=question, related_test=the_test)
+        the_question = Question.objects.create(question=question, related_test=test)
 
         answers = request.POST.getlist("answer")
         is_right = request.POST.getlist("is_right")
@@ -442,9 +442,9 @@ def finish_test_creation(request, testid):
 
 @allowed_users(allowed_groups=["student"])
 def start_a_test(request, testid):
-    the_test = Test.objects.get(id=testid)
+    test = Test.objects.get(id=testid)
     ctx = {
-        "the_test": the_test,
+        "test": test,
     }
     return render(request, "tester/take_test/start_a_test.html", ctx)
 
@@ -453,19 +453,19 @@ def start_a_test(request, testid):
 def take_test(request, testid, current_question_num, taken_test_id):
 
     if request.method == "POST":
-        the_test = Test.objects.get(pk=testid)
-        question_set = Question.get_test_questions(the_test)
-        this_question = None
+        test = Test.objects.get(pk=testid)
+        questions = Question.get_test_questions(test)
+        current_question = None
 
         next_question_num = current_question_num + 1
-        if len(question_set) < next_question_num - 1:
+        if len(questions) < next_question_num - 1:
             next_question = 999999
 
         taken_test = TakenTest.objects.get(id=taken_test_id)
 
         ans_length = 2
         try:
-            next_question = question_set[current_question_num]
+            next_question = questions[current_question_num]
             if next_question is not None:
                 next_answers = Answer.objects.filter(related_question=next_question)
                 ans_length = len(next_answers)
@@ -481,7 +481,7 @@ def take_test(request, testid, current_question_num, taken_test_id):
             extra=ans_length,
         )
 
-        previous_question = question_set[current_question_num - 1]
+        previous_question = questions[current_question_num - 1]
 
         prev_ans_quest = AnsweredQuestion()
         prev_ans_quest.related_taken_test = taken_test
@@ -510,62 +510,52 @@ def take_test(request, testid, current_question_num, taken_test_id):
         if current_question_num == 999999:
             return redirect(reverse("show_result", args=[taken_test_id]))
         try:
-            this_question = question_set[current_question_num]
+            current_question = questions[current_question_num]
         except:
             return redirect(reverse("show_result", args=[taken_test_id]))
 
-        the_answers = Answer.get_answers(this_question)
+        answers = Answer.get_answers(current_question)
         givenanswer_formset = GivenAnswerFormSet()
-        a_ga_zipped = zip(the_answers, givenanswer_formset)
+        answers_given_answers_forms_zipped = zip(answers, givenanswer_formset)
 
         ctx = {
-            "quantity_of_questions": len(question_set),
-            "this_question": this_question,
+            "quantity_of_questions": len(questions),
+            "current_question": current_question,
             "next_question_num": next_question_num,
-            "the_answers": the_answers,
+            "answers": answers,
             "givenanswer_formset": givenanswer_formset,
-            "the_test": the_test,
-            "a_ga_zipped": a_ga_zipped,
+            "test": test,
+            "answers_given_answers_forms_zipped": answers_given_answers_forms_zipped,
             "taken_test": taken_test,
         }
         return render(request, "tester/take_test/take_test.html", ctx)
 
-    the_test = Test.objects.get(pk=testid)
-    question_set = Question.get_test_questions(the_test)
-    this_question = None
-
-    this_question = question_set[current_question_num]
-    next_question_num = current_question_num + 1
-    if len(question_set) < next_question_num:
-        next_question = 999999
-
-    the_answers = Answer.get_answers(this_question)
-
+    test = Test.objects.get(pk=testid)
+    questions = Question.get_test_questions(test)
+    current_question = questions[current_question_num]
+    
     taken_test = TakenTest.objects.create(
-        score=0, related_test=the_test, student=request.user.student
+        score=0, related_test=test, student=request.user.student
     )
-
+    
+    answers = Answer.get_answers(current_question)
     GivenAnswerFormSet = inlineformset_factory(
         AnsweredQuestion,
         GivenAnswer,
         fields=("checked",),
         labels={"checked": ""},
         can_delete_extra=False,
-        extra=len(the_answers),
+        extra=len(answers),
     )
-
     givenanswer_formset = GivenAnswerFormSet()
-
-    a_ga_zipped = zip(the_answers, givenanswer_formset)
-
+    answers_given_answers_forms_zipped = zip(answers, givenanswer_formset)
     ctx = {
-        "quantity_of_questions": len(question_set),
-        "this_question": this_question,
-        "next_question_num": next_question_num,
-        "the_answers": the_answers,
-        "givenanswer_formset": givenanswer_formset,
-        "the_test": the_test,
-        "a_ga_zipped": a_ga_zipped,
+        "quantity_of_questions": len(questions),
+        "current_question": current_question,
+        "next_question_num": current_question_num + 1,
+        "answers": answers,
+        "test": test,
+        "answers_given_answers_forms_zipped": answers_given_answers_forms_zipped,
         "taken_test": taken_test,
     }
     return render(request, "tester/take_test/take_test.html", ctx)
@@ -604,8 +594,8 @@ def show_result_table(request, taken_test_id):
         answers = GivenAnswer.objects.filter(related_answered_question=a_q)
         given_ans_arr2d += [answers]
 
-    the_test = taken_test.related_test
-    questions = Question.objects.filter(related_test=the_test)
+    test = taken_test.related_test
+    questions = Question.objects.filter(related_test=test)
     ans_arr2d = []
     for q in questions:
         answers = Answer.objects.filter(related_question=q)
@@ -617,7 +607,7 @@ def show_result_table(request, taken_test_id):
         "taken_test": taken_test,
         "answered_questions": answered_questions,
         "given_ans_arr2d": given_ans_arr2d,
-        "the_test": the_test,
+        "test": test,
         "questions": questions,
         "ans_arr2d": ans_arr2d,
         "all_zipped": all_zipped,

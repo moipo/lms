@@ -221,9 +221,9 @@ class Question(models.Model):
     def __str__(self):
         return self.question
 
-    def get_test_questions(the_test: Test):
-        the_questions = Question.objects.filter(related_test=the_test)
-        return the_questions
+    def get_test_questions(test: Test):
+        questions = Question.objects.filter(related_test=test)
+        return questions
 
 
 class Answer(models.Model):
@@ -234,9 +234,9 @@ class Answer(models.Model):
         "Question", on_delete=models.CASCADE, null=True
     )
 
-    def get_answers(the_question: Question):
-        the_answers = Answer.objects.filter(related_question=the_question)
-        return the_answers
+    def get_answers(question: Question):
+        answers = Answer.objects.filter(related_question=question)
+        return answers
 
     def __repr__(self):
         return self.answer

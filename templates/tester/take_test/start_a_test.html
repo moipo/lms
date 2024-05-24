@@ -5,21 +5,21 @@
 
 <div class = 'container'>
   <br>
-  <img src="{{the_test.image.url}}" alt="" class = "center">
+  <img src="{{test.image.url}}" alt="" class = "center">
   <br>
   <div class="border border-light p-3 mb-4">
     <div class="text-wrap" style=" height: 1rem; width: 80%; color: white;">
-      Название теста: {{the_test.title}}
+      Название теста: {{test.title}}
     </div>
   </div>
 
 
   <div class="border border-light p-3 mb-4">
     <div class="text-wrap" style=" height: 7rem; width: 80%; color: white;">
-      Описание теста: {{the_test.description}}
+      Описание теста: {{test.description}}
     </div>
   </div>
-  <form action = "{% url 'take_test' the_test.pk 0 0 %}">
+  <form action = "{% url 'take_test' test.pk 0 0 %}">
       <button type="submit" class = "btn btn-success btn-lg center" name="button">Начать тест</button>
   </form>
 </div>
