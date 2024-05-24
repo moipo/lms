@@ -14,7 +14,7 @@ from .decorators import allowed_users
 from .forms import *
 from .models import *
 from .utils import (create_answered_task_instances_for_group, get_ans_task,
-                    get_task, is_teacher, _get_student_average_grade)
+                    get_task, is_teacher, _get_student_average_grade, _is_last_question)
 
 
 def homepage(request):
@@ -449,19 +449,17 @@ def start_a_test(request, testid):
     return render(request, "tester/take_test/start_a_test.html", ctx)
 
 
+
 @allowed_users(allowed_groups=["student"])
 def take_test(request, testid, current_question_num, taken_test_id):
 
     if request.method == "POST":
         test = Test.objects.get(pk=testid)
         questions = Question.get_test_questions(test)
-        current_question = None
-
-        next_question_num = current_question_num + 1
-        if len(questions) < next_question_num - 1:
-            next_question = 999999
-
         taken_test = TakenTest.objects.get(id=taken_test_id)
+        
+        if _is_last_question(questions=questions,current_question_num=current_question_num):
+            next_question = 999999
 
         ans_length = 2
         try:
@@ -483,10 +481,10 @@ def take_test(request, testid, current_question_num, taken_test_id):
 
         previous_question = questions[current_question_num - 1]
 
-        prev_ans_quest = AnsweredQuestion()
-        prev_ans_quest.related_taken_test = taken_test
-        prev_ans_quest.related_question = previous_question
-        prev_ans_quest.save()
+        prev_ans_question = AnsweredQuestion()
+        prev_ans_question.related_taken_test = taken_test
+        prev_ans_question.related_question = previous_question
+        prev_ans_question.save()
 
         previous_answers = Answer.get_answers(previous_question)
 
@@ -494,19 +492,20 @@ def take_test(request, testid, current_question_num, taken_test_id):
             checked = request.POST.get(f"givenanswer_set-{i}-checked", "off")
             given_answer = GivenAnswer()
             given_answer.checked = checked == "on"
-            given_answer.related_answered_question = prev_ans_quest
+            given_answer.related_answered_question = prev_ans_question
             given_answer.save()
 
         all_prev_given_ans = GivenAnswer.objects.filter(
-            related_answered_question=prev_ans_quest
+            related_answered_question=prev_ans_question
         )
 
-        prev_ans_quest.correct = all(
+        prev_ans_question.correct = all(
             ans.is_right == prev_ans.checked
             for ans, prev_ans in zip(previous_answers, all_prev_given_ans)
         )
-        prev_ans_quest.save()
+        prev_ans_question.save()
 
+        current_question = None
         if current_question_num == 999999:
             return redirect(reverse("show_result", args=[taken_test_id]))
         try:
@@ -521,7 +520,7 @@ def take_test(request, testid, current_question_num, taken_test_id):
         ctx = {
             "quantity_of_questions": len(questions),
             "current_question": current_question,
-            "next_question_num": next_question_num,
+            "next_question_num": current_question_num + 1,
             "answers": answers,
             "givenanswer_formset": givenanswer_formset,
             "test": test,

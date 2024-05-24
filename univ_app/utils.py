@@ -71,4 +71,8 @@ def _get_student_average_grade(
             student_taken_tests_grades)) / student_all_passed_tasks_cnt
         return avg_student_grade
     return 0
+
+
+def _is_last_question(questions, current_question_num:int):
+    return current_question_num > len(questions)
     
