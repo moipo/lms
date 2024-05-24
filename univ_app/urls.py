@@ -8,7 +8,8 @@ from django.views.static import serve
 urlpatterns = [
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
-    # testser
+
+    # tests
     path("test/create_test/<int:subject_id>", create_test, name="create_test"),
     path(
         "test/create_test/<int:testid>/create_questions/",
@@ -32,9 +33,11 @@ urlpatterns = [
         show_result_table,
         name="show_result_table",
     ),
-    # Login
+
+    # authorization
     path("login/", login_form, name="login_form"),
     path("log_out/", log_out, name="log_out"),
+
     # Student_views:
     path("student/tasks/", s_tasks, name="s_tasks"),
     path("student/statistics/", s_statistics, name="s_statistics"),

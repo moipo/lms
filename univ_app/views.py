@@ -1,22 +1,20 @@
+import datetime
+from collections import Counter
+from collections.abc import Mapping
 from enum import Enum
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse
-from django.contrib import messages
-from django.forms import inlineformset_factory
 import pytz
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.forms import inlineformset_factory
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+
 from .decorators import allowed_users
-from .utils import (
-    get_task,
-    is_teacher,
-    create_answered_task_instances_for_group,
-    get_ans_task,
-)
-from collections import Counter
-import datetime
 from .forms import *
 from .models import *
+from .utils import (create_answered_task_instances_for_group, get_ans_task,
+                    get_task, is_teacher, _get_student_average_grade)
 
 
 def homepage(request):
@@ -36,14 +34,17 @@ class TaskTypes(Enum):
     info_task = "InfoTask"
 
 
+task_form_by_task_type_mapping : Mapping[TaskTypes:forms.ModelForm] = {
+    TaskTypes.common_task.value: CommonTaskForm,
+    TaskTypes.info_task.value: InfoTaskForm,
+}
+
+
 @allowed_users(allowed_groups=["teacher"])
 def t_create_task(request, subject_id=None, task_type=None):
 
     if request.method == "POST":
-        if task_type == TaskTypes.common_task.value:
-            form = CommonTaskForm(request.POST, request.FILES)
-        elif task_type == TaskTypes.info_task.value:
-            form = InfoTaskForm(request.POST, request.FILES)
+        form = task_form_by_task_type_mapping[task_type](request.POST, request.FILES)
 
         if form.is_valid():
             task = form.save(commit=False)
@@ -85,48 +86,41 @@ def t_statistics_subject(request, subject_id):
 
     subject = Subject.objects.get(id=subject_id)
 
+    # only common_tasks and tests have grades
     common_tasks = subject.commontask_set.all()
     tests = subject.test_set.all()
 
-    ans_common_tasks = AnsweredCommonTask.objects.filter(common_task__in=common_tasks)
+    answered_common_tasks = AnsweredCommonTask.objects.filter(common_task__in=common_tasks)
     taken_tests = TakenTest.objects.filter(related_test__in=tests)
 
-    tasks_amount = taken_tests.count() + ans_common_tasks.count()
+    tasks_amount = taken_tests.count() + answered_common_tasks.count()
 
     assigned_tasks_cnt = (
         taken_tests.filter(status=AnsweredTask.ASND).count()
-        + ans_common_tasks.filter(status=AnsweredTask.ASND).count()
+        + answered_common_tasks.filter(status=AnsweredTask.ASND).count()
     )
     done_tasks_cnt = (
         taken_tests.filter(status=AnsweredTask.DONE).count()
-        + ans_common_tasks.filter(status=AnsweredTask.DONE).count()
+        + answered_common_tasks.filter(status=AnsweredTask.DONE).count()
     )
 
-    eval_ans_common_tasks = taken_tests.filter(status=AnsweredTask.EVAL)
-    eval_taken_tests = ans_common_tasks.filter(status=AnsweredTask.EVAL)
+    evaluated_answered_common_tasks = taken_tests.filter(status=AnsweredTask.EVAL)
+    evaluated_taken_tests = answered_common_tasks.filter(status=AnsweredTask.EVAL)
 
-    taken_test_grades = eval_taken_tests.values_list("grade", flat=True)
+    taken_test_grades = evaluated_taken_tests.values_list("grade", flat=True)
 
     students = subject.st_group.student_set.all()
-    student_avg_grades = []
 
+    student_avg_grades: list[int] = []
     for student in students:
-        s_ct_gr = eval_ans_common_tasks.filter(student=student).values_list(
-            "grade", flat=True
+        avg_student_grade = _get_student_average_grade(
+            student=student,
+            evaluated_answered_common_tasks=evaluated_answered_common_tasks,
+            taken_test_grades=taken_test_grades,
+            answered_common_tasks=answered_common_tasks,
+            taken_tests=taken_tests,
         )
-        s_tt_gr = taken_test_grades.filter(student=student).values_list(
-            "grade", flat=True
-        )
-        student_all_tasks_cnt = (
-            ans_common_tasks.filter(student=student).exclude(status="PASSED").count()
-            + taken_tests.filter(student=student).exclude(status="PASSED").count()
-        )
-        try:
-            avg_st_grade = (sum(s_ct_gr) + sum(s_tt_gr)) / student_all_tasks_cnt
-        except:
-            avg_st_grade = 0
-
-        student_avg_grades.append(round(avg_st_grade, 2) if avg_st_grade else 0)
+        student_avg_grades.append(round(avg_student_grade, 2) if avg_student_grade else 0)
 
     ctx = {
         "subject": subject,
@@ -499,7 +493,7 @@ def take_test(request, testid, current_question_num, taken_test_id):
         for i in range(len(previous_answers)):
             checked = request.POST.get(f"givenanswer_set-{i}-checked", "off")
             given_answer = GivenAnswer()
-            given_answer.checked = True if checked == "on" else False
+            given_answer.checked = checked == "on"
             given_answer.related_answered_question = prev_ans_quest
             given_answer.save()
 
@@ -535,6 +529,7 @@ def take_test(request, testid, current_question_num, taken_test_id):
             "taken_test": taken_test,
         }
         return render(request, "tester/take_test/take_test.html", ctx)
+
     the_test = Test.objects.get(pk=testid)
     question_set = Question.get_test_questions(the_test)
     this_question = None

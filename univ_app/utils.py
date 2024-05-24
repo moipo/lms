@@ -47,3 +47,28 @@ def get_ans_task(task, student):
     elif task_type == "InfoTask":
         ans_task = AnsweredInfoTask.objects.get(related_info_task=task, student=student)
     return ans_task
+
+
+def _get_student_average_grade(
+    student,
+    evaluated_answered_common_tasks,
+    taken_test_grades,
+    answered_common_tasks,
+    taken_tests,
+) -> int:
+    student_answered_common_tasks_grades = evaluated_answered_common_tasks.filter(student=student).values_list(
+        "grade", flat=True
+    )
+    student_taken_tests_grades = taken_test_grades.filter(student=student).values_list(
+        "grade", flat=True
+    )
+    student_all_passed_tasks_cnt = (
+            answered_common_tasks.filter(student=student).exclude(status="PASSED").count()
+            + taken_tests.filter(student=student).exclude(status="PASSED").count()
+    )
+    if student_all_passed_tasks_cnt:
+        avg_student_grade = (sum(student_answered_common_tasks_grades) + sum(
+            student_taken_tests_grades)) / student_all_passed_tasks_cnt
+        return avg_student_grade
+    return 0
+    
