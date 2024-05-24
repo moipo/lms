@@ -2,10 +2,10 @@ from enum import Enum
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from .forms import *
-from .models import *
 from django.urls import reverse
+from django.contrib import messages
 from django.forms import inlineformset_factory
+import pytz
 from .decorators import allowed_users
 from .utils import (
     get_task,
@@ -14,9 +14,9 @@ from .utils import (
     get_ans_task,
 )
 from collections import Counter
-from django.contrib import messages
 import datetime
-import pytz
+from .forms import *
+from .models import *
 
 
 def homepage(request):
@@ -100,10 +100,6 @@ def t_statistics_subject(request, subject_id):
     done_tasks_cnt = (
         taken_tests.filter(status=AnsweredTask.DONE).count()
         + ans_common_tasks.filter(status=AnsweredTask.DONE).count()
-    )
-    eval_tasks_cnt = (
-        taken_tests.filter(status=AnsweredTask.EVAL).count()
-        + ans_common_tasks.filter(status=AnsweredTask.EVAL).count()
     )
 
     eval_ans_common_tasks = taken_tests.filter(status=AnsweredTask.EVAL)
@@ -430,13 +426,13 @@ def create_questions(request, testid):
             "previous_questions": previous_questions,
         }
         return render(request, "tester/create_test/create_questions.html", ctx)
-    else:
-        answer_form_not_model = AnswerFormNotModel()
-        ctx = {
-            "answer_form_not_model": answer_form_not_model,
-            "testid": testid,
-        }
-        return render(request, "tester/create_test/create_questions.html", ctx)
+
+    answer_form_not_model = AnswerFormNotModel()
+    ctx = {
+        "answer_form_not_model": answer_form_not_model,
+        "testid": testid,
+    }
+    return render(request, "tester/create_test/create_questions.html", ctx)
 
 
 @allowed_users(allowed_groups=["teacher"])
@@ -512,10 +508,8 @@ def take_test(request, testid, current_question_num, taken_test_id):
         )
 
         prev_ans_quest.correct = all(
-            [
-                ans.is_right == prev_ans.checked
-                for ans, prev_ans in zip(previous_answers, all_prev_given_ans)
-            ]
+            ans.is_right == prev_ans.checked
+            for ans, prev_ans in zip(previous_answers, all_prev_given_ans)
         )
         prev_ans_quest.save()
 
@@ -527,9 +521,6 @@ def take_test(request, testid, current_question_num, taken_test_id):
             return redirect(reverse("show_result", args=[taken_test_id]))
 
         the_answers = Answer.get_answers(this_question)
-        answered_question = AnsweredQuestion(
-            related_taken_test=taken_test, related_question=this_question
-        )
         givenanswer_formset = GivenAnswerFormSet()
         a_ga_zipped = zip(the_answers, givenanswer_formset)
 
@@ -544,53 +535,45 @@ def take_test(request, testid, current_question_num, taken_test_id):
             "taken_test": taken_test,
         }
         return render(request, "tester/take_test/take_test.html", ctx)
+    the_test = Test.objects.get(pk=testid)
+    question_set = Question.get_test_questions(the_test)
+    this_question = None
 
-    else:
-        the_test = Test.objects.get(pk=testid)
-        question_set = Question.get_test_questions(the_test)
-        this_question = None
+    this_question = question_set[current_question_num]
+    next_question_num = current_question_num + 1
+    if len(question_set) < next_question_num:
+        next_question = 999999
 
-        this_question = question_set[current_question_num]
-        next_question_num = current_question_num + 1
-        if len(question_set) < next_question_num:
-            next_question = 999999
+    the_answers = Answer.get_answers(this_question)
 
-        the_answers = Answer.get_answers(this_question)
+    taken_test = TakenTest.objects.create(
+        score=0, related_test=the_test, student=request.user.student
+    )
 
-        taken_test = TakenTest.objects.create(
-            score=0, related_test=the_test, student=request.user.student
-        )
+    GivenAnswerFormSet = inlineformset_factory(
+        AnsweredQuestion,
+        GivenAnswer,
+        fields=("checked",),
+        labels={"checked": ""},
+        can_delete_extra=False,
+        extra=len(the_answers),
+    )
 
-        given_answer_form = GivenAnswerForm()
+    givenanswer_formset = GivenAnswerFormSet()
 
-        answered_question = AnsweredQuestion(
-            related_taken_test=taken_test, related_question=this_question
-        )
+    a_ga_zipped = zip(the_answers, givenanswer_formset)
 
-        GivenAnswerFormSet = inlineformset_factory(
-            AnsweredQuestion,
-            GivenAnswer,
-            fields=("checked",),
-            labels={"checked": ""},
-            can_delete_extra=False,
-            extra=len(the_answers),
-        )
-
-        givenanswer_formset = GivenAnswerFormSet()
-
-        a_ga_zipped = zip(the_answers, givenanswer_formset)
-
-        ctx = {
-            "quantity_of_questions": len(question_set),
-            "this_question": this_question,
-            "next_question_num": next_question_num,
-            "the_answers": the_answers,
-            "givenanswer_formset": givenanswer_formset,
-            "the_test": the_test,
-            "a_ga_zipped": a_ga_zipped,
-            "taken_test": taken_test,
-        }
-        return render(request, "tester/take_test/take_test.html", ctx)
+    ctx = {
+        "quantity_of_questions": len(question_set),
+        "this_question": this_question,
+        "next_question_num": next_question_num,
+        "the_answers": the_answers,
+        "givenanswer_formset": givenanswer_formset,
+        "the_test": the_test,
+        "a_ga_zipped": a_ga_zipped,
+        "taken_test": taken_test,
+    }
+    return render(request, "tester/take_test/take_test.html", ctx)
 
 
 @allowed_users(allowed_groups=["student"])
@@ -598,9 +581,7 @@ def show_result(request, taken_test_id):
 
     taken_test = TakenTest.objects.get(pk=taken_test_id)
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test=taken_test)
-    score = sum(
-        [1 if ans_question.correct else 0 for ans_question in answered_questions]
-    )
+    score = sum(1 if ans_question.correct else 0 for ans_question in answered_questions)
     q_amount = len(answered_questions)
     taken_test.score = score
     taken_test.status = AnsweredTask.EVAL
@@ -663,22 +644,19 @@ def login_form(request):
                 "user_form": user_form,
             }
             return render(request, "login/login_form.html", ctx)
-        else:
-            login(request, user)
-            ctx = {
-                "user": user,
-            }
-            if is_teacher(user):
-                return redirect("ts_subjects")
-            else:
-                return redirect("ts_subjects")
-
-    else:
-        user_form = UserForm()
+        login(request, user)
         ctx = {
-            "user_form": user_form,
+            "user": user,
         }
-        return render(request, "login/login_form.html", ctx)
+        if is_teacher(user):
+            return redirect("ts_subjects")
+        return redirect("ts_subjects")
+
+    user_form = UserForm()
+    ctx = {
+        "user_form": user_form,
+    }
+    return render(request, "login/login_form.html", ctx)
 
 
 def log_out(request):

@@ -11,7 +11,7 @@ def get_task(task_type, task_id):
         return get_object_or_404(InfoTask, id=task_id)
 
 
-def is_teacher(user):
+def is_teacher(user) -> bool:
     if user.groups.filter(name="teacher").exists():
         return True
     else:
