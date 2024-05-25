@@ -75,4 +75,32 @@ def _get_student_average_grade(
 
 def _is_last_question(questions, current_question_num:int):
     return current_question_num > len(questions)
-    
+
+
+def _save_previous_question(
+        questions,
+        current_question_num,
+        taken_test,
+        request_post
+):
+    previous_question = questions[current_question_num - 1]
+    previous_answered_question = AnsweredQuestion()
+    previous_answered_question.related_taken_test = taken_test
+    previous_answered_question.related_question = previous_question
+
+    previous_answers = Answer.get_answers(previous_question)
+    for i in range(len(previous_answers)):
+        checked = request_post.get(f"givenanswer_set-{i}-checked", "off")
+        given_answer = GivenAnswer()
+        given_answer.checked = checked == "on"
+        given_answer.related_answered_question = previous_answered_question
+        given_answer.save()
+
+    all_previous_given_answers = GivenAnswer.objects.filter(
+        related_answered_question=previous_answered_question
+    )
+    previous_answered_question.correct = all(
+        ans.is_right == prev_ans.checked
+        for ans, prev_ans in zip(previous_answers, all_previous_given_answers)
+    )
+    previous_answered_question.save()

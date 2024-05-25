@@ -14,7 +14,7 @@ from .decorators import allowed_users
 from .forms import *
 from .models import *
 from .utils import (create_answered_task_instances_for_group, get_ans_task,
-                    get_task, is_teacher, _get_student_average_grade, _is_last_question)
+                    get_task, is_teacher, _get_student_average_grade, _is_last_question, _save_previous_question)
 
 
 def homepage(request):
@@ -455,71 +455,37 @@ def take_test(request, testid, current_question_num, taken_test_id):
 
     if request.method == "POST":
         test = Test.objects.get(pk=testid)
-        questions = Question.get_test_questions(test)
+        questions: = Question.get_test_questions(test)
         taken_test = TakenTest.objects.get(id=taken_test_id)
         
+        _save_previous_question(
+            questions=questions,
+            current_question_num=current_question_num,
+            taken_test=taken_test,
+            request_post=request.POST,
+        )
+        
         if _is_last_question(questions=questions,current_question_num=current_question_num):
-            next_question = 999999
+            return redirect(reverse(view_name="show_result", args=[taken_test_id]))
+        
+        next_question: Question = questions[current_question_num]
 
-        ans_length = 2
-        try:
-            next_question = questions[current_question_num]
-            if next_question is not None:
-                next_answers = Answer.objects.filter(related_question=next_question)
-                ans_length = len(next_answers)
-        except:
-            pass
 
+        answers = Answer.get_answers(next_question)
         GivenAnswerFormSet = inlineformset_factory(
             AnsweredQuestion,
             GivenAnswer,
             fields=("checked",),
             labels={"checked": ""},
             can_delete_extra=False,
-            extra=ans_length,
+            extra=2,
         )
-
-        previous_question = questions[current_question_num - 1]
-
-        prev_ans_question = AnsweredQuestion()
-        prev_ans_question.related_taken_test = taken_test
-        prev_ans_question.related_question = previous_question
-        prev_ans_question.save()
-
-        previous_answers = Answer.get_answers(previous_question)
-
-        for i in range(len(previous_answers)):
-            checked = request.POST.get(f"givenanswer_set-{i}-checked", "off")
-            given_answer = GivenAnswer()
-            given_answer.checked = checked == "on"
-            given_answer.related_answered_question = prev_ans_question
-            given_answer.save()
-
-        all_prev_given_ans = GivenAnswer.objects.filter(
-            related_answered_question=prev_ans_question
-        )
-
-        prev_ans_question.correct = all(
-            ans.is_right == prev_ans.checked
-            for ans, prev_ans in zip(previous_answers, all_prev_given_ans)
-        )
-        prev_ans_question.save()
-
-        current_question = None
-        if current_question_num == 999999:
-            return redirect(reverse("show_result", args=[taken_test_id]))
-        try:
-            current_question = questions[current_question_num]
-        except:
-            return redirect(reverse("show_result", args=[taken_test_id]))
-
-        answers = Answer.get_answers(current_question)
         givenanswer_formset = GivenAnswerFormSet()
         answers_given_answers_forms_zipped = zip(answers, givenanswer_formset)
 
         ctx = {
             "quantity_of_questions": len(questions),
-            "current_question": current_question,
+            "next_question": next_question,
             "next_question_num": current_question_num + 1,
             "answers": answers,
             "givenanswer_formset": givenanswer_formset,
@@ -531,13 +497,13 @@ def take_test(request, testid, current_question_num, taken_test_id):
 
     test = Test.objects.get(pk=testid)
     questions = Question.get_test_questions(test)
-    current_question = questions[current_question_num]
+    next_question = questions[current_question_num]
     
     taken_test = TakenTest.objects.create(
         score=0, related_test=test, student=request.user.student
     )
     
-    answers = Answer.get_answers(current_question)
+    answers = Answer.get_answers(next_question)
     GivenAnswerFormSet = inlineformset_factory(
         AnsweredQuestion,
         GivenAnswer,
@@ -550,7 +516,7 @@ def take_test(request, testid, current_question_num, taken_test_id):
     answers_given_answers_forms_zipped = zip(answers, givenanswer_formset)
     ctx = {
         "quantity_of_questions": len(questions),
-        "current_question": current_question,
+        "next_question": next_question,
         "next_question_num": current_question_num + 1,
         "answers": answers,
         "test": test,
