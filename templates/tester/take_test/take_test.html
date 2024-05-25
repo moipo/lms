@@ -14,30 +14,17 @@
     </div>
   </div> -->
 
-  <form action = "{% url 'take_test' test.id next_question_num taken_test.pk %}" method = "POST"> {%csrf_token%}
+  <form action="{% url 'take_test' test.id next_question_num taken_test.pk %}" method="POST">
+  {% csrf_token %}
 
-    <ul>
-      <!-- {# {{given_answer_formset.management_form}} #} -->
-      {{zipped_answers_and_given_answers_forms.1.management_form}}
-      {% for answer, checkbox in zipped_answers_and_given_answers_forms %}
+  <ul>
+    {{ zipped_answers_and_given_answers_forms.management_form }}
+    {% for answer, form in zipped_answers_and_given_answers_forms %}
+      <li>{{ forloop.counter }}. {{ answer.text }} {{ form.checked }}</li>
+    {% endfor %}
+  </ul>
 
-        <li>{{forloop.counter}}:{{checkbox}} {{answer}} </li>
-
-        <!-- <input class="form-check-input" type="checkbox" name="" value=""> -->
-        <br>
-      {% endfor %}
-    </ul>
-
-
-
-      <!-- <ul>
-        {% for answer in answers %}
-          <li>{{answer}}</li>
-          <input class="form-check-input" type="checkbox" name="" value="">
-          <br>
-        {% endfor %}
-      </ul> -->
-      <button type="submit" class = "btn btn-success btn-lg " name="button">Дать ответ</button>
-  </form>
+  <button type="submit" class="btn btn-success btn-lg" name="button">Дать ответ</button>
+</form>
 </div>
 {% endblock %}

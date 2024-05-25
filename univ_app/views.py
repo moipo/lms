@@ -455,13 +455,12 @@ def start_a_test(request, testid):
 def take_test(request, testid, next_question_num, taken_test_id):
     test = Test.objects.get(pk=testid)
     questions = Question.get_test_questions(test)
-    next_question = questions[next_question_num]
-    answers = Answer.get_answers(next_question)
-    taken_test = TakenTest.objects.get(id=taken_test_id) if request.method == "POST" else (
-        TakenTest.objects.create(
-            score=0, related_test=test, student=request.user.student
+    taken_test = TakenTest.objects.get(id=taken_test_id) if TakenTest.objects.filter(id=taken_test_id).exists() else (
+            TakenTest.objects.create(
+                score=0, related_test=test, student=request.user.student
+            )
         )
-    )
+
 
     if request.method == "POST":
         _save_previous_question(
@@ -471,14 +470,16 @@ def take_test(request, testid, next_question_num, taken_test_id):
             request_post=request.POST,
         )
         
-        if _is_last_question(questions=questions,next_question_num=next_question_num):
-            return redirect(reverse(view_name="show_result", args=[taken_test_id]))
+    if _is_last_question(questions=questions,next_question_num=next_question_num):
+        return redirect(reverse("show_result", args=[taken_test_id]))
+
+    next_question = questions[next_question_num]
+    answers = Answer.get_answers(next_question)
 
     zipped_answers_and_given_answers_forms = _get_zipped_answers_and_given_answers_forms(
         answers=answers,
         request_method=request.method
     )
-
     ctx = {
         "quantity_of_questions": len(questions),
         "next_question": next_question,

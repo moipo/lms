@@ -74,8 +74,9 @@ def _get_student_average_grade(
     return 0
 
 
-def _is_last_question(questions, next_question_num:int):
-    return next_question_num > len(questions)
+def _is_last_question(questions, next_question_num:int) -> bool:
+    print(f'next_qestion_num: {next_question_num} \n len(questions) {len(questions)}')
+    return next_question_num == len(questions)
 
 
 def _save_previous_question(
@@ -85,17 +86,18 @@ def _save_previous_question(
         request_post
 ) -> None:
     previous_question = questions[next_question_num - 1]
-    previous_answered_question = AnsweredQuestion()
-    previous_answered_question.related_taken_test = taken_test
-    previous_answered_question.related_question = previous_question
+    previous_answered_question = AnsweredQuestion.objects.create(
+        related_taken_test=taken_test,
+        related_question=previous_question,
+    )
 
     previous_answers = Answer.get_answers(previous_question)
     for i in range(len(previous_answers)):
         checked = request_post.get(f"givenanswer_set-{i}-checked", "off")
-        given_answer = GivenAnswer()
-        given_answer.checked = checked == "on"
-        given_answer.related_answered_question = previous_answered_question
-        given_answer.save()
+        given_answer = GivenAnswer.objects.create(
+            checked=checked == "on",
+            related_answered_question=previous_answered_question,
+        )
 
     all_previous_given_answers = GivenAnswer.objects.filter(
         related_answered_question=previous_answered_question
@@ -120,4 +122,4 @@ def _get_zipped_answers_and_given_answers_forms(
         extra=2 if request_method == "POST" else len(answers),
     )
     givenanswer_formset = GivenAnswerFormSet()
-    zipped_answers_and_given_answers_forms = zip(answers, givenanswer_formset)
+    return zip(answers, givenanswer_formset)
