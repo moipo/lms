@@ -1,5 +1,6 @@
 from .models import *
 from django.shortcuts import get_object_or_404
+from django.forms import inlineformset_factory
 
 
 def get_task(task_type, task_id):
@@ -73,17 +74,17 @@ def _get_student_average_grade(
     return 0
 
 
-def _is_last_question(questions, current_question_num:int):
-    return current_question_num > len(questions)
+def _is_last_question(questions, next_question_num:int):
+    return next_question_num > len(questions)
 
 
 def _save_previous_question(
         questions,
-        current_question_num,
+        next_question_num,
         taken_test,
         request_post
-):
-    previous_question = questions[current_question_num - 1]
+) -> None:
+    previous_question = questions[next_question_num - 1]
     previous_answered_question = AnsweredQuestion()
     previous_answered_question.related_taken_test = taken_test
     previous_answered_question.related_question = previous_question
@@ -104,3 +105,19 @@ def _save_previous_question(
         for ans, prev_ans in zip(previous_answers, all_previous_given_answers)
     )
     previous_answered_question.save()
+
+
+def _get_zipped_answers_and_given_answers_forms(
+        answers,
+        request_method,
+):
+    GivenAnswerFormSet = inlineformset_factory(
+        AnsweredQuestion,
+        GivenAnswer,
+        fields=("checked",),
+        labels={"checked": ""},
+        can_delete_extra=False,
+        extra=2 if request_method == "POST" else len(answers),
+    )
+    givenanswer_formset = GivenAnswerFormSet()
+    zipped_answers_and_given_answers_forms = zip(answers, givenanswer_formset)

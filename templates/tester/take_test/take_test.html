@@ -18,8 +18,8 @@
 
     <ul>
       <!-- {# {{given_answer_formset.management_form}} #} -->
-      {{answers_given_answers_forms_zipped.1.management_form}}
-      {% for answer, checkbox in answers_given_answers_forms_zipped %}
+      {{zipped_answers_and_given_answers_forms.1.management_form}}
+      {% for answer, checkbox in zipped_answers_and_given_answers_forms %}
 
         <li>{{forloop.counter}}:{{checkbox}} {{answer}} </li>
 
