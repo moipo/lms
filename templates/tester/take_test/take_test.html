@@ -14,7 +14,7 @@
     </div>
   </div> -->
 
-  <form action="{% url 'take_test' test.id next_question_num taken_test.pk %}" method="POST">
+  <form action="{% url 'take_test' test.id next_question_num %}" method="POST">
   {% csrf_token %}
 
   <ul>

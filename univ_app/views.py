@@ -11,11 +11,20 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from .decorators import allowed_users
+from .enums import TaskTypes
 from .forms import *
+from .mappings import task_form_by_task_type_mapping, status_by_condition_mapping
 from .models import *
-from .utils import (create_answered_task_instances_for_group, get_ans_task,
-                    get_task, is_teacher, _get_student_average_grade, _is_last_question, _save_previous_question,
-                    _get_zipped_answers_and_given_answers_forms)
+from .utils import (
+    create_answered_task_instances_for_group,
+    get_ans_task,
+    get_task,
+    is_teacher,
+    _get_student_average_grade,
+    _is_last_question,
+    _save_previous_question,
+    _get_zipped_answers_and_given_answers_forms,
+)
 
 
 def homepage(request):
@@ -29,20 +38,10 @@ def t_choose_task_type(request, subject_id):
     )
 
 
-class TaskTypes(Enum):
-    common_task = "CommonTask"
-    test = "Test"
-    info_task = "InfoTask"
-
-
-task_form_by_task_type_mapping : Mapping[TaskTypes:forms.ModelForm] = {
-    TaskTypes.common_task.value: CommonTaskForm,
-    TaskTypes.info_task.value: InfoTaskForm,
-}
-
-
 @allowed_users(allowed_groups=["teacher"])
 def t_create_task(request, subject_id=None, task_type=None):
+
+
 
     if request.method == "POST":
         form = task_form_by_task_type_mapping[task_type](request.POST, request.FILES)
@@ -56,12 +55,10 @@ def t_create_task(request, subject_id=None, task_type=None):
             messages.success(request, "Задание было успешно создано и опубликовано")
             return redirect("ts_subject", subject_id)
 
-    if task_type == TaskTypes.common_task.value:
-        form = CommonTaskForm()
-    elif task_type == TaskTypes.info_task.value:
-        form = InfoTaskForm()
-    elif task_type == TaskTypes.test.value:
+    if task_type == TaskTypes.test.value:
         return redirect("create_test", subject_id=subject_id)
+
+    form = task_form_by_task_type_mapping[task_type]()
 
     ctx = {
         "task_type": task_type,
@@ -74,8 +71,7 @@ def t_create_task(request, subject_id=None, task_type=None):
 
 @allowed_users(allowed_groups=["teacher"])
 def t_statistics(request):
-    teacher = request.user.teacher
-    subjects = Subject.objects.all().filter(teacher=teacher)
+    subjects = Subject.objects.all().filter(teacher=request.user.teacher)
     ctx = {
         "subjects": subjects,
     }
@@ -86,49 +82,44 @@ def t_statistics(request):
 def t_statistics_subject(request, subject_id):
 
     subject = Subject.objects.get(id=subject_id)
-
-    # only common_tasks and tests have grades
     common_tasks = subject.commontask_set.all()
     tests = subject.test_set.all()
-
-    answered_common_tasks = AnsweredCommonTask.objects.filter(common_task__in=common_tasks)
+    
+    # only answered_common_tasks and taken_tests have grades
+    answered_common_tasks = AnsweredCommonTask.objects.filter(
+        common_task__in=common_tasks
+    )
     taken_tests = TakenTest.objects.filter(related_test__in=tests)
 
     tasks_amount = taken_tests.count() + answered_common_tasks.count()
 
-    assigned_tasks_cnt = (
-        taken_tests.filter(status=AnsweredTask.ASND).count()
-        + answered_common_tasks.filter(status=AnsweredTask.ASND).count()
-    )
-    done_tasks_cnt = (
-        taken_tests.filter(status=AnsweredTask.DONE).count()
-        + answered_common_tasks.filter(status=AnsweredTask.DONE).count()
+    assigned_tasks_amount = (
+        taken_tests.filter(status=AnsweredTask.ASSIGNED).count()
+        + answered_common_tasks.filter(status=AnsweredTask.ASSIGNED).count()
     )
 
-    evaluated_answered_common_tasks = taken_tests.filter(status=AnsweredTask.EVAL)
-    evaluated_taken_tests = answered_common_tasks.filter(status=AnsweredTask.EVAL)
+    evaluated_answered_common_tasks = taken_tests.filter(status=AnsweredTask.EVALUATED)
+    evaluated_taken_tests = answered_common_tasks.filter(status=AnsweredTask.EVALUATED)
 
     taken_test_grades = evaluated_taken_tests.values_list("grade", flat=True)
 
     students = subject.st_group.student_set.all()
 
-    student_avg_grades: list[int] = []
-    for student in students:
-        avg_student_grade = _get_student_average_grade(
+    student_avg_grades: list[int] = [
+        _get_student_average_grade(
             student=student,
             evaluated_answered_common_tasks=evaluated_answered_common_tasks,
             taken_test_grades=taken_test_grades,
             answered_common_tasks=answered_common_tasks,
             taken_tests=taken_tests,
-        )
-        student_avg_grades.append(round(avg_student_grade, 2) if avg_student_grade else 0)
+        ) for student in students
+    ]
 
     ctx = {
         "subject": subject,
         "tasks_amount": tasks_amount,
-        "assigned_tasks_cnt": assigned_tasks_cnt,
-        "tasks_performed": tasks_amount - assigned_tasks_cnt,
-        "done_tasks_cnt": done_tasks_cnt,
+        "assigned_tasks_amount": assigned_tasks_amount,
+        "tasks_performed": tasks_amount - assigned_tasks_amount,
         "avg_grade": round(sum(student_avg_grades) / len(student_avg_grades), 2),
         "student_names": [str(st) for st in students],
         "student_avg_grades": student_avg_grades,
@@ -138,11 +129,10 @@ def t_statistics_subject(request, subject_id):
 
 @allowed_users(allowed_groups=["teacher"])
 def t_task_answers(request):
-    teacher = request.user.teacher
-    t_subjects = teacher.subject_set.all()
-    t_common_tasks = CommonTask.objects.filter(subject__in=t_subjects)
+    teacher_subjects = request.user.teacher.subject_set.all()
+    teacher_common_tasks = CommonTask.objects.filter(subject__in=teacher_subjects)
     task_answers = AnsweredCommonTask.objects.filter(
-        common_task__in=t_common_tasks, status=AnsweredTask.DONE
+        common_task__in=teacher_common_tasks, status=AnsweredTask.DONE
     ).order_by("finished_at")
     ctx = {
         "task_answers": task_answers,
@@ -150,31 +140,32 @@ def t_task_answers(request):
     return render(request, "teacher_views/t_task_answers.html", ctx)
 
 
+
+
 @allowed_users(allowed_groups=["teacher"])
 def t_task_answer(request, ans_task_id):
-    ans_task = get_object_or_404(AnsweredCommonTask, pk=ans_task_id)
-    common_task = ans_task.common_task
+    answered_common_task = get_object_or_404(AnsweredCommonTask, pk=ans_task_id)
+    common_task = answered_common_task.common_task
 
     if request.method == "POST":
         task_was_accepted = request.POST.get("btn_accepted") is not None
-        if task_was_accepted:
-            grade = request.POST.get("grade")
-            if grade == "":
-                ans_task.status = AnsweredTask.PSSD
-            else:
-                ans_task.grade = int(grade)
-                ans_task.status = AnsweredTask.EVAL
-        else:
-            ans_task.status = AnsweredTask.ASND
-        comment = request.POST.get("comment_from_teacher")
-        if comment:
-            ans_task.comment_from_teacher = comment
-        ans_task.save()
+        grade = request.POST.get("grade")
+        grade_is_present = grade != ""
+
+        answered_common_task.status=status_by_condition_mapping[(task_was_accepted, grade_is_present)]
+
+        if task_was_accepted and grade_is_present:
+            answered_common_task.grade = int(grade)
+
+        if comment := request.POST.get("comment_from_teacher"):
+            answered_common_task.comment_from_teacher = comment
+
+        answered_common_task.save()
         return redirect("t_task_answers")
 
     ctx = {
         "common_task": common_task,
-        "ans_task": ans_task,
+        "answered_common_task": answered_common_task,
     }
     return render(request, "teacher_views/t_task_answer.html", ctx)
 
@@ -183,19 +174,13 @@ def t_task_answer(request, ans_task_id):
 @allowed_users(allowed_groups=["student"])
 def s_tasks(request):
     student = request.user.student
-    assigned_tasks = student.get_all_tasks_by_type(AnsweredTask.ASND)
-    done_tasks = student.get_all_tasks_by_type(AnsweredTask.DONE)
-    eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVAL)
-    passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PSSD)
-    checked_tasks = student.get_all_tasks_by_type(AnsweredTask.CHKD)
     ctx = {
-        "assigned_tasks": assigned_tasks,
-        "done_tasks": done_tasks,
-        "eval_tasks": eval_tasks,
-        "passed_tasks": passed_tasks,
-        "checked_tasks": checked_tasks,
+        "assigned_tasks": student.get_all_tasks_by_type(AnsweredTask.ASSIGNED),
+        "done_tasks": student.get_all_tasks_by_type(AnsweredTask.DONE),
+        "eval_tasks": student.get_all_tasks_by_type(AnsweredTask.EVALUATED),
+        "passed_tasks": student.get_all_tasks_by_type(AnsweredTask.PASSED),
+        "checked_tasks": student.get_all_tasks_by_type(AnsweredTask.CHECKED),
     }
-
     return render(request, "student_views/s_tasks.html", ctx)
 
 
@@ -220,13 +205,12 @@ def s_group_files_subject(request, subject_id):
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-
             instance = form.save(commit=False)
             instance.student = student
             instance.subject = subject
             instance.save()
         else:
-            # implicit iterations clear previous messages
+            # implicit iterations (list) clear previous messages
             list(messages.get_messages(request))
             messages.warning(request, "Выбран неверный формат файла")
 
@@ -243,8 +227,7 @@ def s_group_files_subject(request, subject_id):
 @allowed_users(allowed_groups=["student"])
 def delete_doc(request, subject_id, doc_id):
     doc = get_object_or_404(Document, pk=doc_id)
-    student = request.user.student
-    if doc.student == student:
+    if doc.student == request.user.student:
         doc.delete()
         messages.warning(request, "Документ успешно удален")
     else:
@@ -255,10 +238,10 @@ def delete_doc(request, subject_id, doc_id):
 @allowed_users(allowed_groups=["student"])
 def s_statistics(request):
     student = request.user.student
-    assigned_tasks = student.get_all_tasks_by_type(AnsweredTask.ASND)
+    assigned_tasks = student.get_all_tasks_by_type(AnsweredTask.ASSIGNED)
     done_tasks = student.get_all_tasks_by_type(AnsweredTask.DONE)
-    eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVAL)
-    passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PSSD)
+    eval_tasks = student.get_all_tasks_by_type(AnsweredTask.EVALUATED)
+    passed_tasks = student.get_all_tasks_by_type(AnsweredTask.PASSED)
 
     standart_grades = [
         task.grade for task in eval_tasks if task.grade in {1, 2, 3, 4, 5}
@@ -266,14 +249,14 @@ def s_statistics(request):
     grades_cnt = dict.fromkeys([1, 2, 3, 4, 5], 0)
     for key, value in Counter(standart_grades).items():
         grades_cnt[key] += value
-    task_grades = list(grades_cnt.values())
+    each_grade_quantity = list(grades_cnt.values())
 
     ctx = {
         "assigned_tasks": assigned_tasks,
         "done_tasks": done_tasks,
         "eval_tasks": eval_tasks,
         "passed_tasks": passed_tasks,
-        "task_grades": task_grades,
+        "each_grade_quantity": each_grade_quantity,
     }
 
     return render(request, "student_views/s_statistics.html", ctx)
@@ -323,7 +306,7 @@ def s_answer_task(request, task_type=None, task_id=None):
     if task_type == TaskTypes.info_task.value:
         info_task = get_task(task_type, task_id)
         answered_info_task = get_ans_task(info_task, student)
-        answered_info_task.status = AnsweredTask.CHKD
+        answered_info_task.status = AnsweredTask.CHECKED
         answered_info_task.save()
         return redirect("s_tasks")
 
@@ -332,7 +315,6 @@ def s_answer_task(request, task_type=None, task_id=None):
 @allowed_users(allowed_groups=["teacher", "student"])
 def ts_subjects(request):
     user = request.user
-    subjects = None
     if is_teacher(user):
         teacher = user.teacher
         subjects = Subject.objects.all().filter(teacher=teacher)
@@ -365,9 +347,8 @@ def ts_profile(request):
 @allowed_users(allowed_groups=["teacher", "student"])
 def ts_task(request, task_type=0, task_id=0):
     task = get_task(task_type, task_id)
-
     ctx = {"task": task}
-
+    
     user = request.user
     if not is_teacher(user):
         ans_task = get_ans_task(task, user.student)
@@ -397,12 +378,9 @@ def create_test(request, subject_id):
 def create_questions(request, testid):
     if request.method == "POST":
 
-        question = request.POST.get("question")
-
         test = Test.objects.get(id=testid)
-        previous_questions = Question.get_test_questions(test)
-
-        the_question = Question.objects.create(question=question, related_test=test)
+        question = request.POST.get("question")
+        new_question = Question.objects.create(question=question, related_test=test)
 
         answers = request.POST.getlist("answer")
         is_right = request.POST.getlist("is_right")
@@ -411,10 +389,12 @@ def create_questions(request, testid):
             ans_obj = Answer()
             ans_obj.answer = answer
             ans_obj.is_right = str(number) in is_right
-            ans_obj.related_question = the_question
+            ans_obj.related_question = new_question
             ans_obj.save()
 
+
         answer_form_not_model = AnswerFormNotModel()
+        previous_questions = Question.get_test_questions(test)
         ctx = {
             "answer_form_not_model": answer_form_not_model,
             "testid": testid,
@@ -450,17 +430,13 @@ def start_a_test(request, testid):
     return render(request, "tester/take_test/start_a_test.html", ctx)
 
 
-
 @allowed_users(allowed_groups=["student"])
-def take_test(request, testid, next_question_num, taken_test_id):
+def take_test(request, testid, next_question_num):
     test = Test.objects.get(pk=testid)
     questions = Question.get_test_questions(test)
-    taken_test = TakenTest.objects.get(id=taken_test_id) if TakenTest.objects.filter(id=taken_test_id).exists() else (
-            TakenTest.objects.create(
-                score=0, related_test=test, student=request.user.student
-            )
-        )
-
+    taken_test = TakenTest.objects.get(
+        related_test_id=testid, student_id=request.user.student.id
+    )
 
     if request.method == "POST":
         _save_previous_question(
@@ -469,16 +445,17 @@ def take_test(request, testid, next_question_num, taken_test_id):
             taken_test=taken_test,
             request_post=request.POST,
         )
-        
-    if _is_last_question(questions=questions,next_question_num=next_question_num):
-        return redirect(reverse("show_result", args=[taken_test_id]))
+
+    if _is_last_question(questions=questions, next_question_num=next_question_num):
+        return redirect(reverse("show_result", args=[taken_test.id]))
 
     next_question = questions[next_question_num]
     answers = Answer.get_answers(next_question)
 
-    zipped_answers_and_given_answers_forms = _get_zipped_answers_and_given_answers_forms(
-        answers=answers,
-        request_method=request.method
+    zipped_answers_and_given_answers_forms = (
+        _get_zipped_answers_and_given_answers_forms(
+            answers=answers, request_method=request.method
+        )
     )
     ctx = {
         "quantity_of_questions": len(questions),
@@ -492,28 +469,27 @@ def take_test(request, testid, next_question_num, taken_test_id):
     return render(request, "tester/take_test/take_test.html", ctx)
 
 
-
-
 @allowed_users(allowed_groups=["student"])
 def show_result(request, taken_test_id):
 
     taken_test = TakenTest.objects.get(pk=taken_test_id)
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test=taken_test)
     score = sum(1 if ans_question.correct else 0 for ans_question in answered_questions)
-    q_amount = len(answered_questions)
+    
+    answered_questions_amount = len(answered_questions)
     taken_test.score = score
-    taken_test.status = AnsweredTask.EVAL
-    taken_test.grade = int((score / q_amount) * 5)
+    taken_test.status = AnsweredTask.EVALUATED
+    taken_test.grade = int((score / answered_questions_amount) * 5)
     taken_test.save()
 
     # delete excessive taken_test instance
-    TakenTest.objects.filter(
-        student=request.user.student, related_test=taken_test.related_test
-    )[0].delete()
+    # TakenTest.objects.filter(
+    #     student=request.user.student, related_test=taken_test.related_test
+    # )[0].delete()
 
     ctx = {
         "taken_test": taken_test,
-        "q_amount": q_amount,
+        "answered_questions_amount": answered_questions_amount,
     }
     return render(request, "tester/take_test/show_result.html", ctx)
 

@@ -1,22 +1,20 @@
+from .enums import TaskTypes
 from .models import *
 from django.shortcuts import get_object_or_404
 from django.forms import inlineformset_factory
 
 
 def get_task(task_type, task_id):
-    if task_type == "CommonTask":
+    if task_type == TaskTypes.common_task.value:
         return get_object_or_404(CommonTask, id=task_id)
-    if task_type == "Test":
+    if task_type == TaskTypes.test.value:
         return get_object_or_404(Test, id=task_id)
-    if task_type == "InfoTask":
+    if task_type == TaskTypes.info_task.value:
         return get_object_or_404(InfoTask, id=task_id)
 
 
 def is_teacher(user) -> bool:
-    if user.groups.filter(name="teacher").exists():
-        return True
-    else:
-        return False
+    return user.groups.filter(name="teacher").exists()
 
 
 def create_answered_task_instances_for_group(task):
@@ -25,17 +23,17 @@ def create_answered_task_instances_for_group(task):
     if task_type == "CommonTask":
         for student in student_set:
             AnsweredCommonTask.objects.create(
-                student=student, common_task=task, status=AnsweredTask.ASND
+                student=student, common_task=task, status=AnsweredTask.ASSIGNED
             )
     elif task_type == "Test":
         for student in student_set:
             TakenTest.objects.create(
-                student=student, related_test=task, status=AnsweredTask.ASND
+                student=student, related_test=task, status=AnsweredTask.ASSIGNED
             )
     elif task_type == "InfoTask":
         for student in student_set:
             AnsweredInfoTask.objects.create(
-                student=student, related_info_task=task, status=AnsweredTask.ASND
+                student=student, related_info_task=task, status=AnsweredTask.ASSIGNED
             )
 
 
@@ -57,33 +55,31 @@ def _get_student_average_grade(
     answered_common_tasks,
     taken_tests,
 ) -> int:
-    student_answered_common_tasks_grades = evaluated_answered_common_tasks.filter(student=student).values_list(
-        "grade", flat=True
-    )
+    student_answered_common_tasks_grades = evaluated_answered_common_tasks.filter(
+        student=student
+    ).values_list("grade", flat=True)
     student_taken_tests_grades = taken_test_grades.filter(student=student).values_list(
         "grade", flat=True
     )
     student_all_passed_tasks_cnt = (
-            answered_common_tasks.filter(student=student).exclude(status="PASSED").count()
-            + taken_tests.filter(student=student).exclude(status="PASSED").count()
+        answered_common_tasks.filter(student=student).exclude(status="PASSED").count()
+        + taken_tests.filter(student=student).exclude(status="PASSED").count()
     )
     if student_all_passed_tasks_cnt:
-        avg_student_grade = (sum(student_answered_common_tasks_grades) + sum(
-            student_taken_tests_grades)) / student_all_passed_tasks_cnt
-        return avg_student_grade
+        avg_student_grade = (
+            sum(student_answered_common_tasks_grades) + sum(student_taken_tests_grades)
+        ) / student_all_passed_tasks_cnt
+        return round(avg_student_grade, 2)
     return 0
 
 
-def _is_last_question(questions, next_question_num:int) -> bool:
-    print(f'next_qestion_num: {next_question_num} \n len(questions) {len(questions)}')
+def _is_last_question(questions, next_question_num: int) -> bool:
+    print(f"next_qestion_num: {next_question_num} \n len(questions) {len(questions)}")
     return next_question_num == len(questions)
 
 
 def _save_previous_question(
-        questions,
-        next_question_num,
-        taken_test,
-        request_post
+    questions, next_question_num, taken_test, request_post
 ) -> None:
     previous_question = questions[next_question_num - 1]
     previous_answered_question = AnsweredQuestion.objects.create(
@@ -110,8 +106,8 @@ def _save_previous_question(
 
 
 def _get_zipped_answers_and_given_answers_forms(
-        answers,
-        request_method,
+    answers,
+    request_method,
 ):
     GivenAnswerFormSet = inlineformset_factory(
         AnsweredQuestion,

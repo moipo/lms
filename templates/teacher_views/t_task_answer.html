@@ -34,24 +34,24 @@
   <h5 class = "text-center">
     Выполненное задание:
     
-    {% if ans_task.file%}
+    {% if answered_common_task.file%}
     <br>
     <br>
-    <a class="mb-1" href = {{ans_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
+    <a class="mb-1" href = {{answered_common_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
     {%endif%} 
   </h5>
-  {{ans_task.answer}}
+  {{answered_common_task.answer}}
   
     <hr>
   
 
-  {% if ans_task.comment_from_teacher%}
+  {% if answered_common_task.comment_from_teacher%}
       <h5 class = "text-center"> 
         Комментарий преподавателя: 
       </h5>
       <br>
       <br>
-      {{ans_task.comment_from_teacher}}
+      {{answered_common_task.comment_from_teacher}}
     <hr>
   {%endif%} 
 
@@ -65,7 +65,7 @@
 
 
   {% if not request.user|has_group:'teacher' %}
-  {%if ans_task.status == "PASSED" or ans_task.status == "EVALUATED" %}
+  {%if answered_common_task.status == "PASSED" or answered_common_task.status == "EVALUATED" %}
 
   {%else%}
   
@@ -73,9 +73,9 @@
     {%if common_task.get_type == "InfoTask"%}
       С материалами ознакомился(ась)
     {%else%}
-      {%if ans_task.status == "DONE"%}
+      {%if answered_common_task.status == "DONE"%}
         Изменить ответ
-      {%elif ans_task.status == "ASSIGNED"%}
+      {%elif answered_common_task.status == "ASSIGNED"%}
         Выполнить задание
       {%endif%}
     {%endif%} 
@@ -87,7 +87,7 @@
 
 <div class = "row">
   <div class = "col-md-5 border border-3 border-success rounded p-3">
-    <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post">
+    <form class="form-group" action="{% url 't_task_answer' answered_common_task.id %}" method="post">
       {%csrf_token%}
       оценка:
       <input name = "grade" class = "input-field" type = "number"> </input>
@@ -102,7 +102,7 @@
   <div class = "col-md-1">
   </div>
   <div class = "col-md-5 border border-3 border-danger rounded p-3">
-    <form class="form-group" action="{% url 't_task_answer' ans_task.id %}" method="post"> {%csrf_token%}
+    <form class="form-group" action="{% url 't_task_answer' answered_common_task.id %}" method="post"> {%csrf_token%}
       Комментирий:
       <input type = "textarea" class = "input-field" name = "comment_from_teacher"> </input> 
       <br><br>

@@ -148,18 +148,18 @@ class InfoTask(Task):
 
 
 class AnsweredTask(models.Model):
-    ASND = "ASSIGNED"
+    ASSIGNED = "ASSIGNED"
     DONE = "DONE"
-    PSSD = "PASSED"
-    EVAL = "EVALUATED"
-    CHKD = "CHECKED"  # for InfoTask
+    PASSED = "PASSED"
+    EVALUATED = "EVALUATED"
+    CHECKED = "CHECKED"  # for InfoTask
 
     STATUS_CHOICES = (
-        (ASND, "Assigned"),
+        (ASSIGNED, "Assigned"),
         (DONE, "Done"),
-        (PSSD, "Passed"),
-        (EVAL, "Evaluated"),
-        (CHKD, "CHECKED"),
+        (PASSED, "Passed"),
+        (EVALUATED, "Evaluated"),
+        (CHECKED, "CHECKED"),
     )
 
     student = models.ForeignKey(
@@ -167,7 +167,7 @@ class AnsweredTask(models.Model):
     )
     finished_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     status = models.CharField(
-        max_length=255, choices=STATUS_CHOICES, default=ASND, blank=True
+        max_length=255, choices=STATUS_CHOICES, default=ASSIGNED, blank=True
     )
 
     class Meta:
@@ -211,6 +211,9 @@ class TakenTest(AnsweredTask):
 
     def __str__(self):
         return str(self.related_test)
+
+    class Meta:
+        unique_together = (("student", "related_test"),)
 
 
 class Question(models.Model):

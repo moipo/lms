@@ -87,7 +87,7 @@ class AnsweredQuestionAdmin(admin.ModelAdmin):
 
 
 class TakenTestAdmin(admin.ModelAdmin):
-    list_display = ["id", "related_test", "score"]
+    list_display = ["id", "related_test", "score", "student"]
 
 
 admin.site.register(Answer, AnswerAdmin)
