@@ -1,6 +1,7 @@
-from .models import *
 from django import forms
 from django.contrib.auth.models import User
+
+from .models import *
 
 
 class GivenAnswerForm(forms.ModelForm):
@@ -111,7 +112,7 @@ class CommonTaskForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CommonTaskForm, self).__init__(*args, **kwargs)
-        for name, field in self.fields.items():
+        for _, field in self.fields.items():
             field.widget.attrs.update({"class": "form-control"})
 
 
@@ -126,7 +127,7 @@ class InfoTaskForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(InfoTaskForm, self).__init__(*args, **kwargs)
-        for name, field in self.fields.items():
+        for _, field in self.fields.items():
             field.widget.attrs.update({"class": "form-control"})
 
 
@@ -141,7 +142,7 @@ class AnsweredCommonTaskForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AnsweredCommonTaskForm, self).__init__(*args, **kwargs)
-        for name, field in self.fields.items():
+        for _, field in self.fields.items():
             field.widget.attrs.update({"class": "form-control"})
 
 
@@ -159,5 +160,5 @@ class DocumentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)
-        for name, field in self.fields.items():
+        for _, field in self.fields.items():
             field.widget.attrs.update({"class": "form-control"})

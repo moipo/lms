@@ -1,7 +1,8 @@
+from django.forms import inlineformset_factory
+from django.shortcuts import get_object_or_404
+
 from .enums import TaskTypes
 from .models import *
-from django.shortcuts import get_object_or_404
-from django.forms import inlineformset_factory
 
 
 def get_task(task_type, task_id):

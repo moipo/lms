@@ -1,30 +1,23 @@
 import datetime
 from collections import Counter
-from collections.abc import Mapping
-from enum import Enum
 
 import pytz
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.forms import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from .decorators import allowed_users
 from .enums import TaskTypes
 from .forms import *
-from .mappings import task_form_by_task_type_mapping, status_by_condition_mapping
+from .mappings import (status_by_condition_mapping,
+                       task_form_by_task_type_mapping)
 from .models import *
-from .utils import (
-    create_answered_task_instances_for_group,
-    get_ans_task,
-    get_task,
-    is_teacher,
-    _get_student_average_grade,
-    _is_last_question,
-    _save_previous_question,
-    _get_zipped_answers_and_given_answers_forms,
-)
+from .utils import (_get_student_average_grade,
+                    _get_zipped_answers_and_given_answers_forms,
+                    _is_last_question, _save_previous_question,
+                    create_answered_task_instances_for_group, get_ans_task,
+                    get_task, is_teacher)
 
 
 def homepage(request):
@@ -40,8 +33,6 @@ def t_choose_task_type(request, subject_id):
 
 @allowed_users(allowed_groups=["teacher"])
 def t_create_task(request, subject_id=None, task_type=None):
-
-
 
     if request.method == "POST":
         form = task_form_by_task_type_mapping[task_type](request.POST, request.FILES)
@@ -84,7 +75,7 @@ def t_statistics_subject(request, subject_id):
     subject = Subject.objects.get(id=subject_id)
     common_tasks = subject.commontask_set.all()
     tests = subject.test_set.all()
-    
+
     # only answered_common_tasks and taken_tests have grades
     answered_common_tasks = AnsweredCommonTask.objects.filter(
         common_task__in=common_tasks
@@ -112,7 +103,8 @@ def t_statistics_subject(request, subject_id):
             taken_test_grades=taken_test_grades,
             answered_common_tasks=answered_common_tasks,
             taken_tests=taken_tests,
-        ) for student in students
+        )
+        for student in students
     ]
 
     ctx = {
@@ -140,8 +132,6 @@ def t_task_answers(request):
     return render(request, "teacher_views/t_task_answers.html", ctx)
 
 
-
-
 @allowed_users(allowed_groups=["teacher"])
 def t_task_answer(request, ans_task_id):
     answered_common_task = get_object_or_404(AnsweredCommonTask, pk=ans_task_id)
@@ -152,7 +142,9 @@ def t_task_answer(request, ans_task_id):
         grade = request.POST.get("grade")
         grade_is_present = grade != ""
 
-        answered_common_task.status=status_by_condition_mapping[(task_was_accepted, grade_is_present)]
+        answered_common_task.status = status_by_condition_mapping[
+            (task_was_accepted, grade_is_present)
+        ]
 
         if task_was_accepted and grade_is_present:
             answered_common_task.grade = int(grade)
@@ -348,7 +340,7 @@ def ts_profile(request):
 def ts_task(request, task_type=0, task_id=0):
     task = get_task(task_type, task_id)
     ctx = {"task": task}
-    
+
     user = request.user
     if not is_teacher(user):
         ans_task = get_ans_task(task, user.student)
@@ -391,7 +383,6 @@ def create_questions(request, testid):
             ans_obj.is_right = str(number) in is_right
             ans_obj.related_question = new_question
             ans_obj.save()
-
 
         answer_form_not_model = AnswerFormNotModel()
         previous_questions = Question.get_test_questions(test)
@@ -474,18 +465,13 @@ def show_result(request, taken_test_id):
 
     taken_test = TakenTest.objects.get(pk=taken_test_id)
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test=taken_test)
+
     score = sum(1 if ans_question.correct else 0 for ans_question in answered_questions)
-    
     answered_questions_amount = len(answered_questions)
     taken_test.score = score
     taken_test.status = AnsweredTask.EVALUATED
     taken_test.grade = int((score / answered_questions_amount) * 5)
     taken_test.save()
-
-    # delete excessive taken_test instance
-    # TakenTest.objects.filter(
-    #     student=request.user.student, related_test=taken_test.related_test
-    # )[0].delete()
 
     ctx = {
         "taken_test": taken_test,
@@ -498,13 +484,15 @@ def show_result(request, taken_test_id):
 def show_result_table(request, taken_test_id):
     taken_test = TakenTest.objects.get(id=taken_test_id)
     answered_questions = AnsweredQuestion.objects.filter(related_taken_test=taken_test)
+
     given_ans_arr2d = []
-    for a_q in answered_questions:
-        answers = GivenAnswer.objects.filter(related_answered_question=a_q)
+    for aq in answered_questions:
+        answers = GivenAnswer.objects.filter(related_answered_question=aq)
         given_ans_arr2d += [answers]
 
     test = taken_test.related_test
     questions = Question.objects.filter(related_test=test)
+
     ans_arr2d = []
     for q in questions:
         answers = Answer.objects.filter(related_question=q)
@@ -525,8 +513,10 @@ def show_result_table(request, taken_test_id):
 
 
 def login_form(request):
+
     if request.user.is_authenticated:
         return redirect("ts_profile")
+
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")

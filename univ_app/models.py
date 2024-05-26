@@ -1,8 +1,9 @@
+import os
+from itertools import chain
+
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
-from django.contrib.auth.models import User
-from itertools import chain
-import os
 
 
 class Subject(models.Model):

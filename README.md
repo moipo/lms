@@ -27,3 +27,9 @@ commands to run locally(Linux):
 
 
 
+
+linters:
+    black univ_app
+    autoflake --remove-all-unused-imports -i -r univ_app
+    isort univ_app
+    pylint --load-plugins pylint_django --django-settings-module=lms.settings --ignore=migrations /c/Users/moipo/projects/lms/univ_app

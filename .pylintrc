@@ -451,6 +451,7 @@ disable=raw-checker-failed,
         unused-wildcard-import,
         too-many-locals,
         no-value-for-parameter,
+        super-with-arguments,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
