@@ -176,12 +176,13 @@ class AnsweredTask(models.Model):
 
     def related_task(self):
         class_name = self.__class__.__name__
-        if class_name == "AnsweredCommonTask":
-            return self.common_task
-        elif class_name == "TakenTest":
-            return self.related_test
-        elif class_name == "AnsweredInfoTask":
-            return self.related_info_task
+        match class_name:
+            case "AnsweredCommonTask":
+                return self.common_task  # pylint: disable=no-member
+            case "TakenTest":
+                return self.related_test  # pylint: disable=no-member
+            case "AnsweredInfoTask":
+                return self.related_info_task  # pylint: disable=no-member
 
 
 class AnsweredCommonTask(AnsweredTask):
@@ -225,8 +226,8 @@ class Question(models.Model):
     def __str__(self):
         return self.question
 
-    def get_test_questions(test: Test):
-        questions = Question.objects.filter(related_test=test)
+    def get_test_questions(self, test: Test):
+        questions = self.objects.filter(related_test=test)
         return questions
 
 
@@ -238,8 +239,8 @@ class Answer(models.Model):
         "Question", on_delete=models.CASCADE, null=True
     )
 
-    def get_answers(question: Question):
-        answers = Answer.objects.filter(related_question=question)
+    def get_answers(self, question: Question):
+        answers = self.objects.filter(related_question=question)
         return answers
 
     def __repr__(self):

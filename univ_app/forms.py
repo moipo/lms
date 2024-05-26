@@ -53,7 +53,7 @@ class AnswerForm(forms.ModelForm):
         self.fields["answer"].widget.attrs.update(
             {
                 "class": "form-control",
-                "style": ' placeholder : "Вопрос"; width:700px; height:25px;  display:inline-block;',
+                "style": ' placeholder : "Вопрос"; width:700px; height:25px;  display:inline-block;',  # pylint: disable=line-too-long
             }
         )
         self.fields["is_right"].widget.attrs.update(

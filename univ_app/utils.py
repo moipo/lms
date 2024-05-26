@@ -6,12 +6,13 @@ from .models import *
 
 
 def get_task(task_type, task_id):
-    if task_type == TaskTypes.common_task.value:
-        return get_object_or_404(CommonTask, id=task_id)
-    if task_type == TaskTypes.test.value:
-        return get_object_or_404(Test, id=task_id)
-    if task_type == TaskTypes.info_task.value:
-        return get_object_or_404(InfoTask, id=task_id)
+    match task_type:
+        case TaskTypes.common_task.value:
+            return get_object_or_404(CommonTask, id=task_id)
+        case TaskTypes.test.value:
+            return get_object_or_404(Test, id=task_id)
+        case TaskTypes.info_task.value:
+            return get_object_or_404(InfoTask, id=task_id)
 
 
 def is_teacher(user) -> bool:
@@ -21,32 +22,43 @@ def is_teacher(user) -> bool:
 def create_answered_task_instances_for_group(task):
     student_set = task.subject.st_group.student_set.all()
     task_type = task.get_type()
-    if task_type == "CommonTask":
-        for student in student_set:
-            AnsweredCommonTask.objects.create(
-                student=student, common_task=task, status=AnsweredTask.ASSIGNED
-            )
-    elif task_type == "Test":
-        for student in student_set:
-            TakenTest.objects.create(
-                student=student, related_test=task, status=AnsweredTask.ASSIGNED
-            )
-    elif task_type == "InfoTask":
-        for student in student_set:
-            AnsweredInfoTask.objects.create(
-                student=student, related_info_task=task, status=AnsweredTask.ASSIGNED
-            )
+
+    match task_type:
+        case "CommonTask":
+            for student in student_set:
+                AnsweredCommonTask.objects.create(
+                    student=student, common_task=task, status=AnsweredTask.ASSIGNED
+                )
+        case "Test":
+            for student in student_set:
+                TakenTest.objects.create(
+                    student=student, related_test=task, status=AnsweredTask.ASSIGNED
+                )
+        case "InfoTask":
+            for student in student_set:
+                AnsweredInfoTask.objects.create(
+                    student=student,
+                    related_info_task=task,
+                    status=AnsweredTask.ASSIGNED,
+                )
 
 
-def get_ans_task(task, student):
+def get_answered_task(task, student):
     task_type = task.get_type()
-    if task_type == "CommonTask":
-        ans_task = AnsweredCommonTask.objects.get(common_task=task, student=student)
-    elif task_type == "Test":
-        ans_task = TakenTest.objects.get(related_test=task, student=student)
-    elif task_type == "InfoTask":
-        ans_task = AnsweredInfoTask.objects.get(related_info_task=task, student=student)
-    return ans_task
+
+    match task_type:
+        case "CommonTask":
+            answered_task = AnsweredCommonTask.objects.get(
+                common_task=task, student=student
+            )
+        case "Test":
+            answered_task = TakenTest.objects.get(related_test=task, student=student)
+        case "InfoTask":
+            answered_task = AnsweredInfoTask.objects.get(
+                related_info_task=task, student=student
+            )
+
+    return answered_task
 
 
 def _get_student_average_grade(
@@ -91,7 +103,7 @@ def _save_previous_question(
     previous_answers = Answer.get_answers(previous_question)
     for i in range(len(previous_answers)):
         checked = request_post.get(f"givenanswer_set-{i}-checked", "off")
-        given_answer = GivenAnswer.objects.create(
+        GivenAnswer.objects.create(
             checked=checked == "on",
             related_answered_question=previous_answered_question,
         )

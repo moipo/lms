@@ -10,14 +10,18 @@ from django.urls import reverse
 from .decorators import allowed_users
 from .enums import TaskTypes
 from .forms import *
-from .mappings import (status_by_condition_mapping,
-                       task_form_by_task_type_mapping)
+from .mappings import status_by_condition_mapping, task_form_by_task_type_mapping
 from .models import *
-from .utils import (_get_student_average_grade,
-                    _get_zipped_answers_and_given_answers_forms,
-                    _is_last_question, _save_previous_question,
-                    create_answered_task_instances_for_group, get_ans_task,
-                    get_task, is_teacher)
+from .utils import (
+    _get_student_average_grade,
+    _get_zipped_answers_and_given_answers_forms,
+    _is_last_question,
+    _save_previous_question,
+    create_answered_task_instances_for_group,
+    get_answered_task,
+    get_task,
+    is_teacher,
+)
 
 
 def homepage(request):
@@ -297,7 +301,7 @@ def s_answer_task(request, task_type=None, task_id=None):
 
     if task_type == TaskTypes.info_task.value:
         info_task = get_task(task_type, task_id)
-        answered_info_task = get_ans_task(info_task, student)
+        answered_info_task = get_answered_task(info_task, student)
         answered_info_task.status = AnsweredTask.CHECKED
         answered_info_task.save()
         return redirect("s_tasks")
@@ -343,7 +347,7 @@ def ts_task(request, task_type=0, task_id=0):
 
     user = request.user
     if not is_teacher(user):
-        ans_task = get_ans_task(task, user.student)
+        ans_task = get_answered_task(task, user.student)
         ctx["ans_task"] = ans_task
 
     return render(request, "mutual_views/ts_task.html", ctx)

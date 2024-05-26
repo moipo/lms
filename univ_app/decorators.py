@@ -14,8 +14,7 @@ def allowed_users(allowed_groups: list = None):
 
             if group in allowed_groups:
                 return view_func(request, *args, **kwargs)
-            else:
-                return HttpResponse("У вас нет прав доступа к этой странице")
+            return HttpResponse("У вас нет прав доступа к этой странице")
 
         return wrapper  #
 

@@ -1,6 +1,6 @@
+Python version: 3.10.0
 
-
-Python version - 3.10
+A learning management system with a simple interface
 
 Demo teacher credentials:
     login: teacher1         
@@ -14,21 +14,14 @@ Demo student credentials:
 there are also student2 student3, student4, student5, student6 with the same password
 
 
-commands to run locally(Linux):
-
-        cd .. && python3 -m venv myvenv 
-
-        source myvenv/bin/activate 
-
-        cd lms && pip install -r requirements.txt 
-
+commands to launch the project locally(Linux):
+        python3 -m venv myvenv
+        source myvenv/bin/activate
+        pip install -r requirements.txt
         python3 manage.py runserver 
 
 
-
-
-
-linters:
+static analysis tools:
     black univ_app
     autoflake --remove-all-unused-imports -i -r univ_app
     isort univ_app
