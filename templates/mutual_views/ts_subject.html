@@ -3,7 +3,6 @@
 
 {% block ts_subject %}
 
-
 {% if messages %}
   {%for message in messages%}
     {{message}}
@@ -16,8 +15,6 @@
   <hr>
 {% endif%}
 
-
-
 {%if not tasks%}
 <h4 class = "text-center">
 Задания ещё не были назначены
@@ -25,7 +22,6 @@
 {%endif%}
 <div class="list-group">
 
-  
   {%for task in tasks%}
   <a href="{%url 'ts_task' task.get_type task.id %}" class="list-group-item  list-group-item-action list-group-item-dark flex-column align-items-start my-1">
     <div class="d-flex w-100 justify-content-between">

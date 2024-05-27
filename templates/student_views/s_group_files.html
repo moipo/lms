@@ -2,9 +2,7 @@
 
 {% block s_group_files %}
 
-
 <div class="list-group">
-
   {%for subject in subjects%}
   <a href="{% url 's_group_files_subject' subject.id%}" class="list-group-item list-group-item-info list-group-item-action flex-column align-items-start my-1">
     <div class="d-flex w-100 justify-content-between">
@@ -14,9 +12,7 @@
     <p class="mb-1">{{subject.teacher}}</p>
     <small class="text-muted"></small>
   </a>
-  
   {%endfor%}
-
 </div>
 
 

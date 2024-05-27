@@ -2,10 +2,8 @@
 {%load user_tags%}
 {% block ts_task %}
 
-
       <div class = "container justify-content-between mx-auto"> 
-        <h5 class="mb-1 text-center">{{task.title}} 
-
+        <h5 class="mb-1 text-center">{{task.title}}
           {% if task.file%}
           <br>
           <br>
@@ -14,13 +12,6 @@
         </h5>
 
         <hr>
-        
-
-
-
-
-
-
 
         <small class="text-muted">{{task.created_at}}</small>
           <h5 class = "text-center"> Описание:</h5>
@@ -49,15 +40,6 @@
             {{ans_task.comment_from_teacher}}
           <hr>
         {%endif%} 
-
-
-      
-
-
-
-
-
-
 
         {% if not request.user|has_group:'teacher' %}
         {%if ans_task.status == "PASSED" or ans_task.status == "EVALUATED" %}

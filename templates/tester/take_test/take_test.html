@@ -13,17 +13,14 @@
     <div class="text-wrap" style="width: 8rem; color: white;">
     </div>
   </div> -->
-
   <form action="{% url 'take_test' test.id next_question_num %}" method="POST">
   {% csrf_token %}
-
   <ul>
     {{ zipped_answers_and_given_answers_forms.management_form }}
     {% for answer, form in zipped_answers_and_given_answers_forms %}
       <li>{{ forloop.counter }}. {{ answer.text }} {{ form.checked }}</li>
     {% endfor %}
   </ul>
-
   <button type="submit" class="btn btn-success btn-lg" name="button">Дать ответ</button>
 </form>
 </div>

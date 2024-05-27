@@ -1,8 +1,6 @@
 {%extends "base.html"%}
 {% block answer_common_task %}
 
-
-
 <div class="container">
   <form class="form-group" action="{% url 's_answer_task' task_type task_id   %}" method="post" enctype="multipart/form-data">
     {%csrf_token%}

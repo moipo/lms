@@ -1,18 +1,7 @@
 {% extends "tester_base_with_sidebar.html" %}
 {% load static %}
 
-<!--<form action="" method="POST"> {% csrf_token %}-->
-<!--    <div class='form-group testformtxt'>-->
-
-
-            <!-- {# {% comment %}  #} -->
-<!--        <button type="submit" class="btn btn-success btn-md createTestButton"> Продолжить</button>-->
-<!--    </div>-->
-<!--</form>-->
-
 {% block questions_form %}
-
-
 
    <form class = "white_text" action = "#" method="POST"> {% csrf_token %}
        <div class="form-group testformtxt mb-1">
@@ -23,7 +12,6 @@
         <button type = "button" class="btn btn-primary plusBtn" name="button"> Добавить ещё ответ </button>
         <button type="submit" class="btn btn-success btn-md createQuestionButton">Сохранить вопрос</button>
 
-
               <div id = "empty_form" class = "empty_form" >
                 {{answer_form_not_model.as_p}}
               </div>
@@ -32,18 +20,15 @@
                 <p>
                   <label for="id_answer">Ответ:</label>
                   <textarea type="text" name="answer" maxlength="200" cols = "90" rows = '1' placeholder="Ответ" required="" id="id_answer"></textarea>
-                  <!-- <input type="text" name="answer" maxlength="200" cols = "90" rows = '1' placeholder="Ответ" required="" id="id_answer"> -->
                 </p>
 
                 <p>
                   <label for="id_is_right">является верным:</label>
                   <input type="checkbox" name="is_right" id="id_is_right" value = "2">
-                  <!-- <input type="hidden" name="hidden_checkbox" id="hidden_checkbox" value ="off" > -->
                 </p>
               </div>
 
          </div>
-
 
      </form>
 
@@ -52,18 +37,7 @@
      </form>
 
 
-
-
     <script defer>
-
-
-      //empty_form = document.getElementById("empty_form")
-      //second_form = empty_form.cloneNode()
-      //second_form.setAttribute("id" , "")
-
-
-
-
 
       let num = 3
       const plusBtn = document.querySelector('.plusBtn')
@@ -86,13 +60,8 @@
 
         console.log(newForm.lastElementChild.lastElementChild)
 
-        // answer = newForm.firstElementChild.lastElementChild
-        // answer.setAttribute("id", "")
-
-
         num += 1
         const ansGroup = document.querySelector(".ans_group")
-
 
         ansGroup.appendChild(newForm)
       });
@@ -176,30 +145,13 @@
           bottom: 100px;
           background-color: red;
         }
-
-
-
 </style>
-
-
 
 {% endblock %}
 
-
-
-
-
-
-
-
 {% block answer%}
 {% for question in previous_questions %}
-<!-- some text and form:
-<form class="" action="index.html" method="post"> {% csrf_token %}
-  {{answer_form.as_p}}
-  <br>
-  {{answer_form.as_p}}
-</form> -->
+
 <br>
 <em>{{question}}</em>
 <br>
