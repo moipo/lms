@@ -226,8 +226,8 @@ class Question(models.Model):
     def __str__(self):
         return self.question
 
-    def get_test_questions(self, test: Test):
-        questions = self.objects.filter(related_test=test)
+    def get_test_questions(test: Test):
+        questions = Question.objects.filter(related_test=test)
         return questions
 
 
@@ -239,8 +239,8 @@ class Answer(models.Model):
         "Question", on_delete=models.CASCADE, null=True
     )
 
-    def get_answers(self, question: Question):
-        answers = self.objects.filter(related_question=question)
+    def get_answers(question: Question):
+        answers = Answer.objects.filter(related_question=question)
         return answers
 
     def __repr__(self):
