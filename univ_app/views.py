@@ -47,7 +47,7 @@ def t_create_task(request, subject_id=None, task_type=None):
             task.subject = Subject.objects.get(id=subject_id)
             task.save()
             create_answered_task_instances_for_group(task)
-            messages.success(request, "Задание было успешно создано и опубликовано")
+            messages.success(request, "The task has been successfully created and published")
             return redirect("ts_subject", subject_id)
 
     if task_type == TaskTypes.test.value:
@@ -208,7 +208,7 @@ def s_group_files_subject(request, subject_id):
         else:
             # implicit iterations (list) clear previous messages
             list(messages.get_messages(request))
-            messages.warning(request, "Выбран неверный формат файла")
+            messages.warning(request, "The format of the file is incorrect")
 
     docs = subject.document_set.all()
     form = DocumentForm()
@@ -225,9 +225,9 @@ def delete_doc(request, subject_id, doc_id):
     doc = get_object_or_404(Document, pk=doc_id)
     if doc.student == request.user.student:
         doc.delete()
-        messages.warning(request, "Документ успешно удален")
+        messages.warning(request, "The document has been deleted")
     else:
-        messages.warning(request, "У вас нет прав на удаление данного файла")
+        messages.warning(request, "Permission denied")
     return redirect("s_group_files_subject", subject_id)
 
 
@@ -283,7 +283,7 @@ def s_answer_task(request, task_type=None, task_id=None):
                 )
                 answered_common_task.save()
                 messages.success(
-                    request, "Ответ на задание был успешно отправлен на проверку."
+                    request, "The answer has been sent."
                 )
                 return redirect("s_tasks")
 

@@ -4,11 +4,11 @@
 
 <table class = "table">
   <tr>
-    <th>Вопрос</th>
-    <th>Варианты ответов</th>
-    <th>Правильный ответ</th>
-    <th>Ваш ответ</th>
-    <th>Результат</th>
+    <th>Question</th>
+    <th>Answer option</th>
+    <th>Correct asnwer</th>
+    <th>You answer</th>
+    <th>Result</th>
   </tr>
   {% for zipped in all_zipped %}
   <tr>
@@ -33,12 +33,12 @@
       {%endfor%}
     </td>
     <td>
-      {{zipped.3.correct|yesno:"Правильный ответ, Неправильный ответ"}}
+      {{zipped.3.correct|yesno:"Correct answer, incorrect answer"}}
     </td>
   </tr>
   {% endfor %}
 </table>
 
-<a href = "{%url 's_tasks'%}" class = "btn btn-success btn-lg">Вернуться к заданиям</a>
+<a href = "{%url 's_tasks'%}" class = "btn btn-success btn-lg">Go back to tasks</a>
 
 {%endblock%}

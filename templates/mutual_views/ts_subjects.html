@@ -13,9 +13,9 @@
     </div>
     <p class="mb-1">
       {% if request.user|has_group:'teacher' %}
-      Группа: {{subject.st_group}}
+      Group: {{subject.st_group}}
       {%else%}
-      Преподаватель: {{subject.teacher}} 
+      Techer: {{subject.teacher}}
       {%endif%}
     </p>
     <small class="text-muted"></small>

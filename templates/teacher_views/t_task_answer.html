@@ -23,7 +23,7 @@
 
 
   <small class="text-muted">{{common_task.created_at}}</small>
-    <h5 class = "text-center"> Описание:</h5>
+    <h5 class = "text-center"> Description:</h5>
     <p class="mb-1">{{common_task.description}}</p>
     <hr>
   <small class="text-muted"></small>
@@ -32,7 +32,7 @@
 
   
   <h5 class = "text-center">
-    Выполненное задание:
+    Completed tasks:
     
     {% if answered_common_task.file%}
     <br>
@@ -47,7 +47,7 @@
 
   {% if answered_common_task.comment_from_teacher%}
       <h5 class = "text-center"> 
-        Комментарий преподавателя: 
+        Teacher's comment:
       </h5>
       <br>
       <br>
@@ -71,12 +71,12 @@
   
   <a class = "btn btn-success btn-lg " href ="{% url 's_answer_task' common_task.get_type common_task.id %}" name="button">
     {%if common_task.get_type == "InfoTask"%}
-      С материалами ознакомился(ась)
+      Read it
     {%else%}
       {%if answered_common_task.status == "DONE"%}
-        Изменить ответ
+        Change the answer
       {%elif answered_common_task.status == "ASSIGNED"%}
-        Выполнить задание
+        Do the task
       {%endif%}
     {%endif%} 
   {%endif%}
@@ -89,12 +89,12 @@
   <div class = "col-md-5 border border-3 border-success rounded p-3">
     <form class="form-group" action="{% url 't_task_answer' answered_common_task.id %}" method="post">
       {%csrf_token%}
-      оценка:
+      grade:
       <input name = "grade" class = "input-field" type = "number"> </input>
       <br>
-      если работу требуется зачесть без оценки - оставьте поле пустым.
+      If the work needs to be credited without a grade, leave the field blank
       
-      <button class = "btn btn-success btn-lg w-100 mt-3" type="submit" name="btn_accepted">Оценить/Зачесть</button>
+      <button class = "btn btn-success btn-lg w-100 mt-3" type="submit" name="btn_accepted">Evaluate/Credit</button>
       
      
     </form>
@@ -103,10 +103,10 @@
   </div>
   <div class = "col-md-5 border border-3 border-danger rounded p-3">
     <form class="form-group" action="{% url 't_task_answer' answered_common_task.id %}" method="post"> {%csrf_token%}
-      Комментирий:
+      Comment:
       <input type = "textarea" class = "input-field" name = "comment_from_teacher"> </input> 
       <br><br>
-      <button class = "btn btn-danger btn-lg w-100 mt-3" type="submit" name="btn_not_accepted">Работа не засчитана / Переделать</button>
+      <button class = "btn btn-danger btn-lg w-100 mt-3" type="submit" name="btn_not_accepted">Must be redone</button>
     </form>
   </div>
 

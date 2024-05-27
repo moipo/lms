@@ -5,22 +5,20 @@
 <form action="#" method="POST" enctype="multipart/form-data"> {% csrf_token %}
 
     <div class="form-group testformstr">
-        <!-- <label for="id_title">Название теста:</label> -->
-        <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Название теста" name="title"
+        <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Test's title" name="title"
                maxlength="100" required="" id="id_title">
     </div>
 
     <div class="form-group testformtxt">
         <div>
-            <!-- <label for="id_description">Описание:</label> -->
             <textarea class="form-control" name="description" cols="40" rows="10" id="id_description"
-                      placeholder="Описание теста"></textarea>
-            <button type="submit" class="btn btn-success btn-md createTestButton"> Продолжить</button>
+                      placeholder="Test's description"></textarea>
+            <button type="submit" class="btn btn-success btn-md createTestButton"> Continue</button>
         </div>
     </div>
 
     <div class="form-group marg">
-      <label for="id_image">Добавить картинку:</label>
+      <label for="id_image">Add a picture:</label>
       <input type="file" name="image" accept="image/*" id="id_image">
     </div>
 

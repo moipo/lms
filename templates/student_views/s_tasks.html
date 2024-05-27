@@ -3,7 +3,7 @@
 {% block s_tasks %}
 
 <hr>
-  Назначены:
+  Assigned:
     <div class="list-group">
     {%for task in assigned_tasks%}
     <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-danger my-1 list-group-item-action flex-column align-items-start">
@@ -20,7 +20,7 @@
     </div>
 
 <hr>
-  На проверке:
+  Being evaluated:
       <div class="list-group">
       {%for task in done_tasks%}
       <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-dark my-1 list-group-item-action flex-column align-items-start">
@@ -37,14 +37,14 @@
       </div>
 
   <hr>
-  Сданы с оценкой:
+  Done (with a grade):
       <div class="list-group">
       {%for task in eval_tasks%}
       <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-success list-group-item-action flex-column align-items-start my-1">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{task.related_task.subject}} </h5>
             <h5 class="mb-1">{{task.related_task.title}} </h5>
-            <h5 class="mb-1">Оценка: {{task.grade}} </h5>
+            <h5 class="mb-1">Grade: {{task.grade}} </h5>
             <small class="text-muted">{{task.related_task.created_at|date:"SHORT_DATE_FORMAT"}}</small>
           </div>
           <p class="mb-1">{{task.description}}</p>
@@ -54,7 +54,7 @@
       </div>
 
   <hr>
-  Сданы без оценки:
+  Done (without a grade):
       <div class="list-group">
       {%for task in passed_tasks%}
       <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-success my-1 list-group-item-action flex-column align-items-start">
@@ -71,7 +71,7 @@
       </div>
     
   <hr>
-  Материалы:
+  Materials:
       <div class="list-group">
       {%for task in checked_tasks%}
       <a href="{%url 'ts_task' task.related_task.get_type task.related_task.id %}" class="list-group-item list-group-item-dark my-1 list-group-item-action flex-column align-items-start">

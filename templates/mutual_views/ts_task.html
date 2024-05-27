@@ -14,7 +14,7 @@
         <hr>
 
         <small class="text-muted">{{task.created_at}}</small>
-          <h5 class = "text-center"> Описание:</h5>
+          <h5 class = "text-center"> Description:</h5>
           <p class="mb-1">{{task.description}}</p>
           <hr>
         <small class="text-muted"></small>
@@ -22,7 +22,7 @@
         {%if ans_task%}
           {% if ans_task.file%}
           <h5 class = "text-center">
-            Выполненное задание: {{ans_task.answer}}
+            Answered task: {{ans_task.answer}}
             <br>
             <br>
             <a class="mb-1" href = {{ans_common_task.file.url}}> <i class="fa fa-file fa-5x"></i> </a>
@@ -33,7 +33,7 @@
 
         {% if ans_task.comment_from_teacher%}
             <h5 class = "text-center"> 
-              Комментарий преподавателя: 
+              Teacher's comments:
             </h5>
             <br>
             <br>
@@ -48,12 +48,12 @@
         
         <a class = "btn btn-success btn-lg " href ="{% url 's_answer_task' task.get_type task.id %}" name="button">
           {%if task.get_type == "InfoTask"%}
-            С материалами ознакомился(ась)
+            Read it
           {%else%}
             {%if ans_task.status == "DONE"%}
-              Изменить ответ
+              Change the answer
             {%elif ans_task.status == "ASSIGNED"%}
-              Выполнить задание
+              Do the task
             {%endif%}
           {%endif%} 
         {%endif%}

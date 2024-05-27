@@ -11,13 +11,13 @@
 
 
           <!-- <li class="nav-item">
-            <a class="nav-link" href="{#{% url 'profile' %} #}">Личный кабинет</a>
+            <a class="nav-link" href="{#{% url 'profile' %} #}">Account</a>
           </li> -->
           <!-- <li class="nav-item">
-            <a class="nav-link" href="{#  {% url 'homepage' %} #}">Создать тест</a>
+            <a class="nav-link" href="{#  {% url 'homepage' %} #}">Create a test</a>
           </li> -->
           <!-- <li class="nav-item">
-            <a class="nav-link" href="{# {% url 'test_list' %} #}" >Список тестов</a>
+            <a class="nav-link" href="{# {% url 'test_list' %} #}" >List of Tests</a>
           </li> -->
 
 
@@ -25,9 +25,9 @@
           <br>
           {% comment %} <li class="nav-item">
             {% if not request.user.is_authenticated %}
-            <a class="nav-link" href="{% url 'login_form' %}">Войти<span class="sr-only"></span></a>
+            <a class="nav-link" href="{% url 'login_form' %}">L<span class="sr-only"></span></a>
             {% else %}
-            <a class="nav-link" href="{% url 'log_out' %}">Выйти<span class="sr-only"></span></a>
+            <a class="nav-link" href="{% url 'log_out' %}">Log out<span class="sr-only"></span></a>
             {% endif %}
           </li> {% endcomment %}
         </ul>

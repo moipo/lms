@@ -5,12 +5,12 @@
 
    <form class = "white_text" action = "#" method="POST"> {% csrf_token %}
        <div class="form-group testformtxt mb-1">
-           <textarea class ="form-control"  name="question" cols="40" rows="10" required="" id="id_question" placeholder = "Текст вопроса"></textarea>
+           <textarea class ="form-control"  name="question" cols="40" rows="10" required="" id="id_question" placeholder = "Question text"></textarea>
        </div>
 
       <div class="form-group ans_group" >
-        <button type = "button" class="btn btn-primary plusBtn" name="button"> Добавить ещё ответ </button>
-        <button type="submit" class="btn btn-success btn-md createQuestionButton">Сохранить вопрос</button>
+        <button type = "button" class="btn btn-primary plusBtn" name="button"> Add another answer </button>
+        <button type="submit" class="btn btn-success btn-md createQuestionButton">Save the question</button>
 
               <div id = "empty_form" class = "empty_form" >
                 {{answer_form_not_model.as_p}}
@@ -18,12 +18,12 @@
 
               <div class="empty_form ">
                 <p>
-                  <label for="id_answer">Ответ:</label>
-                  <textarea type="text" name="answer" maxlength="200" cols = "90" rows = '1' placeholder="Ответ" required="" id="id_answer"></textarea>
+                  <label for="id_answer">Answer:</label>
+                  <textarea type="text" name="answer" maxlength="200" cols = "90" rows = '1' placeholder="Answer" required="" id="id_answer"></textarea>
                 </p>
 
                 <p>
-                  <label for="id_is_right">является верным:</label>
+                  <label for="id_is_right">Is correct:</label>
                   <input type="checkbox" name="is_right" id="id_is_right" value = "2">
                 </p>
               </div>
@@ -33,7 +33,7 @@
      </form>
 
      <form action="{% url 'finish_test_creation' testid %}">
-       <button class = "btn btn-danger btn-lg ready_btn" type="submit" name="button">Тест готов</button>
+       <button class = "btn btn-danger btn-lg ready_btn" type="submit" name="button">Test is ready</button>
      </form>
 
 

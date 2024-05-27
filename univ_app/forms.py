@@ -12,11 +12,11 @@ class GivenAnswerForm(forms.ModelForm):
 
 
 class AnswerFormNotModel(forms.Form):
-    answer = forms.CharField(max_length=200, widget=forms.Textarea, label="Ответ")
-    is_right = forms.BooleanField(required=False, label="является верным")
+    answer = forms.CharField(max_length=200, widget=forms.Textarea, label="Answer")
+    is_right = forms.BooleanField(required=False, label="is correct")
 
-    is_right.widget.attrs.update({"value": "1", "placeholder": "Является верным"})
-    answer.widget.attrs.update({"cols": "90", "rows": "1", "placeholder": "Ответ"})
+    is_right.widget.attrs.update({"value": "1", "placeholder": "is correct"})
+    answer.widget.attrs.update({"cols": "90", "rows": "1", "placeholder": "answer"})
 
 
 class TestForm(forms.ModelForm):
@@ -29,9 +29,9 @@ class TestForm(forms.ModelForm):
         ]
 
         labels = {
-            "title": "Название теста",
-            "description": "Описание",
-            "image": "Картинка",
+            "title": "Title of the test",
+            "description": "Description",
+            "image": "Picture",
         }
 
 
@@ -43,7 +43,7 @@ class QuestionForm(forms.ModelForm):
         ]
 
         labels = {
-            "question": "Текст вопроса",
+            "question": "question",
         }
 
 
@@ -53,7 +53,7 @@ class AnswerForm(forms.ModelForm):
         self.fields["answer"].widget.attrs.update(
             {
                 "class": "form-control",
-                "style": ' placeholder : "Вопрос"; width:700px; height:25px;  display:inline-block;',  # pylint: disable=line-too-long
+                "style": ' placeholder : "Question"; width:700px; height:25px;  display:inline-block;',  # pylint: disable=line-too-long
             }
         )
         self.fields["is_right"].widget.attrs.update(
@@ -68,8 +68,8 @@ class AnswerForm(forms.ModelForm):
         ]
 
         labels = {
-            "is_right": "Ответ является правильным ",
-            "answer": "Ответ",
+            "is_right": "Answer is correct",
+            "answer": "Answer",
         }
 
 
@@ -79,13 +79,13 @@ class UserForm(forms.ModelForm):
         self.fields["username"].widget.attrs.update(
             {
                 "class": "form-control",
-                "style": ' placeholder : "Логин"',
+                "style": ' placeholder : "Login"',
             }
         )
         self.fields["password"].widget.attrs.update(
             {
                 "class": "form-control",
-                "style": ' placeholder : "Пароль"',
+                "style": ' placeholder : "Password"',
             }
         )
 
@@ -95,7 +95,7 @@ class UserForm(forms.ModelForm):
             "username",
             "password",
         ]
-        labels = {"username": "имя пользователя", "password": "пароль"}
+        labels = {"username": "login", "password": "password"}
         help_texts = {"username": " "}
 
         widgets = {"password": forms.PasswordInput(attrs={"class": "form-control"})}
@@ -106,8 +106,8 @@ class CommonTaskForm(forms.ModelForm):
         model = CommonTask
         fields = ["title", "description", "file"]
         labels = {
-            "title": "название",
-            "description": "описание",
+            "title": "Title",
+            "description": "Description",
         }
 
     def __init__(self, *args, **kwargs):
@@ -121,8 +121,8 @@ class InfoTaskForm(forms.ModelForm):
         model = InfoTask
         fields = ["title", "description", "file"]
         labels = {
-            "title": "название",
-            "description": "описание",
+            "title": "Title",
+            "description": "Description",
         }
 
     def __init__(self, *args, **kwargs):
@@ -136,8 +136,8 @@ class AnsweredCommonTaskForm(forms.ModelForm):
         model = AnsweredCommonTask
         fields = ["answer", "file"]
         labels = {
-            "description": "описание",
-            "file": "прикрепить документ",
+            "description": "Description",
+            "file": "Add a document",
         }
 
     def __init__(self, *args, **kwargs):
@@ -155,7 +155,7 @@ class DocumentForm(forms.ModelForm):
         model = Document
         fields = ["doc"]
         labels = {
-            "doc": "Выберете документ для добавления",
+            "doc": "Choose a document to upload",
         }
 
     def __init__(self, *args, **kwargs):

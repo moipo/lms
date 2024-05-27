@@ -18,7 +18,7 @@ var barChartSetUp = {
     labels: ["1", "2", "3", "4", "5"],
     datasets: [
       {
-        label: "Оценка",
+        label: "Grade",
         backgroundColor: "#3e95cd",//["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
         data: {{each_grade_quantity|safe}}//[2478,5267,734,784,433]
       }
@@ -28,7 +28,7 @@ var barChartSetUp = {
     legend: { display: false },
     title: {
       display: true,
-      text: 'Оценки'
+      text: 'Grades'
     }
   }
 }

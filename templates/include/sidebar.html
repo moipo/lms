@@ -32,18 +32,18 @@
       <hr>
     {%endif%}
     
-    <a class = "nav-link" href="{% url 'ts_subjects' %}">Мои дисциплины</a> <hr>
+    <a class = "nav-link" href="{% url 'ts_subjects' %}">Subjects</a> <hr>
     {% if request.user|has_group:'teacher' %}
-    <a class = "nav-link" href="{% url 't_statistics' %}">Статистика</a> <hr>
-    <a class = "nav-link" href="{% url 't_task_answers' %}">Ответы студентов</a> <hr>
+    <a class = "nav-link" href="{% url 't_statistics' %}">Statistics</a> <hr>
+    <a class = "nav-link" href="{% url 't_task_answers' %}">Student's answers</a> <hr>
     {% else %}
-    <a class = "nav-link" href="{% url 's_tasks' %}">Мои задания</a> <hr>
-    <a class = "nav-link" href="{% url 's_statistics' %}">Моя статистика</a> <hr>
-    <a class = "nav-link" href="{% url 's_group_files' %}">Файлы группы</a> <hr>
+    <a class = "nav-link" href="{% url 's_tasks' %}">Tasks</a> <hr>
+    <a class = "nav-link" href="{% url 's_statistics' %}">Statistics</a> <hr>
+    <a class = "nav-link" href="{% url 's_group_files' %}">Group's files</a> <hr>
     {%endif%}
-    <a class = "nav-link" href="{% url 'log_out' %}">Выход</a> <hr>
+    <a class = "nav-link" href="{% url 'log_out' %}">Log out</a> <hr>
   {%else%}
-    <a class = "nav-link" href="{% url 'login_form' %}" >Вход</a>
+    <a class = "nav-link" href="{% url 'login_form' %}" >Log in</a>
   {%endif%}
 
 </div>

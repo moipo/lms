@@ -6,18 +6,18 @@
 
   {% comment %} <a href="{% url 't_create_task' subject_id 'CommonTask'%}" class="list-group-item list-group-item-action flex-column align-items-start">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1"> Стандартное задание </h5>
+      <h5 class="mb-1"> Standart task </h5>
     </div>
   </a>
 
   <a href="{% url 't_create_task' subject_id 'Test'%}" class="list-group-item list-group-item-action flex-column align-items-start">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1"> Тест </h5>
+      <h5 class="mb-1"> Test </h5>
     </div>
   </a>
   <a href="{% url 't_create_task' subject_id 'InfoTask'%}" class="list-group-item list-group-item-action flex-column align-items-start">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1"> Выложить файлы/сообщение </h5>
+      <h5 class="mb-1"> Post files/message </h5>
     </div>
   </a> {% endcomment %}
 
@@ -29,7 +29,7 @@
 
       <a href = "{% url 't_create_task' subject_id 'CommonTask'%}" class="link-dark">
         <div class="card" style="width: 28rem;">
-          <h5 class="card-title text-center">Стандартное задание</h5>
+          <h5 class="card-title text-center">General-purpose task</h5>
           <img class="card-img-top" src="{% static 'univ_app/img/CommonTaskPreview.png' %}" alt="Card image cap">
           <div class="card-body">
             
@@ -40,7 +40,7 @@
       </a>
       <a href = "{% url 't_create_task' subject_id 'Test'%}" class="link-dark">
         <div class="card" style="width: 28rem;">
-          <h5 class="card-title text-center">Тест</h5>
+          <h5 class="card-title text-center">Test</h5>
           <img class="card-img-top" src="{% static 'univ_app/img/test_preview.jpg' %}" alt="Card image cap">
           <div class="card-body">
             
@@ -52,7 +52,7 @@
 
       <a href = "t_create_task' subject_id 'InfoTask" class="link-dark">
         <div class="card" style="width: 28rem;">
-          <h5 class="card-title">Выложить файлы/материалы/сообщение</h5>
+          <h5 class="card-title">Post files/message</h5>
           <img class="card-img-top" src="{% static 'univ_app/img/infotask_preview.png' %}" alt="Card image cap">
           <div class="card-body">
             

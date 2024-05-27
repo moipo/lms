@@ -2,12 +2,12 @@
 
 {% block show_result %}
   <div class = "centrate cent" >
-    Ваш результат:
+    You result:
     <strong>{{taken_test.score}}/{{answered_questions_amount}}</strong>
     <br>
     <br>
     <br>
-    <a href = "{%url 'show_result_table' taken_test.id %}" class = "text-warning">показать таблицу</a>
+    <a href = "{%url 'show_result_table' taken_test.id %}" class = "text-warning">Show table with results</a>
   </div>
 
   <style>

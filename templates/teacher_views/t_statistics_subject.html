@@ -4,8 +4,8 @@
 
 
 
-Показатели по предмету "{{subject}}":
-Средний балл: {{avg_grade}},  Заданий назначено-{{tasks_amount}},  Заданий выполнено-{{tasks_performed}} ,  Заданий осталось выполнить - {{assigned_tasks_amount}}
+Subject's statistics "{{subject}}":
+Average grade: {{avg_grade}},  Tasks assigned-{{tasks_amount}},  Completed tasks-{{tasks_performed}} ,  Tasks to complete - {{assigned_tasks_amount}}
 <canvas id="bar-chart" width="800" height="450"></canvas>
 
 
@@ -24,7 +24,7 @@ var barChartSetUp = {
     labels: {{student_names|safe}} ,//["1", "2", "3", "4", "5"],
     datasets: [
       {
-        label: "Оценка",
+        label: "Grade",
         backgroundColor: "#3e95cd",//["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
         data: {{student_avg_grades|safe}} //[2478,5267,734,784,433]//{{task_grades|safe}} 
       }
@@ -34,7 +34,7 @@ var barChartSetUp = {
     legend: { display: false },
     title: {
       display: true,
-      text: 'Оценки'
+      text: 'Grades'
     }
   }
 }

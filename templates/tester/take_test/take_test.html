@@ -5,7 +5,7 @@
   <br>
   <br>
   <div class="border border-light p-3 mb-4 " style = "width: 50%; color: white; margin:auto; ">
-      Вопрос {{next_question_num}} / {{ quantity_of_questions }}:
+      Question {{next_question_num}} / {{ quantity_of_questions }}:
       <br>
       {{next_question}}
   </div>
@@ -21,7 +21,7 @@
       <li>{{ forloop.counter }}. {{ answer.text }} {{ form.checked }}</li>
     {% endfor %}
   </ul>
-  <button type="submit" class="btn btn-success btn-lg" name="button">Дать ответ</button>
+  <button type="submit" class="btn btn-success btn-lg" name="button">Answer</button>
 </form>
 </div>
 {% endblock %}

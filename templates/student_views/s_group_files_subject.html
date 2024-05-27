@@ -10,9 +10,9 @@
       <div class="card-body text-primary">
         <p class="card-text"><a class="mb-1" href = {{doc.doc.url}}> <i class="fa fa-file fa-5x"></i> </a></p>
       </div>
-      <div class=" text-primary card-footer bg-transparent border-primary">название: {{doc.filename|slice:":20"}}</div>
-      <div class=" text-primary card-footer bg-transparent border-primary">владелец: {{doc.student|slice:":20"}}</div>
-      <div class=" text-primary card-footer bg-transparent border-primary"><a href = "{%url 'delete_doc' subject.id doc.id%}" class ="btn btn-danger" > удалить</a></div>
+      <div class=" text-primary card-footer bg-transparent border-primary">title: {{doc.filename|slice:":20"}}</div>
+      <div class=" text-primary card-footer bg-transparent border-primary">owner: {{doc.student|slice:":20"}}</div>
+      <div class=" text-primary card-footer bg-transparent border-primary"><a href = "{%url 'delete_doc' subject.id doc.id%}" class ="btn btn-danger" > Delete</a></div>
     </div>
     {%endfor%}
   </div>
@@ -34,7 +34,7 @@
     {{form.as_p}}
       </div>
       <div class = "col-2">
-    <button class = "btn btn-success btn-lg mt-3" type="submit" name="button"> Добавить документ </button>
+    <button class = "btn btn-success btn-lg mt-3" type="submit" name="button"> Add a document </button>
       </div>
     </div>
   </form>

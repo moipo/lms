@@ -108,11 +108,11 @@ class Task(models.Model):
     def get_type_for_user(self):
         type_name = self.get_type()
         if type_name == "CommonTask":
-            return "Задание"
+            return "General-purpose task"
         if type_name == "Test":
-            return "Тест"
+            return "Test"
         if type_name == "InfoTask":
-            return "Материалы"
+            return "Materials"
 
 
 class CommonTask(Task):
