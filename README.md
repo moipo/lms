@@ -19,11 +19,15 @@ monitor resolutions (seems to look alright with 1920 * 1080)
 
      
 Demo teacher credentials:
-    login: teacher1         
+
+    login: teacher1      
+    
     password: some_password
 
 Demo student credentials:
+
     login: student2
+    
     password: some_password
 
 (there are also teacher2, teacher3, student1, student3, student4, student5, student6
@@ -38,7 +42,11 @@ commands to launch the project locally(Linux):
 
 
 static analysis tools:
+
     black univ_app
+    
     autoflake --remove-all-unused-imports -i -r univ_app
+    
     isort univ_app
+    
     pylint --load-plugins pylint_django --django-settings-module=lms.settings --ignore=migrations /c/Users/moipo/projects/lms/univ_app
