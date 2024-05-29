@@ -49,4 +49,4 @@ static analysis tools:
     
     isort univ_app
     
-    pylint --load-plugins pylint_django --django-settings-module=lms.settings --ignore=migrations /c/Users/moipo/projects/lms/univ_app
+    pylint --load-plugins pylint_django --django-settings-module=lms.settings --ignore=migrations univ_app
