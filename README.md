@@ -1,17 +1,7 @@
 Python version: 3.10.0
 
-Description:
-A learning management system with a simple interface, where teachers can create
-different types of tasks for students:  Test, General-purpose task and Materials.
-Students can do these tasks and get grades.
-The system also includes permission-based storage for files for each of the student groups, 
-and an option to view statistics of an individual or an entire subjects.
-There are two separate flows for dynamically constructing and taking a test. A test has a custom
-amount of answers. After taking a test a grade is generated automatically.
-General-purpose task allows to add files and then evaluate student's answer and even 'chat' with a
-student many times on the topic of the task if needed (via 'must be redone' option).
-There are also a login subsystem and a separate flow for each type of the task.
-
+Description: A learning management system with a simple interface, where teachers can create different types of tasks for students: tests, general-purpose tasks, and materials. Students can complete these tasks and receive grades. The system also includes permission-based storage for files for each student group and an option to view statistics for an individual or an entire subject. There are two separate flows for dynamically constructing and taking a test. A test can have a custom number of answers. After taking a test, a grade is generated automatically. The general-purpose task allows adding files and then evaluating the student's answer, including the option to 'chat' with a student multiple times about the task if needed (via the 'must be redone' option). There is also a login subsystem and a separate flow for each type of task.
+The login form and the part of the project responsible for creating and taking tests were taken from one of my first projects (a very old one), so the related part of the frontend may not look optimal for all monitor resolutions (seems to look alright with 1920 * 1080).
 Login form and a part of the project accountable for creating and taking tests was taken from one of my first
 projects (a very old one) so related part of frontend may not look very well for all the
 monitor resolutions (seems to look alright with 1920 * 1080)
